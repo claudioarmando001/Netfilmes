@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Filmes - Painel Administrativo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset e configurações globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #e50914;
+            --secondary-color: #141414;
+            --text-color: #fff;
+            --light-gray: #757575;
+            --dark-gray: #2d2d2d;
+            --card-bg: #181818;
+            --hover-bg: #2a2a2a;
+            --gradient: linear-gradient(to right, #e50914, #b81d24);
+            --admin-sidebar: #0a0a0a;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background-color: var(--admin-sidebar);
+            color: white;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .sidebar-header {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo span {
+            color: var(--text-color);
+            margin-left: 5px;
+        }
+        
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .admin-avatar {
+            width: 45px;
+            height: 45px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .admin-name {
+            font-weight: 500;
+        }
+        
+        .admin-role {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        .nav-links {
+            list-style: none;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+            border-left-color: var(--primary-color);
+        }
+        
+        .nav-link i {
+            margin-right: 15px;
+            font-size: 1.2rem;
+            width: 25px;
+            text-align: center;
+        }
+        
+        .nav-link span {
+            flex: 1;
+        }
+        
+        .nav-link .badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+        
+        /* Conteúdo principal */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .page-title i {
+            color: var(--primary-color);
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning-color);
+            color: #333;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+        
+        /* Cards de estatísticas */
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s;
+            border-left: 5px solid var(--primary-color);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 2rem;
+        }
+        
+        .stat-icon.filmes { background-color: rgba(229, 9, 20, 0.1); color: var(--primary-color); }
+        .stat-icon.series { background-color: rgba(32, 201, 151, 0.1); color: #20c997; }
+        .stat-icon.animes { background-color: rgba(13, 110, 253, 0.1); color: #0d6efd; }
+        .stat-icon.animacoes { background-color: rgba(255, 193, 7, 0.1); color: var(--warning-color); }
+        .stat-icon.views { background-color: rgba(111, 66, 193, 0.1); color: #6f42c1; }
+        
+        .stat-info h3 {
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-info p {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Formulários */
+        .form-section {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--secondary-color);
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .form-control {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
+        }
+        
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        /* Upload de imagem */
+        .image-upload-container {
+            margin-bottom: 25px;
+        }
+        
+        .image-upload {
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .image-upload:hover, .image-upload.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(229, 9, 20, 0.05);
+        }
+        
+        .upload-icon {
+            font-size: 3.5rem;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+        
+        .image-upload p {
+            color: var(--light-gray);
+            margin-bottom: 10px;
+        }
+        
+        .image-upload small {
+            color: #999;
+            font-size: 0.9rem;
+        }
+        
+        .image-preview {
+            display: none;
+            max-width: 300px;
+            margin-top: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Episódios */
+        .episodes-container {
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            border: 1px solid #eee;
+        }
+        
+        .episodes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .episode-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .episode-item:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+        
+        .episode-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .episode-number {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .remove-episode {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .remove-episode:hover {
+            background-color: #c82333;
+            transform: scale(1.05);
+        }
+        
+        /* Lista de conteúdos */
+        .content-list-container {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .content-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .content-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .content-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s;
+        }
+        
+        .content-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .content-item.selected {
+            background-color: rgba(229, 9, 20, 0.05);
+            border-left: 3px solid var(--primary-color);
+        }
+        
+        .content-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        
+        .content-info h4 {
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .content-info p {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .content-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+        }
+        
+        .content-category {
+            display: inline-block;
+            background-color: #eee;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+        
+        .content-views {
+            color: #666;
+        }
+        
+        .content-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background-color: transparent;
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .action-btn:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .action-btn.edit:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .action-btn.delete:hover {
+            background-color: var(--danger-color);
+            border-color: var(--danger-color);
+            color: white;
+        }
+        
+        /* Mensagens */
+        .message {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        
+        .message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Modal de confirmação */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            animation: modalIn 0.3s;
+        }
+        
+        @keyframes modalIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .modal-close:hover {
+            color: var(--primary-color);
+        }
+        
+        .modal-body {
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 30px;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .tab.active {
+            border-bottom-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar .logo span,
+            .sidebar .admin-name,
+            .sidebar .admin-role,
+            .sidebar .nav-link span,
+            .sidebar .nav-link .badge {
+                display: none;
+            }
+            
+            .sidebar .nav-link i {
+                margin-right: 0;
+                font-size: 1.3rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .header-actions {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            
+            .content-item {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .content-actions {
+                justify-content: flex-end;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .tabs {
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            
+            .tab {
+                padding: 15px 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo">NET<span>Filmes</span></a>
+            <div class="admin-info">
+                <div class="admin-avatar">A</div>
+                <div>
+                    <div class="admin-name">Administrador</div>
+                    <div class="admin-role">Super Admin</div>
+                </div>
+            </div>
+        </div>
+        
+        <ul class="nav-links">
+            <li>
+                <a href="#" class="nav-link active" data-tab="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-tab="add-content">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Adicionar Conteúdo</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-tab="manage-content">
+                    <i class="fas fa-list"></i>
+                    <span>Gerenciar Conteúdo</span>
+                    <span class="badge" id="contentCountBadge">0</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" data-tab="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Análises</span>
+                </a>
+            </li>
+            <li>
+                <a href="index.html" class="nav-link">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Ver Site Público</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="main-content">
+        <!-- Cabeçalho -->
+        <div class="header">
+            <h1 class="page-title" id="pageTitle">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </h1>
+            <div class="header-actions">
+                <button class="btn btn-outline" id="clearDataBtn">
+                    <i class="fas fa-trash"></i> Limpar Dados
+                </button>
+                <button class="btn btn-primary" id="exportDataBtn">
+                    <i class="fas fa-download"></i> Exportar Dados
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mensagens -->
+        <div class="message" id="message"></div>
+        
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" data-tab="dashboard">Dashboard</div>
+            <div class="tab" data-tab="add-content">Adicionar Conteúdo</div>
+            <div class="tab" data-tab="manage-content">Gerenciar Conteúdo</div>
+            <div class="tab" data-tab="analytics">Análises</div>
+        </div>
+        
+        <!-- Conteúdo das Tabs -->
+        
+        <!-- Tab 1: Dashboard -->
+        <div class="tab-content active" id="dashboard-content">
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon filmes"><i class="fas fa-film"></i></div>
+                    <div class="stat-info">
+                        <h3 id="moviesCount">0</h3>
+                        <p>Filmes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon series"><i class="fas fa-tv"></i></div>
+                    <div class="stat-info">
+                        <h3 id="seriesCount">0</h3>
+                        <p>Séries</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon animes"><i class="fas fa-globe-asia"></i></div>
+                    <div class="stat-info">
+                        <h3 id="animesCount">0</h3>
+                        <p>Animes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon animacoes"><i class="fas fa-gamepad"></i></div>
+                    <div class="stat-info">
+                        <h3 id="animationsCount">0</h3>
+                        <p>Animações</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon views"><i class="fas fa-eye"></i></div>
+                    <div class="stat-info">
+                        <h3 id="totalViews">0</h3>
+                        <p>Total de Visualizações</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-info-circle"></i> Instruções do Painel
+                </h2>
+                <div style="line-height: 1.8;">
+                    <p><strong>1. Adicionar Conteúdo:</strong> Use a aba "Adicionar Conteúdo" para incluir novos filmes, séries, animes ou animações.</p>
+                    <p><strong>2. Imagens Locais:</strong> Você pode fazer upload de imagens do seu dispositivo. Elas serão convertidas para Base64 e armazenadas no navegador.</p>
+                    <p><strong>3. Episódios:</strong> Para séries e animes, você pode adicionar episódios individualmente com títulos e links de vídeo.</p>
+                    <p><strong>4. Destaques Automáticos:</strong> O sistema de destaques no site público é baseado no número de visualizações. Os 5 conteúdos mais vistos aparecem automaticamente no slider.</p>
+                    <p><strong>5. Links de Vídeo:</strong> Use URLs de vídeos hospedados online (YouTube, Vimeo, arquivos MP4, etc.) ou arquivos locais convertidos para Base64.</p>
+                    <p><strong>⚠️ Importante:</strong> Todos os dados são armazenados apenas no seu navegador (localStorage). Para preservar os dados, não limpe o cache do navegador.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 2: Adicionar Conteúdo -->
+        <div class="tab-content" id="add-content-content">
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-plus-circle"></i> Adicionar Novo Conteúdo
+                </h2>
+                
+                <form id="contentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contentType">Tipo de Conteúdo *</label>
+                            <select id="contentType" class="form-control" required>
+                                <option value="">Selecione...</option>
+                                <option value="filme">Filme</option>
+                                <option value="serie">Série</option>
+                                <option value="anime">Anime</option>
+                                <option value="animacao">Animação</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contentTitle">Título *</label>
+                            <input type="text" id="contentTitle" class="form-control" placeholder="Ex: Vingadores: Ultimato" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contentYear">Ano de Lançamento</label>
+                            <input type="number" id="contentYear" class="form-control" placeholder="Ex: 2023" min="1900" max="2030" value="2023">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contentRating">Classificação (0-5)</label>
+                            <input type="number" id="contentRating" class="form-control" placeholder="Ex: 4.5" min="0" max="5" step="0.1" value="4.5">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contentDescription">Descrição *</label>
+                        <textarea id="contentDescription" class="form-control" placeholder="Descreva o conteúdo..." rows="5" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contentVideoUrl">Link do Vídeo *</label>
+                            <input type="text" id="contentVideoUrl" class="form-control" placeholder="URL do vídeo (MP4, YouTube, etc.)" required>
+                            <small style="color: #666; margin-top: 5px; display: block;">Para testes, use: https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contentDuration">Duração (minutos)</label>
+                            <input type="number" id="contentDuration" class="form-control" placeholder="Ex: 120" min="1" value="120">
+                        </div>
+                    </div>
+                    
+                    <!-- Upload de Imagem -->
+                    <div class="image-upload-container">
+                        <label>Imagem de Capa</label>
+                        <div class="image-upload" id="imageUploadArea">
+                            <div class="upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <p>Clique para selecionar uma imagem</p>
+                            <p style="font-size: 0.9rem;">Ou arraste e solte aqui</p>
+                            <small>Tamanho máximo: 5MB. Formatos: JPG, PNG, GIF</small>
+                            <input type="file" id="contentImage" accept="image/*" style="display: none;">
+                            <img id="imagePreview" class="image-preview" src="" alt="Prévia da imagem">
+                        </div>
+                    </div>
+                    
+                    <!-- Seção de episódios (apenas para séries e animes) -->
+                    <div id="episodesContainer" class="episodes-container" style="display: none;">
+                        <div class="episodes-header">
+                            <h3 style="margin: 0;">Episódios</h3>
+                            <button type="button" class="btn btn-secondary" id="addEpisodeBtn">
+                                <i class="fas fa-plus"></i> Adicionar Episódio
+                            </button>
+                        </div>
+                        <div id="episodesList">
+                            <!-- Episódios serão adicionados aqui dinamicamente -->
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 25px;">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Salvar Conteúdo
+                        </button>
+                        <button type="reset" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Limpar Formulário
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Tab 3: Gerenciar Conteúdo -->
+        <div class="tab-content" id="manage-content-content">
+            <div class="content-list-container">
+                <div class="content-list-header">
+                    <h3 style="margin: 0;">Conteúdos Cadastrados</h3>
+                    <div class="filters">
+                        <select id="filterCategory" class="form-control" style="width: 150px;">
+                            <option value="all">Todas as Categorias</option>
+                            <option value="filme">Filmes</option>
+                            <option value="serie">Séries</option>
+                            <option value="anime">Animes</option>
+                            <option value="animacao">Animações</option>
+                        </select>
+                        <input type="text" id="searchContent" class="form-control" placeholder="Buscar por título..." style="width: 200px;">
+                        <button class="btn btn-danger" id="deleteSelectedBtn" style="display: none;">
+                            <i class="fas fa-trash"></i> Excluir Selecionados
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="content-list" id="contentList">
+                    <!-- Conteúdos serão listados aqui -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab 4: Análises -->
+        <div class="tab-content" id="analytics-content">
+            <div class="form-section">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-line"></i> Análises e Estatísticas
+                </h2>
+                
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <div class="stat-icon views"><i class="fas fa-chart-bar"></i></div>
+                        <div class="stat-info">
+                            <h3 id="mostViewedCount">0</h3>
+                            <p>Visualizações do Conteúdo Mais Popular</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon filmes"><i class="fas fa-trophy"></i></div>
+                        <div class="stat-info">
+                            <h3 id="topCategory">-</h3>
+                            <p>Categoria Mais Popular</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 20px;">Top 5 Conteúdos Mais Vistos</h3>
+                    <div id="topContentsList">
+                        <!-- Top conteúdos serão listados aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Confirmação -->
+    <div class="modal" id="confirmationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmar Ação</h3>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalMessage">
+                Tem certeza que deseja realizar esta ação?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelModal">Cancelar</button>
+                <button class="btn btn-danger" id="confirmModal">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados
+        let allContents = [];
+        let nextId = 1;
+        let currentImageBase64 = '';
+        let selectedContentIds = [];
+        let currentModalAction = null;
+        
+        // Elementos do DOM
+        const messageElement = document.getElementById('message');
+        const contentTypeSelect = document.getElementById('contentType');
+        const episodesContainer = document.getElementById('episodesContainer');
+        const episodesList = document.getElementById('episodesList');
+        const addEpisodeBtn = document.getElementById('addEpisodeBtn');
+        const contentForm = document.getElementById('contentForm');
+        const contentList = document.getElementById('contentList');
+        const imageUploadArea = document.getElementById('imageUploadArea');
+        const imageInput = document.getElementById('contentImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const filterCategory = document.getElementById('filterCategory');
+        const searchContent = document.getElementById('searchContent');
+        const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+        const exportDataBtn = document.getElementById('exportDataBtn');
+        const contentCountBadge = document.getElementById('contentCountBadge');
+        
+        // Elementos de estatísticas
+        const moviesCountElement = document.getElementById('moviesCount');
+        const seriesCountElement = document.getElementById('seriesCount');
+        const animesCountElement = document.getElementById('animesCount');
+        const animationsCountElement = document.getElementById('animationsCount');
+        const totalViewsElement = document.getElementById('totalViews');
+        const mostViewedCountElement = document.getElementById('mostViewedCount');
+        const topCategoryElement = document.getElementById('topCategory');
+        const topContentsList = document.getElementById('topContentsList');
+        
+        // Modal elements
+        const confirmationModal = document.getElementById('confirmationModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const closeModal = document.getElementById('closeModal');
+        const cancelModal = document.getElementById('cancelModal');
+        const confirmModal = document.getElementById('confirmModal');
+        
+        // Inicializar aplicação
+        function initApp() {
+            loadContents();
+            initEvents();
+            updateStats();
+            renderContentList();
+            renderAnalytics();
+            
+            // Mostrar dashboard por padrão
+            showTab('dashboard');
+        }
+        
+        // Carregar conteúdos do localStorage
+        function loadContents() {
+            const storedContents = localStorage.getItem('netfilmes_contents');
+            if (storedContents) {
+                allContents = JSON.parse(storedContents);
+                
+                // Encontrar o maior ID para definir o próximo
+                if (allContents.length > 0) {
+                    nextId = Math.max(...allContents.map(c => c.id)) + 1;
+                }
+                
+                updateContentCountBadge();
+            }
+        }
+        
+        // Salvar conteúdos no localStorage
+        function saveContents() {
+            localStorage.setItem('netfilmes_contents', JSON.stringify(allContents));
+            updateStats();
+            updateContentCountBadge();
+            renderContentList();
+            renderAnalytics();
+        }
+        
+        // Atualizar contador de conteúdo no badge
+        function updateContentCountBadge() {
+            contentCountBadge.textContent = allContents.length;
+        }
+        
+        // Atualizar estatísticas
+        function updateStats() {
+            const movies = allContents.filter(c => c.category === 'filme').length;
+            const series = allContents.filter(c => c.category === 'serie').length;
+            const animes = allContents.filter(c => c.category === 'anime').length;
+            const animations = allContents.filter(c => c.category === 'animacao').length;
+            
+            // Calcular visualizações totais
+            const viewCounts = JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {};
+            const totalViews = Object.values(viewCounts).reduce((sum, count) => sum + count, 0);
+            
+            moviesCountElement.textContent = movies;
+            seriesCountElement.textContent = series;
+            animesCountElement.textContent = animes;
+            animationsCountElement.textContent = animations;
+            totalViewsElement.textContent = totalViews;
+        }
+        
+        // Renderizar análises
+        function renderAnalytics() {
+            if (allContents.length === 0) {
+                mostViewedCountElement.textContent = '0';
+                topCategoryElement.textContent = '-';
+                topContentsList.innerHTML = '<p style="color: #666;">Nenhum conteúdo disponível para análise.</p>';
+                return;
+            }
+            
+            // Encontrar conteúdo mais visto
+            const viewCounts = JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {};
+            let mostViewedContent = null;
+            let maxViews = 0;
+            
+            allContents.forEach(content => {
+                const views = viewCounts[content.id] || 0;
+                if (views > maxViews) {
+                    maxViews = views;
+                    mostViewedContent = content;
+                }
+            });
+            
+            mostViewedCountElement.textContent = maxViews;
+            
+            // Encontrar categoria mais popular
+            const categoryCounts = {};
+            allContents.forEach(content => {
+                categoryCounts[content.category] = (categoryCounts[content.category] || 0) + 1;
+            });
+            
+            let topCategory = '';
+            let maxCount = 0;
+            for (const [category, count] of Object.entries(categoryCounts)) {
+                if (count > maxCount) {
+                    maxCount = count;
+                    topCategory = category;
+                }
+            }
+            
+            // Traduzir categoria
+            const categoryNames = {
+                'filme': 'Filmes',
+                'serie': 'Séries',
+                'anime': 'Animes',
+                'animacao': 'Animações'
+            };
+            
+            topCategoryElement.textContent = categoryNames[topCategory] || '-';
+            
+            // Listar top 5 conteúdos mais vistos
+            const topContents = [...allContents]
+                .sort((a, b) => {
+                    const viewsA = viewCounts[a.id] || 0;
+                    const viewsB = viewCounts[b.id] || 0;
+                    return viewsB - viewsA;
+                })
+                .slice(0, 5);
+            
+            topContentsList.innerHTML = '';
+            topContents.forEach((content, index) => {
+                const views = viewCounts[content.id] || 0;
+                const item = document.createElement('div');
+                item.className = 'content-item';
+                item.style.borderBottom = index < 4 ? '1px solid #eee' : 'none';
+                
+                item.innerHTML = `
+                    <img src="${content.imageUrl}" alt="${content.title}" class="content-image">
+                    <div class="content-info">
+                        <h4>${content.title}</h4>
+                        <div class="content-meta">
+                            <span class="content-category">${getCategoryIcon(content.category)} ${getCategoryName(content.category)}</span>
+                            <span class="content-views">👁️ ${views} visualizações</span>
+                        </div>
+                    </div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: ${index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? '#cd7f32' : '#666'}">
+                        #${index + 1}
+                    </div>
+                `;
+                
+                topContentsList.appendChild(item);
+            });
+        }
+        
+        // Obter ícone da categoria
+        function getCategoryIcon(category) {
+            switch(category) {
+                case 'filme': return '🎬';
+                case 'serie': return '📺';
+                case 'anime': return '🇯🇵';
+                case 'animacao': return '🐭';
+                default: return '';
+            }
+        }
+        
+        // Obter nome da categoria
+        function getCategoryName(category) {
+            switch(category) {
+                case 'filme': return 'Filme';
+                case 'serie': return 'Série';
+                case 'anime': return 'Anime';
+                case 'animacao': return 'Animação';
+                default: return '';
+            }
+        }
+        
+        // Inicializar eventos
+        function initEvents() {
+            // Tabs
+            document.querySelectorAll('.tab, .nav-link').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const tabId = item.dataset.tab;
+                    
+                    if (tabId) {
+                        showTab(tabId);
+                        
+                        // Atualizar navegação ativa
+                        document.querySelectorAll('.tab.active, .nav-link.active').forEach(activeItem => {
+                            activeItem.classList.remove('active');
+                        });
+                        
+                        item.classList.add('active');
+                        
+                        // Atualizar título da página
+                        const tabTitles = {
+                            'dashboard': 'Dashboard',
+                            'add-content': 'Adicionar Conteúdo',
+                            'manage-content': 'Gerenciar Conteúdo',
+                            'analytics': 'Análises'
+                        };
+                        
+                        document.getElementById('pageTitle').innerHTML = `
+                            <i class="fas fa-${tabId === 'dashboard' ? 'tachometer-alt' : tabId === 'add-content' ? 'plus-circle' : tabId === 'manage-content' ? 'list' : 'chart-line'}"></i> 
+                            ${tabTitles[tabId]}
+                        `;
+                    }
+                });
+            });
+            
+            // Mostrar/ocultar seção de episódios
+            contentTypeSelect.addEventListener('change', () => {
+                const type = contentTypeSelect.value;
+                if (type === 'serie' || type === 'anime') {
+                    episodesContainer.style.display = 'block';
+                } else {
+                    episodesContainer.style.display = 'none';
+                    episodesList.innerHTML = '';
+                }
+            });
+            
+            // Adicionar episódio
+            addEpisodeBtn.addEventListener('click', addEpisode);
+            
+            // Upload de imagem
+            imageUploadArea.addEventListener('click', () => {
+                imageInput.click();
+            });
+            
+            imageInput.addEventListener('change', handleImageUpload);
+            
+            // Arrastar e soltar imagem
+            imageUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                imageUploadArea.classList.add('dragover');
+            });
+            
+            imageUploadArea.addEventListener('dragleave', () => {
+                imageUploadArea.classList.remove('dragover');
+            });
+            
+            imageUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                imageUploadArea.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length) {
+                    imageInput.files = e.dataTransfer.files;
+                    handleImageUpload();
+                }
+            });
+            
+            // Formulário de conteúdo
+            contentForm.addEventListener('submit', handleFormSubmit);
+            
+            // Filtro de categoria
+            filterCategory.addEventListener('change', renderContentList);
+            
+            // Busca
+            searchContent.addEventListener('input', renderContentList);
+            
+            // Botão excluir selecionados
+            deleteSelectedBtn.addEventListener('click', () => {
+                if (selectedContentIds.length === 0) return;
+                
+                showConfirmationModal(
+                    `Tem certeza que deseja excluir ${selectedContentIds.length} conteúdo(s) selecionado(s)?`,
+                    deleteSelectedContents
+                );
+            });
+            
+            // Botão limpar dados
+            clearDataBtn.addEventListener('click', () => {
+                showConfirmationModal(
+                    'ATENÇÃO: Isso irá remover TODOS os conteúdos e visualizações. Esta ação não pode ser desfeita. Tem certeza?',
+                    clearAllData
+                );
+            });
+            
+            // Botão exportar dados
+            exportDataBtn.addEventListener('click', exportData);
+            
+            // Modal events
+            closeModal.addEventListener('click', hideModal);
+            cancelModal.addEventListener('click', hideModal);
+            confirmModal.addEventListener('click', executeModalAction);
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                // Em um sistema real, aqui seria o logout
+                // Para este projeto, apenas redirecionamos para a página inicial
+                window.location.href = 'index.html';
+            });
+        }
+        
+        // Mostrar tab
+        function showTab(tabId) {
+            // Esconder todas as tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Mostrar tab selecionada
+            document.getElementById(`${tabId}-content`).classList.add('active');
+            
+            // Atualizar conteúdo específico da tab
+            if (tabId === 'analytics') {
+                renderAnalytics();
+            }
+        }
+        
+        // Adicionar episódio
+        function addEpisode() {
+            const episodeCount = episodesList.children.length + 1;
+            
+            const episodeDiv = document.createElement('div');
+            episodeDiv.className = 'episode-item';
+            episodeDiv.innerHTML = `
+                <div class="episode-header">
+                    <div class="episode-number">Episódio ${episodeCount}</div>
+                    <button type="button" class="remove-episode">Remover</button>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Título do Episódio *</label>
+                        <input type="text" class="form-control episode-title" placeholder="Título do episódio" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Link do Vídeo *</label>
+                        <input type="text" class="form-control episode-video" placeholder="URL do vídeo do episódio" required>
+                    </div>
+                </div>
+            `;
+            
+            episodesList.appendChild(episodeDiv);
+            
+            // Adicionar evento para remover episódio
+            episodeDiv.querySelector('.remove-episode').addEventListener('click', () => {
+                episodesList.removeChild(episodeDiv);
+                // Renumerar episódios restantes
+                Array.from(episodesList.children).forEach((ep, index) => {
+                    ep.querySelector('.episode-number').textContent = `Episódio ${index + 1}`;
+                });
+            });
+        }
+        
+        // Manipular upload de imagem
+        function handleImageUpload() {
+            const file = imageInput.files[0];
+            if (!file) return;
+            
+            // Verificar se é uma imagem
+            if (!file.type.startsWith('image/')) {
+                showMessage('Por favor, selecione um arquivo de imagem válido (JPG, PNG, GIF).', 'error');
+                return;
+            }
+            
+            // Verificar tamanho do arquivo (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showMessage('A imagem deve ter no máximo 5MB.', 'error');
+                return;
+            }
+            
+            // Converter para Base64
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImageBase64 = e.target.result;
+                imagePreview.src = currentImageBase64;
+                imagePreview.style.display = 'block';
+                imageUploadArea.querySelector('p').style.display = 'none';
+                imageUploadArea.querySelector('.upload-icon').style.display = 'none';
+                imageUploadArea.querySelector('small').style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Manipular envio do formulário
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            // Coletar dados do formulário
+            const type = contentTypeSelect.value;
+            const title = document.getElementById('contentTitle').value.trim();
+            const description = document.getElementById('contentDescription').value.trim();
+            const videoUrl = document.getElementById('contentVideoUrl').value.trim();
+            const year = document.getElementById('contentYear').value;
+            const rating = document.getElementById('contentRating').value;
+            const duration = document.getElementById('contentDuration').value;
+            
+            // Validar dados
+            if (!type || !title || !description || !videoUrl) {
+                showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+            
+            // Coletar episódios se for série ou anime
+            const episodes = [];
+            if (type === 'serie' || type === 'anime') {
+                const episodeItems = episodesList.querySelectorAll('.episode-item');
+                episodeItems.forEach((item, index) => {
+                    const episodeTitle = item.querySelector('.episode-title').value.trim();
+                    const episodeVideo = item.querySelector('.episode-video').value.trim();
+                    
+                    if (episodeTitle && episodeVideo) {
+                        episodes.push({
+                            number: index + 1,
+                            title: episodeTitle,
+                            videoUrl: episodeVideo
+                        });
+                    } else {
+                        showMessage('Por favor, preencha todos os campos dos episódios.', 'error');
+                        return;
+                    }
+                });
+            }
+            
+            // Usar imagem padrão se nenhuma for fornecida
+            let imageUrl = currentImageBase64;
+            if (!imageUrl) {
+                // Imagens padrão por categoria
+                const defaultImages = {
+                    'filme': 'https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60',
+                    'serie': 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+                    'anime': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80',
+                    'animacao': 'https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60'
+                };
+                imageUrl = defaultImages[type] || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80';
+            }
+            
+            // Criar objeto de conteúdo
+            const newContent = {
+                id: nextId++,
+                title: title,
+                category: type,
+                description: description,
+                imageUrl: imageUrl,
+                videoUrl: videoUrl,
+                year: year || 2023,
+                rating: rating || 4.5,
+                duration: duration || 120,
+                views: 0,
+                episodes: episodes,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Adicionar à lista
+            allContents.push(newContent);
+            
+            // Salvar no localStorage
+            saveContents();
+            
+            // Mostrar mensagem de sucesso
+            showMessage(`"${title}" adicionado com sucesso!`, 'success');
+            
+            // Limpar formulário
+            contentForm.reset();
+            episodesList.innerHTML = '';
+            episodesContainer.style.display = 'none';
+            imagePreview.style.display = 'none';
+            imagePreview.src = '';
+            currentImageBase64 = '';
+            imageUploadArea.querySelector('p').style.display = 'block';
+            imageUploadArea.querySelector('.upload-icon').style.display = 'block';
+            imageUploadArea.querySelector('small').style.display = 'block';
+            
+            // Mostrar tab de gerenciamento
+            showTab('manage-content');
+            document.querySelectorAll('.tab.active, .nav-link.active').forEach(activeItem => {
+                activeItem.classList.remove('active');
+            });
+            document.querySelector('[data-tab="manage-content"]').classList.add('active');
+            document.getElementById('pageTitle').innerHTML = `
+                <i class="fas fa-list"></i> Gerenciar Conteúdo
+            `;
+        }
+        
+        // Renderizar lista de conteúdos
+        function renderContentList() {
+            // Filtrar conteúdos
+            let filteredContents = allContents;
+            
+            const categoryFilter = filterCategory.value;
+            if (categoryFilter !== 'all') {
+                filteredContents = filteredContents.filter(content => content.category === categoryFilter);
+            }
+            
+            const searchTerm = searchContent.value.toLowerCase();
+            if (searchTerm) {
+                filteredContents = filteredContents.filter(content => 
+                    content.title.toLowerCase().includes(searchTerm) ||
+                    content.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // Ordenar por ID (mais recentes primeiro)
+            filteredContents.sort((a, b) => b.id - a.id);
+            
+            // Limpar lista
+            contentList.innerHTML = '';
+            
+            // Verificar se há conteúdos
+            if (filteredContents.length === 0) {
+                contentList.innerHTML = `
+                    <div style="text-align: center; padding: 60px; color: #666;">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                        <h3>Nenhum conteúdo encontrado</h3>
+                        <p>Adicione seu primeiro conteúdo na aba "Adicionar Conteúdo".</p>
+                    </div>
+                `;
+                deleteSelectedBtn.style.display = 'none';
+                return;
+            }
+            
+            // Resetar seleção
+            selectedContentIds = [];
+            deleteSelectedBtn.style.display = 'none';
+            
+            // Adicionar conteúdos à lista
+            filteredContents.forEach(content => {
+                const viewCounts = JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {};
+                const views = viewCounts[content.id] || 0;
+                
+                const contentItem = document.createElement('div');
+                contentItem.className = 'content-item';
+                contentItem.dataset.id = content.id;
+                
+                contentItem.innerHTML = `
+                    <input type="checkbox" class="content-checkbox" data-id="${content.id}" style="margin-right: 15px;">
+                    <img src="${content.imageUrl}" alt="${content.title}" class="content-image">
+                    <div class="content-info">
+                        <h4>${content.title}</h4>
+                        <p>${content.description.substring(0, 100)}${content.description.length > 100 ? '...' : ''}</p>
+                        <div class="content-meta">
+                            <span class="content-category">${getCategoryIcon(content.category)} ${getCategoryName(content.category)}</span>
+                            <span class="content-views">👁️ ${views} visualizações</span>
+                            <span>⭐ ${content.rating || 4.5}</span>
+                            <span>📅 ${content.year || 2023}</span>
+                        </div>
+                    </div>
+                    <div class="content-actions">
+                        <button class="action-btn edit" data-id="${content.id}" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="action-btn delete" data-id="${content.id}" title="Excluir">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                
+                contentList.appendChild(contentItem);
+            });
+            
+            // Adicionar eventos
+            contentList.querySelectorAll('.content-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const contentId = parseInt(checkbox.dataset.id);
+                    
+                    if (checkbox.checked) {
+                        selectedContentIds.push(contentId);
+                        checkbox.closest('.content-item').classList.add('selected');
+                    } else {
+                        const index = selectedContentIds.indexOf(contentId);
+                        if (index > -1) {
+                            selectedContentIds.splice(index, 1);
+                        }
+                        checkbox.closest('.content-item').classList.remove('selected');
+                    }
+                    
+                    // Mostrar/ocultar botão excluir selecionados
+                    deleteSelectedBtn.style.display = selectedContentIds.length > 0 ? 'inline-flex' : 'none';
+                });
+            });
+            
+            contentList.querySelectorAll('.action-btn.edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const contentId = parseInt(btn.dataset.id);
+                    editContent(contentId);
+                });
+            });
+            
+            contentList.querySelectorAll('.action-btn.delete').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const contentId = parseInt(btn.dataset.id);
+                    deleteContent(contentId);
+                });
+            });
+        }
+        
+        // Editar conteúdo
+        function editContent(contentId) {
+            // Encontrar conteúdo
+            const content = allContents.find(c => c.id === contentId);
+            if (!content) return;
+            
+            // Preencher formulário com dados do conteúdo
+            document.getElementById('contentType').value = content.category;
+            document.getElementById('contentTitle').value = content.title;
+            document.getElementById('contentYear').value = content.year || 2023;
+            document.getElementById('contentRating').value = content.rating || 4.5;
+            document.getElementById('contentDescription').value = content.description;
+            document.getElementById('contentVideoUrl').value = content.videoUrl;
+            document.getElementById('contentDuration').value = content.duration || 120;
+            
+            // Configurar imagem
+            if (content.imageUrl && content.imageUrl.startsWith('data:image')) {
+                currentImageBase64 = content.imageUrl;
+                imagePreview.src = currentImageBase64;
+                imagePreview.style.display = 'block';
+                imageUploadArea.querySelector('p').style.display = 'none';
+                imageUploadArea.querySelector('.upload-icon').style.display = 'none';
+                imageUploadArea.querySelector('small').style.display = 'none';
+            }
+            
+            // Configurar episódios se for série/anime
+            if ((content.category === 'serie' || content.category === 'anime') && content.episodes) {
+                episodesContainer.style.display = 'block';
+                episodesList.innerHTML = '';
+                
+                content.episodes.forEach(episode => {
+                    const episodeDiv = document.createElement('div');
+                    episodeDiv.className = 'episode-item';
+                    episodeDiv.innerHTML = `
+                        <div class="episode-header">
+                            <div class="episode-number">Episódio ${episode.number}</div>
+                            <button type="button" class="remove-episode">Remover</button>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Título do Episódio *</label>
+                                <input type="text" class="form-control episode-title" value="${episode.title}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Link do Vídeo *</label>
+                                <input type="text" class="form-control episode-video" value="${episode.videoUrl}" required>
+                            </div>
+                        </div>
+                    `;
+                    
+                    episodesList.appendChild(episodeDiv);
+                    
+                    // Adicionar evento para remover episódio
+                    episodeDiv.querySelector('.remove-episode').addEventListener('click', () => {
+                        episodesList.removeChild(episodeDiv);
+                        Array.from(episodesList.children).forEach((ep, index) => {
+                            ep.querySelector('.episode-number').textContent = `Episódio ${index + 1}`;
+                        });
+                    });
+                });
+            }
+            
+            // Mostrar tab de adicionar conteúdo
+            showTab('add-content');
+            document.querySelectorAll('.tab.active, .nav-link.active').forEach(activeItem => {
+                activeItem.classList.remove('active');
+            });
+            document.querySelector('[data-tab="add-content"]').classList.add('active');
+            document.getElementById('pageTitle').innerHTML = `
+                <i class="fas fa-edit"></i> Editar Conteúdo
+            `;
+            
+            // Alterar comportamento do formulário para edição
+            const form = document.getElementById('contentForm');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            
+            // Remover evento anterior
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+            
+            // Configurar novo formulário para edição
+            newForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                updateContent(contentId);
+            });
+            
+            newForm.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> Atualizar Conteúdo';
+            
+            // Atualizar referências
+            document.getElementById('contentForm').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Atualizar conteúdo
+        function updateContent(contentId) {
+            // Coletar dados do formulário
+            const type = document.getElementById('contentType').value;
+            const title = document.getElementById('contentTitle').value.trim();
+            const description = document.getElementById('contentDescription').value.trim();
+            const videoUrl = document.getElementById('contentVideoUrl').value.trim();
+            const year = document.getElementById('contentYear').value;
+            const rating = document.getElementById('contentRating').value;
+            const duration = document.getElementById('contentDuration').value;
+            
+            // Validar dados
+            if (!type || !title || !description || !videoUrl) {
+                showMessage('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return;
+            }
+            
+            // Encontrar índice do conteúdo
+            const contentIndex = allContents.findIndex(c => c.id === contentId);
+            if (contentIndex === -1) return;
+            
+            // Coletar episódios se for série ou anime
+            const episodes = [];
+            if (type === 'serie' || type === 'anime') {
+                const episodeItems = episodesList.querySelectorAll('.episode-item');
+                episodeItems.forEach((item, index) => {
+                    const episodeTitle = item.querySelector('.episode-title').value.trim();
+                    const episodeVideo = item.querySelector('.episode-video').value.trim();
+                    
+                    if (episodeTitle && episodeVideo) {
+                        episodes.push({
+                            number: index + 1,
+                            title: episodeTitle,
+                            videoUrl: episodeVideo
+                        });
+                    } else {
+                        showMessage('Por favor, preencha todos os campos dos episódios.', 'error');
+                        return;
+                    }
+                });
+            }
+            
+            // Atualizar conteúdo
+            allContents[contentIndex] = {
+                ...allContents[contentIndex],
+                title: title,
+                category: type,
+                description: description,
+                videoUrl: videoUrl,
+                year: year || 2023,
+                rating: rating || 4.5,
+                duration: duration || 120,
+                episodes: episodes,
+                updatedAt: new Date().toISOString()
+            };
+            
+            // Atualizar imagem se foi alterada
+            if (currentImageBase64 && currentImageBase64.startsWith('data:image')) {
+                allContents[contentIndex].imageUrl = currentImageBase64;
+            }
+            
+            // Salvar no localStorage
+            saveContents();
+            
+            // Mostrar mensagem de sucesso
+            showMessage(`"${title}" atualizado com sucesso!`, 'success');
+            
+            // Voltar para tab de gerenciamento
+            showTab('manage-content');
+        }
+        
+        // Excluir conteúdo
+        function deleteContent(contentId) {
+            showConfirmationModal(
+                'Tem certeza que deseja excluir este conteúdo? Esta ação não pode ser desfeita.',
+                () => {
+                    // Encontrar índice do conteúdo
+                    const contentIndex = allContents.findIndex(c => c.id === contentId);
+                    
+                    if (contentIndex !== -1) {
+                        const contentTitle = allContents[contentIndex].title;
+                        
+                        // Remover conteúdo
+                        allContents.splice(contentIndex, 1);
+                        
+                        // Remover das visualizações
+                        const viewCounts = JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {};
+                        delete viewCounts[contentId];
+                        localStorage.setItem('netfilmes_view_counts', JSON.stringify(viewCounts));
+                        
+                        // Salvar no localStorage
+                        saveContents();
+                        
+                        // Mostrar mensagem
+                        showMessage(`"${contentTitle}" removido com sucesso!`, 'success');
+                    }
+                }
+            );
+        }
+        
+        // Excluir conteúdos selecionados
+        function deleteSelectedContents() {
+            // Filtrar conteúdos não selecionados
+            allContents = allContents.filter(content => !selectedContentIds.includes(content.id));
+            
+            // Remover visualizações dos conteúdos excluídos
+            const viewCounts = JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {};
+            selectedContentIds.forEach(id => {
+                delete viewCounts[id];
+            });
+            localStorage.setItem('netfilmes_view_counts', JSON.stringify(viewCounts));
+            
+            // Salvar no localStorage
+            saveContents();
+            
+            // Limpar seleção
+            selectedContentIds = [];
+            deleteSelectedBtn.style.display = 'none';
+            
+            // Mostrar mensagem
+            showMessage(`${selectedContentIds.length} conteúdo(s) removido(s) com sucesso!`, 'success');
+        }
+        
+        // Limpar todos os dados
+        function clearAllData() {
+            // Limpar localStorage
+            localStorage.removeItem('netfilmes_contents');
+            localStorage.removeItem('netfilmes_view_counts');
+            localStorage.removeItem('netfilmes_favorites');
+            
+            // Reiniciar dados
+            allContents = [];
+            nextId = 1;
+            selectedContentIds = [];
+            
+            // Atualizar interface
+            updateStats();
+            updateContentCountBadge();
+            renderContentList();
+            renderAnalytics();
+            
+            showMessage('Todos os dados foram removidos.', 'success');
+            hideModal();
+        }
+        
+        // Exportar dados
+        function exportData() {
+            // Preparar dados para exportação
+            const data = {
+                contents: allContents,
+                viewCounts: JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {},
+                exportedAt: new Date().toISOString()
+            };
+            
+            // Criar arquivo JSON
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            // Criar link de download
+            const exportFileDefaultName = `netfilmes_backup_${new Date().toISOString().slice(0,10)}.json`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showMessage('Dados exportados com sucesso!', 'success');
+        }
+        
+        // Mostrar modal de confirmação
+        function showConfirmationModal(message, action) {
+            modalMessage.textContent = message;
+            currentModalAction = action;
+            confirmationModal.style.display = 'flex';
+        }
+        
+        // Esconder modal
+        function hideModal() {
+            confirmationModal.style.display = 'none';
+            currentModalAction = null;
+        }
+        
+        // Executar ação do modal
+        function executeModalAction() {
+            if (currentModalAction) {
+                currentModalAction();
+            }
+            hideModal();
+        }
+        
+        // Mostrar mensagem
+        function showMessage(text, type) {
+            messageElement.textContent = text;
+            messageElement.className = `message ${type}`;
+            messageElement.style.display = 'block';
+            
+            // Ocultar mensagem após 5 segundos
+            setTimeout(() => {
+                messageElement.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Inicializar quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
