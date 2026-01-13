@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Filmes - Assistir Conteúdo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset e configurações globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #e50914;
+            --secondary-color: #141414;
+            --text-color: #fff;
+            --light-gray: #757575;
+            --dark-gray: #2d2d2d;
+            --card-bg: #181818;
+            --hover-bg: #2a2a2a;
+            --gradient: linear-gradient(to right, #e50914, #b81d24);
+        }
+        
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        header {
+            background-color: var(--secondary-color);
+            padding: 20px 5%;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--text-color);
+            margin-left: 5px;
+        }
+        
+        .back-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.3);
+        }
+        
+        /* Player Section */
+        .player-section {
+            margin-top: 80px;
+            padding: 40px 5% 0;
+        }
+        
+        .player-container {
+            background-color: #000;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+            margin-bottom: 40px;
+        }
+        
+        .video-player {
+            width: 100%;
+            height: 600px;
+            background-color: #000;
+        }
+        
+        #videoElement {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .player-controls {
+            padding: 20px;
+            background-color: var(--card-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .player-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .player-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .action-btn {
+            background-color: transparent;
+            border: 1px solid var(--light-gray);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        /* Conteúdo Info */
+        .content-info {
+            padding: 40px 5%;
+        }
+        
+        .content-header {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .content-poster {
+            width: 300px;
+            height: 450px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        
+        .content-details {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .content-title {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+        
+        .content-meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ccc;
+        }
+        
+        .content-category {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        
+        .content-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ddd;
+            margin-bottom: 30px;
+            max-width: 800px;
+        }
+        
+        .content-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--dark-gray);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Episodes Section */
+        .episodes-section {
+            padding: 40px 5%;
+            margin-top: 40px;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        .episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .episode-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .episode-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        
+        .episode-number {
+            background: var(--gradient);
+            color: white;
+            padding: 10px 20px;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .episode-info {
+            padding: 20px;
+        }
+        
+        .episode-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .episode-description {
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        /* Recomendações */
+        .recommendations {
+            padding: 40px 5%;
+            margin-top: 40px;
+        }
+        
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
+        }
+        
+        .recommendation-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .recommendation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        
+        .rec-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .rec-info {
+            padding: 15px;
+        }
+        
+        .rec-title {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #000;
+            padding: 40px 5% 20px;
+            margin-top: 60px;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .copyright {
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Mensagem de erro */
+        .error-message {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .error-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .video-player {
+                height: 500px;
+            }
+            
+            .content-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .video-player {
+                height: 400px;
+            }
+            
+            .content-header {
+                flex-direction: column;
+            }
+            
+            .content-poster {
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .content-title {
+                font-size: 2rem;
+            }
+            
+            .episodes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .video-player {
+                height: 300px;
+            }
+            
+            .player-controls {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .content-title {
+                font-size: 1.8rem;
+            }
+            
+            .content-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .content-actions {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo">NET<span>Filmes</span></a>
+        <button class="back-btn" onclick="window.history.back()">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Player Section -->
+        <section class="player-section">
+            <div class="player-container">
+                <div class="video-player">
+                    <video id="videoElement" controls poster="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80">
+                        <source src="" type="video/mp4">
+                        Seu navegador não suporta a tag de vídeo.
+                    </video>
+                </div>
+                <div class="player-controls">
+                    <div class="player-title" id="playerTitle">Carregando...</div>
+                    <div class="player-actions">
+                        <button class="action-btn" id="downloadBtn">
+                            <i class="fas fa-download"></i> Baixar
+                        </button>
+                        <button class="action-btn" id="shareBtn">
+                            <i class="fas fa-share-alt"></i> Compartilhar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Info -->
+        <section class="content-info">
+            <div class="content-header">
+                <img id="contentPoster" src="" alt="Poster" class="content-poster">
+                <div class="content-details">
+                    <h1 class="content-title" id="contentTitle">Carregando...</h1>
+                    <div class="content-meta">
+                        <div class="meta-item" id="contentRating">
+                            <i class="fas fa-star"></i> <span>0.0</span>
+                        </div>
+                        <div class="meta-item" id="contentYear">
+                            <i class="fas fa-calendar"></i> <span>2023</span>
+                        </div>
+                        <div class="meta-item" id="contentViews">
+                            <i class="fas fa-eye"></i> <span>0 visualizações</span>
+                        </div>
+                        <div class="meta-item" id="contentDuration">
+                            <i class="fas fa-clock"></i> <span>120min</span>
+                        </div>
+                    </div>
+                    <div class="content-category" id="contentCategory">Filme</div>
+                    <p class="content-description" id="contentDescription">Carregando descrição...</p>
+                    <div class="content-actions">
+                        <button class="btn btn-primary" id="playBtn">
+                            <i class="fas fa-play"></i> Assistir Agora
+                        </button>
+                        <button class="btn btn-secondary" id="addToListBtn">
+                            <i class="fas fa-plus"></i> Minha Lista
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Episodes Section (para séries e animes) -->
+        <section class="episodes-section" id="episodesSection" style="display: none;">
+            <h2 class="section-title">
+                <i class="fas fa-list-ol"></i> Episódios
+            </h2>
+            <div class="episodes-grid" id="episodesGrid">
+                <!-- Episódios serão carregados aqui -->
+            </div>
+        </section>
+
+        <!-- Recommendations -->
+        <section class="recommendations">
+            <h2 class="section-title">
+                <i class="fas fa-thumbs-up"></i> Recomendações
+            </h2>
+            <div class="recommendations-grid" id="recommendationsGrid">
+                <!-- Recomendações serão carregadas aqui -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="index.html" class="footer-link">Início</a>
+            <a href="#" class="footer-link">Filmes</a>
+            <a href="#" class="footer-link">Séries</a>
+            <a href="#" class="footer-link">Animes</a>
+            <a href="#" class="footer-link">Ajuda</a>
+        </div>
+        <p class="copyright">© 2023 Net Filmes. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Elementos do DOM
+        const videoElement = document.getElementById('videoElement');
+        const playerTitle = document.getElementById('playerTitle');
+        const contentTitle = document.getElementById('contentTitle');
+        const contentPoster = document.getElementById('contentPoster');
+        const contentRating = document.getElementById('contentRating');
+        const contentYear = document.getElementById('contentYear');
+        const contentViews = document.getElementById('contentViews');
+        const contentDuration = document.getElementById('contentDuration');
+        const contentCategory = document.getElementById('contentCategory');
+        const contentDescription = document.getElementById('contentDescription');
+        const episodesSection = document.getElementById('episodesSection');
+        const episodesGrid = document.getElementById('episodesGrid');
+        const recommendationsGrid = document.getElementById('recommendationsGrid');
+        const playBtn = document.getElementById('playBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        
+        // Dados
+        let currentContent = null;
+        let allContents = [];
+        
+        // Obter ID do conteúdo da URL
+        function getContentIdFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return parseInt(urlParams.get('id'));
+        }
+        
+        // Carregar conteúdo
+        function loadContent() {
+            const contentId = getContentIdFromUrl();
+            
+            if (!contentId) {
+                showError('Conteúdo não encontrado');
+                return;
+            }
+            
+            // Carregar conteúdos do localStorage
+            const storedContents = localStorage.getItem('netfilmes_contents');
+            if (!storedContents) {
+                showError('Nenhum conteúdo disponível');
+                return;
+            }
+            
+            allContents = JSON.parse(storedContents);
+            currentContent = allContents.find(c => c.id === contentId);
+            
+            if (!currentContent) {
+                showError('Conteúdo não encontrado');
+                return;
+            }
+            
+            // Incrementar visualizações
+            incrementViewCount(contentId);
+            
+            // Atualizar interface
+            updateContentDisplay();
+            loadEpisodes();
+            loadRecommendations();
+        }
+        
+        // Incrementar contagem de visualizações
+        function incrementViewCount(contentId) {
+            const viewCounts = JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {};
+            viewCounts[contentId] = (viewCounts[contentId] || 0) + 1;
+            localStorage.setItem('netfilmes_view_counts', JSON.stringify(viewCounts));
+            
+            // Atualizar no conteúdo atual
+            if (currentContent) {
+                currentContent.views = viewCounts[contentId];
+            }
+        }
+        
+        // Atualizar exibição do conteúdo
+        function updateContentDisplay() {
+            if (!currentContent) return;
+            
+            // Determinar ícone da categoria
+            let categoryIcon = '';
+            let categoryName = '';
+            
+            switch(currentContent.category) {
+                case 'filme':
+                    categoryIcon = '🎬';
+                    categoryName = 'Filme';
+                    break;
+                case 'serie':
+                    categoryIcon = '📺';
+                    categoryName = 'Série';
+                    break;
+                case 'anime':
+                    categoryIcon = '🇯🇵';
+                    categoryName = 'Anime';
+                    break;
+                case 'animacao':
+                    categoryIcon = '🐭';
+                    categoryName = 'Animação';
+                    break;
+            }
+            
+            // Atualizar elementos
+            document.title = `Net Filmes - ${currentContent.title}`;
+            playerTitle.textContent = currentContent.title;
+            contentTitle.textContent = currentContent.title;
+            contentPoster.src = currentContent.imageUrl;
+            contentPoster.alt = currentContent.title;
+            contentRating.querySelector('span').textContent = currentContent.rating || '4.5';
+            contentYear.querySelector('span').textContent = currentContent.year || '2023';
+            contentViews.querySelector('span').textContent = `${currentContent.views || 0} visualizações`;
+            contentDuration.querySelector('span').textContent = currentContent.duration || '120min';
+            contentCategory.textContent = `${categoryIcon} ${categoryName}`;
+            contentDescription.textContent = currentContent.description;
+            
+            // Configurar player de vídeo
+            if (currentContent.episodes && currentContent.episodes.length > 0) {
+                // Para séries/animes, usar o primeiro episódio como padrão
+                videoElement.src = currentContent.episodes[0].videoUrl;
+            } else {
+                videoElement.src = currentContent.videoUrl;
+            }
+        }
+        
+        // Carregar episódios (para séries e animes)
+        function loadEpisodes() {
+            if (!currentContent || !currentContent.episodes || currentContent.episodes.length === 0) {
+                return;
+            }
+            
+            // Mostrar seção de episódios
+            episodesSection.style.display = 'block';
+            
+            // Limpar grade de episódios
+            episodesGrid.innerHTML = '';
+            
+            // Adicionar episódios
+            currentContent.episodes.forEach(episode => {
+                const episodeCard = document.createElement('div');
+                episodeCard.className = 'episode-card';
+                episodeCard.dataset.episodeIndex = episode.number;
+                
+                episodeCard.innerHTML = `
+                    <div class="episode-number">Episódio ${episode.number}</div>
+                    <div class="episode-info">
+                        <h3 class="episode-title">${episode.title}</h3>
+                        <p class="episode-description">Clique para assistir este episódio</p>
+                        <button class="action-btn play-episode-btn" data-episode-index="${episode.number}">
+                            <i class="fas fa-play"></i> Assistir
+                        </button>
+                    </div>
+                `;
+                
+                episodesGrid.appendChild(episodeCard);
+                
+                // Adicionar evento para reproduzir episódio
+                episodeCard.querySelector('.play-episode-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    playEpisode(episode.number);
+                });
+            });
+        }
+        
+        // Reproduzir episódio específico
+        function playEpisode(episodeNumber) {
+            if (!currentContent || !currentContent.episodes) return;
+            
+            const episode = currentContent.episodes.find(ep => ep.number === episodeNumber);
+            if (!episode) return;
+            
+            videoElement.src = episode.videoUrl;
+            videoElement.play();
+            playerTitle.textContent = `${currentContent.title} - Ep. ${episode.number}: ${episode.title}`;
+            
+            // Rolar para o player
+            document.querySelector('.player-section').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Carregar recomendações
+        function loadRecommendations() {
+            if (!allContents || allContents.length === 0) return;
+            
+            // Filtrar conteúdos da mesma categoria (excluindo o atual)
+            const recommendations = allContents
+                .filter(c => c.id !== currentContent.id && c.category === currentContent.category)
+                .slice(0, 6);
+            
+            // Se não houver suficientes da mesma categoria, pegar quaisquer outros
+            if (recommendations.length < 6) {
+                const otherContents = allContents
+                    .filter(c => c.id !== currentContent.id)
+                    .slice(0, 6 - recommendations.length);
+                recommendations.push(...otherContents);
+            }
+            
+            // Limpar grade de recomendações
+            recommendationsGrid.innerHTML = '';
+            
+            // Adicionar recomendações
+            recommendations.forEach(content => {
+                const recCard = document.createElement('a');
+                recCard.className = 'recommendation-card';
+                recCard.href = `content.html?id=${content.id}`;
+                
+                recCard.innerHTML = `
+                    <img src="${content.imageUrl}" alt="${content.title}" class="rec-image">
+                    <div class="rec-info">
+                        <h3 class="rec-title">${content.title}</h3>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa;">
+                            <span>⭐ ${content.rating || 4.5}</span>
+                            <span>👁️ ${content.views || 0}</span>
+                        </div>
+                    </div>
+                `;
+                
+                recommendationsGrid.appendChild(recCard);
+            });
+        }
+        
+        // Mostrar erro
+        function showError(message) {
+            document.querySelector('main').innerHTML = `
+                <div class="error-message">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h2>Oops! Algo deu errado</h2>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="window.location.href='index.html'" style="margin-top: 20px;">
+                        <i class="fas fa-home"></i> Voltar para Início
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Inicializar eventos
+        function initEvents() {
+            // Botão play
+            playBtn.addEventListener('click', () => {
+                videoElement.play();
+                document.querySelector('.player-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Botão download
+            downloadBtn.addEventListener('click', () => {
+                if (!currentContent) return;
+                
+                let downloadUrl = currentContent.videoUrl;
+                if (currentContent.episodes && currentContent.episodes.length > 0) {
+                    downloadUrl = currentContent.episodes[0].videoUrl;
+                }
+                
+                // Em um sistema real, aqui seria o link para download
+                // Para demonstração, apenas mostraremos uma mensagem
+                alert(`Iniciando download de "${currentContent.title}". No sistema real, isso baixaria o arquivo de vídeo.`);
+                
+                // Simulação de download
+                // window.location.href = downloadUrl;
+            });
+            
+            // Botão compartilhar
+            shareBtn.addEventListener('click', () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: currentContent.title,
+                        text: `Assista ${currentContent.title} no Net Filmes`,
+                        url: window.location.href
+                    });
+                } else {
+                    // Fallback para copiar link
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('Link copiado para a área de transferência!');
+                }
+            });
+            
+            // Botão adicionar à lista
+            document.getElementById('addToListBtn').addEventListener('click', () => {
+                if (!currentContent) return;
+                
+                // Adicionar à lista de favoritos no localStorage
+                const favorites = JSON.parse(localStorage.getItem('netfilmes_favorites')) || [];
+                if (!favorites.includes(currentContent.id)) {
+                    favorites.push(currentContent.id);
+                    localStorage.setItem('netfilmes_favorites', JSON.stringify(favorites));
+                    alert(`"${currentContent.title}" adicionado à sua lista!`);
+                } else {
+                    alert(`"${currentContent.title}" já está na sua lista!`);
+                }
+            });
+        }
+        
+        // Inicializar aplicação
+        function initApp() {
+            loadContent();
+            initEvents();
+        }
+        
+        // Iniciar quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
