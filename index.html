@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Net Filmes - Streaming e Download de Filmes, Séries e Animes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset e configurações globais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #e50914;
+            --secondary-color: #141414;
+            --text-color: #fff;
+            --light-gray: #757575;
+            --dark-gray: #2d2d2d;
+            --card-bg: #181818;
+            --hover-bg: #2a2a2a;
+            --gradient: linear-gradient(to right, #e50914, #b81d24);
+        }
+        
+        body {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Header e Navegação */
+        header {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 50%, transparent 100%);
+            padding: 20px 5%;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            background-color: var(--secondary-color);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--text-color);
+            margin-left: 5px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary-color);
+            transition: width 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input {
+            background-color: rgba(0,0,0,0.7);
+            border: 1px solid var(--light-gray);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            width: 250px;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(229, 9, 20, 0.3);
+        }
+        
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            margin-top: -80px;
+            overflow: hidden;
+        }
+        
+        .hero-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
+                        url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+        }
+        
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            color: #ccc;
+            max-width: 600px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        /* Slider de Destaques */
+        .featured-section {
+            padding: 80px 5%;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        .slider-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+        
+        .slider-track {
+            display: flex;
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .slider-slide {
+            min-width: 100%;
+            height: 500px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 40px;
+            overflow: hidden;
+        }
+        
+        .slide-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.4);
+        }
+        
+        .slide-content {
+            max-width: 600px;
+            z-index: 2;
+        }
+        
+        .slide-category {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+        
+        .slide-title {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        .slide-description {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #ddd;
+        }
+        
+        .slide-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .slide-rating {
+            color: gold;
+            font-weight: bold;
+        }
+        
+        .slide-year {
+            color: #ccc;
+        }
+        
+        .slide-views {
+            color: #aaa;
+        }
+        
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--light-gray);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .slider-dot.active {
+            background-color: var(--primary-color);
+            transform: scale(1.3);
+        }
+        
+        /* Catálogo */
+        .catalog-section {
+            padding: 80px 5%;
+        }
+        
+        .category-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .category-btn {
+            padding: 10px 25px;
+            background-color: var(--card-bg);
+            border: none;
+            color: var(--text-color);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .category-btn:hover, .category-btn.active {
+            background: var(--gradient);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 9, 20, 0.3);
+        }
+        
+        /* Grid de conteúdos */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .content-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .content-card:hover .card-image {
+            transform: scale(1.1);
+        }
+        
+        .card-info {
+            padding: 20px;
+            position: relative;
+        }
+        
+        .card-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .card-category {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .card-description {
+            font-size: 0.9rem;
+            color: #aaa;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-bottom: 15px;
+            height: 60px;
+        }
+        
+        .card-actions {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .action-btn {
+            background-color: transparent;
+            border: 1px solid var(--light-gray);
+            color: var(--text-color);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+        
+        .card-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: gold;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            z-index: 2;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #000;
+            padding: 60px 5% 30px;
+            margin-top: 50px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-color);
+            padding-left: 5px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--dark-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .social-icon:hover {
+            background-color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            color: var(--light-gray);
+            font-size: 0.9rem;
+        }
+        
+        /* Mensagem de carregamento */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            grid-column: 1 / -1;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .slider-slide {
+                height: 400px;
+            }
+            
+            .slide-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero {
+                height: 80vh;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.1rem;
+            }
+            
+            .slider-slide {
+                height: 350px;
+                padding: 20px;
+            }
+            
+            .slide-title {
+                font-size: 2rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .card-image {
+                height: 280px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .search-input {
+                width: 180px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .slider-slide {
+                height: 300px;
+            }
+            
+            .slide-title {
+                font-size: 1.8rem;
+            }
+            
+            .slide-description {
+                font-size: 1rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .card-image {
+                height: 200px;
+            }
+        }
+        
+        /* Animação de entrada */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .animate {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header com navegação -->
+    <header id="mainHeader">
+        <a href="index.html" class="logo">NET<span>Filmes</span></a>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link active">Início</a>
+            <a href="#" class="nav-link" data-category="filme">Filmes</a>
+            <a href="#" class="nav-link" data-category="serie">Séries</a>
+            <a href="#" class="nav-link" data-category="anime">Animes</a>
+            <a href="#" class="nav-link" data-category="animacao">Animações</a>
+        </nav>
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Buscar filmes, séries...">
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-content animate">
+            <h1>Milhares de Filmes, Séries e Animes</h1>
+            <p>Assista online ou baixe para ver offline. Conteúdo atualizado semanalmente com as melhores produções do cinema e streaming.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="exploreBtn">
+                    <i class="fas fa-play"></i> Explorar Agora
+                </button>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i> Como Funciona
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slider de Destaques -->
+    <section class="featured-section">
+        <h2 class="section-title">
+            <i class="fas fa-fire"></i> Destaques & Mais Vistos
+        </h2>
+        
+        <div class="slider-container">
+            <div class="slider-track" id="sliderTrack">
+                <!-- Slides serão carregados aqui dinamicamente -->
+            </div>
+        </div>
+        
+        <div class="slider-controls" id="sliderDots">
+            <!-- Pontos do slider serão adicionados aqui -->
+        </div>
+    </section>
+
+    <!-- Catálogo Completo -->
+    <section class="catalog-section">
+        <h2 class="section-title">
+            <i class="fas fa-film"></i> Catálogo Completo
+        </h2>
+        
+        <!-- Filtros por categoria -->
+        <div class="category-filter">
+            <button class="category-btn active" data-category="all">Todos</button>
+            <button class="category-btn" data-category="filme">Filmes</button>
+            <button class="category-btn" data-category="serie">Séries</button>
+            <button class="category-btn" data-category="anime">Animes</button>
+            <button class="category-btn" data-category="animacao">Animações</button>
+        </div>
+        
+        <!-- Grid de conteúdos -->
+        <div class="content-grid" id="contentGrid">
+            <!-- Conteúdo será carregado aqui dinamicamente -->
+        </div>
+        
+        <!-- Botão carregar mais -->
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-secondary" id="loadMoreBtn" style="display: none;">
+                <i class="fas fa-sync-alt"></i> Carregar Mais
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Net Filmes</h3>
+                <p>O melhor streaming de filmes, séries e animes. Assista online ou baixe para ver offline quando quiser.</p>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Links Rápidos</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">Início</a></li>
+                    <li><a href="#">Filmes</a></li>
+                    <li><a href="#">Séries</a></li>
+                    <li><a href="#">Animes</a></li>
+                    <li><a href="#">Animações</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Ajuda</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Suporte</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Termos de Uso</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h3>Plataformas</h3>
+                <ul class="footer-links">
+                    <li><a href="#">Android</a></li>
+                    <li><a href="#">iOS</a></li>
+                    <li><a href="#">Windows</a></li>
+                    <li><a href="#">Mac</a></li>
+                    <li><a href="#">Smart TV</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2023 Net Filmes. Todos os direitos reservados. Este é um projeto demonstrativo.</p>
+            <p>Conteúdo carregado localmente. Nenhum arquivo está hospedado neste servidor.</p>
+            <p style="margin-top: 15px;">
+                <a href="admin.html" style="color: var(--primary-color); text-decoration: none;">
+                    <i class="fas fa-cog"></i> Painel Administrativo
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Dados e configurações
+        let allContents = [];
+        let currentFilter = 'all';
+        let searchTerm = '';
+        let currentSlide = 0;
+        let slideInterval;
+        let itemsPerPage = 12;
+        let currentPage = 1;
+        
+        // Elementos do DOM
+        const contentGrid = document.getElementById('contentGrid');
+        const sliderTrack = document.getElementById('sliderTrack');
+        const sliderDots = document.getElementById('sliderDots');
+        const searchInput = document.getElementById('searchInput');
+        const exploreBtn = document.getElementById('exploreBtn');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        
+        // Carregar conteúdos do localStorage
+        function loadContents() {
+            const storedContents = localStorage.getItem('netfilmes_contents');
+            if (storedContents) {
+                allContents = JSON.parse(storedContents);
+                updateViewCounts();
+                renderContentGrid();
+                renderFeaturedSlider();
+                startSlider();
+            } else {
+                // Conteúdo padrão caso não haja dados no localStorage
+                loadDefaultContent();
+            }
+        }
+        
+        // Carregar conteúdo padrão
+        function loadDefaultContent() {
+            allContents = [
+                {
+                    id: 1,
+                    title: "Vingadores: Ultimato",
+                    category: "filme",
+                    description: "Os heróis mais poderosos da Terra unem forças mais uma vez para desfazer as ações do vilão Thanos e restaurar a ordem no universo.",
+                    imageUrl: "https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    views: 1250,
+                    rating: 4.8,
+                    year: 2019,
+                    episodes: []
+                },
+                {
+                    id: 2,
+                    title: "Stranger Things",
+                    category: "serie",
+                    description: "Um grupo de amigos se envolve em uma série de eventos sobrenaturais na pacata cidade de Hawkins. Eles enfrentam criaturas monstruosas, agências secretas do governo e se aventuram em dimensões paralelas.",
+                    imageUrl: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+                    views: 1980,
+                    rating: 4.7,
+                    year: 2016,
+                    episodes: [
+                        { number: 1, title: "Capítulo Um: O Desaparecimento de Will Byers", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" },
+                        { number: 2, title: "Capítulo Dois: A Estranha da Rua Maple", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" }
+                    ]
+                },
+                {
+                    id: 3,
+                    title: "Attack on Titan",
+                    category: "anime",
+                    description: "Em um mundo onde a humanidade vive dentro de cidades cercadas por enormes muralhas para se proteger de gigantescos humanóides devoradores de humanos, a história segue Eren Yeager, que jura exterminar os Titãs.",
+                    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+                    views: 2120,
+                    rating: 4.9,
+                    year: 2013,
+                    episodes: [
+                        { number: 1, title: "Para você, 2.000 anos no futuro - Ataque dos Titãs", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" },
+                        { number: 2, title: "Naquele dia - O dia em que a humanidade lembrou", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" }
+                    ]
+                },
+                {
+                    id: 4,
+                    title: "Toy Story",
+                    category: "animacao",
+                    description: "Um filme de animação que segue a vida secreta dos brinquedos que ganham vida quando os humanos não estão por perto. O brinquedo favorito de Andy, Woody, se vê ameaçado pela chegada do novato Buzz Lightyear.",
+                    imageUrl: "https://images.unsplash.com/photo-1598899134739-24c46f58b8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+                    views: 1850,
+                    rating: 4.5,
+                    year: 1995,
+                    episodes: []
+                },
+                {
+                    id: 5,
+                    title: "Interestelar",
+                    category: "filme",
+                    description: "Um grupo de astronautas viaja através de um buraco de minhoca em busca de um novo lar para a humanidade, enquanto a Terra enfrenta uma crise ambiental catastrófica.",
+                    imageUrl: "https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+                    views: 1920,
+                    rating: 4.8,
+                    year: 2014,
+                    episodes: []
+                },
+                {
+                    id: 6,
+                    title: "One Piece",
+                    category: "anime",
+                    description: "Monkey D. Luffy e sua tripulação pirata exploram o Grand Line em busca do tesouro mundial conhecido como 'One Piece', para se tornar o próximo Rei dos Piratas.",
+                    imageUrl: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=60",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+                    views: 2560,
+                    rating: 4.9,
+                    year: 1999,
+                    episodes: [
+                        { number: 1, title: "Eu sou Luffy! O homem que vai ser o Rei dos Piratas!", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" },
+                        { number: 2, title: "O Grande Espadachim Aparece! Caçador de Piratas Roronoa Zoro", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4" }
+                    ]
+                },
+                {
+                    id: 7,
+                    title: "Avatar: O Caminho da Água",
+                    category: "filme",
+                    description: "Jake Sully e Ney'tiri formam uma família e fazem de tudo para ficarem juntos. No entanto, eles devem sair de casa e explorar as regiões de Pandora.",
+                    imageUrl: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerMeltdowns.mp4",
+                    views: 1430,
+                    rating: 4.3,
+                    year: 2022,
+                    episodes: []
+                },
+                {
+                    id: 8,
+                    title: "The Mandalorian",
+                    category: "serie",
+                    description: "As aventuras de um pistoleiro solitário nos confins da galáxia, longe da autoridade da Nova República. Um mandaloriano encontra e protege uma criança misteriosa.",
+                    imageUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80",
+                    videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
+                    views: 1870,
+                    rating: 4.7,
+                    year: 2019,
+                    episodes: [
+                        { number: 1, title: "Capítulo 1: O Mandaloriano", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" },
+                        { number: 2, title: "Capítulo 2: A Criança", videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4" }
+                    ]
+                }
+            ];
+            
+            // Salvar conteúdos padrão no localStorage
+            localStorage.setItem('netfilmes_contents', JSON.stringify(allContents));
+            renderContentGrid();
+            renderFeaturedSlider();
+            startSlider();
+        }
+        
+        // Atualizar contagens de visualização
+        function updateViewCounts() {
+            const viewCounts = JSON.parse(localStorage.getItem('netfilmes_view_counts')) || {};
+            
+            allContents.forEach(content => {
+                if (viewCounts[content.id]) {
+                    content.views = viewCounts[content.id];
+                }
+            });
+        }
+        
+        // Renderizar slider de destaques
+        function renderFeaturedSlider() {
+            // Ordenar por visualizações e pegar os 5 primeiros
+            const featured = [...allContents]
+                .sort((a, b) => (b.views || 0) - (a.views || 0))
+                .slice(0, 5);
+            
+            // Limpar slider
+            sliderTrack.innerHTML = '';
+            sliderDots.innerHTML = '';
+            
+            // Adicionar slides
+            featured.forEach((content, index) => {
+                // Determinar ícone da categoria
+                let categoryIcon = '';
+                let categoryName = '';
+                
+                switch(content.category) {
+                    case 'filme':
+                        categoryIcon = '🎬';
+                        categoryName = 'Filme';
+                        break;
+                    case 'serie':
+                        categoryIcon = '📺';
+                        categoryName = 'Série';
+                        break;
+                    case 'anime':
+                        categoryIcon = '🇯🇵';
+                        categoryName = 'Anime';
+                        break;
+                    case 'animacao':
+                        categoryIcon = '🐭';
+                        categoryName = 'Animação';
+                        break;
+                }
+                
+                // Criar slide
+                const slide = document.createElement('div');
+                slide.className = 'slider-slide';
+                slide.dataset.index = index;
+                
+                slide.innerHTML = `
+                    <img src="${content.imageUrl}" alt="${content.title}" class="slide-background">
+                    <div class="slide-content">
+                        <span class="slide-category">${categoryIcon} ${categoryName}</span>
+                        <h2 class="slide-title">${content.title}</h2>
+                        <p class="slide-description">${content.description}</p>
+                        <div class="slide-info">
+                            <span class="slide-rating">⭐ ${content.rating || 4.5}</span>
+                            <span class="slide-year">📅 ${content.year || 2020}</span>
+                            <span class="slide-views">👁️ ${content.views || 0} visualizações</span>
+                        </div>
+                        <div class="hero-buttons">
+                            <a href="content.html?id=${content.id}" class="btn btn-primary">
+                                <i class="fas fa-play"></i> Assistir Agora
+                            </a>
+                            <a href="content.html?id=${content.id}#episodes" class="btn btn-secondary">
+                                <i class="fas fa-info-circle"></i> Ver Detalhes
+                            </a>
+                        </div>
+                    </div>
+                `;
+                
+                sliderTrack.appendChild(slide);
+                
+                // Adicionar ponto de controle
+                const dot = document.createElement('div');
+                dot.className = 'slider-dot';
+                if (index === 0) dot.classList.add('active');
+                dot.dataset.index = index;
+                dot.addEventListener('click', () => goToSlide(index));
+                sliderDots.appendChild(dot);
+            });
+            
+            // Configurar largura do track baseado no número de slides
+            sliderTrack.style.width = `${featured.length * 100}%`;
+        }
+        
+        // Iniciar slider automático
+        function startSlider() {
+            // Parar intervalo anterior se existir
+            if (slideInterval) clearInterval(slideInterval);
+            
+            // Configurar intervalo para trocar slides a cada 5 segundos
+            slideInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+        }
+        
+        // Ir para próximo slide
+        function nextSlide() {
+            const slides = document.querySelectorAll('.slider-slide');
+            if (slides.length === 0) return;
+            
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlider();
+        }
+        
+        // Ir para slide específico
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlider();
+            
+            // Reiniciar intervalo
+            if (slideInterval) clearInterval(slideInterval);
+            slideInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+        }
+        
+        // Atualizar slider
+        function updateSlider() {
+            const slides = document.querySelectorAll('.slider-slide');
+            if (slides.length === 0) return;
+            
+            // Mover track
+            sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            // Atualizar pontos ativos
+            document.querySelectorAll('.slider-dot').forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        // Renderizar grade de conteúdos
+        function renderContentGrid() {
+            // Filtrar conteúdos
+            let filteredContents = allContents;
+            
+            if (currentFilter !== 'all') {
+                filteredContents = allContents.filter(content => content.category === currentFilter);
+            }
+            
+            if (searchTerm) {
+                filteredContents = filteredContents.filter(content => 
+                    content.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    content.description.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+            }
+            
+            // Calcular conteúdo para a página atual
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const pageContents = filteredContents.slice(startIndex, endIndex);
+            
+            // Limpar grade
+            contentGrid.innerHTML = '';
+            
+            // Verificar se há conteúdos
+            if (filteredContents.length === 0) {
+                contentGrid.innerHTML = `
+                    <div style="text-align: center; padding: 60px; grid-column: 1 / -1;">
+                        <i class="fas fa-search" style="font-size: 3rem; color: var(--light-gray); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--light-gray); margin-bottom: 10px;">Nenhum conteúdo encontrado</h3>
+                        <p>Tente alterar os filtros ou buscar por outro termo.</p>
+                    </div>
+                `;
+                loadMoreBtn.style.display = 'none';
+                return;
+            }
+            
+            // Adicionar conteúdos à grade
+            pageContents.forEach(content => {
+                // Verificar se é destaque
+                const isFeatured = [...allContents]
+                    .sort((a, b) => (b.views || 0) - (a.views || 0))
+                    .slice(0, 5)
+                    .some(c => c.id === content.id);
+                
+                // Determinar ícone da categoria
+                let categoryIcon = '';
+                let categoryName = '';
+                
+                switch(content.category) {
+                    case 'filme':
+                        categoryIcon = '🎬';
+                        categoryName = 'Filme';
+                        break;
+                    case 'serie':
+                        categoryIcon = '📺';
+                        categoryName = 'Série';
+                        break;
+                    case 'anime':
+                        categoryIcon = '🇯🇵';
+                        categoryName = 'Anime';
+                        break;
+                    case 'animacao':
+                        categoryIcon = '🐭';
+                        categoryName = 'Animação';
+                        break;
+                }
+                
+                const contentCard = document.createElement('div');
+                contentCard.className = 'content-card animate';
+                contentCard.style.animationDelay = `${Math.random() * 0.5}s`;
+                
+                contentCard.innerHTML = `
+                    <a href="content.html?id=${content.id}" style="text-decoration: none; color: inherit;">
+                        ${isFeatured ? '<div class="card-badge">🔥 Destaque</div>' : ''}
+                        <img src="${content.imageUrl}" alt="${content.title}" class="card-image">
+                        <div class="card-info">
+                            <h3 class="card-title">${content.title}</h3>
+                            <span class="card-category">${categoryIcon} ${categoryName}</span>
+                            <p class="card-description">${content.description}</p>
+                            <div class="card-actions">
+                                <button class="action-btn">
+                                    <i class="fas fa-play"></i> Assistir
+                                </button>
+                                <button class="action-btn">
+                                    <i class="fas fa-download"></i> Baixar
+                                </button>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.8rem; color: #aaa; display: flex; justify-content: space-between;">
+                                <span>⭐ ${content.rating || 4.5}</span>
+                                <span>👁️ ${content.views || 0}</span>
+                            </div>
+                        </div>
+                    </a>
+                `;
+                
+                contentGrid.appendChild(contentCard);
+            });
+            
+            // Mostrar/ocultar botão "Carregar mais"
+            if (filteredContents.length > endIndex) {
+                loadMoreBtn.style.display = 'inline-flex';
+            } else {
+                loadMoreBtn.style.display = 'none';
+            }
+        }
+        
+        // Carregar mais conteúdos
+        function loadMoreContents() {
+            currentPage++;
+            renderContentGrid();
+            
+            // Rolar suavemente para baixo
+            setTimeout(() => {
+                contentGrid.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }, 300);
+        }
+        
+        // Inicializar eventos
+        function initEvents() {
+            // Filtros por categoria
+            document.querySelectorAll('.category-btn, .nav-link').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    if (btn.dataset.category) {
+                        // Atualizar botão ativo
+                        document.querySelectorAll('.category-btn.active, .nav-link.active').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        
+                        btn.classList.add('active');
+                        
+                        // Atualizar filtro
+                        currentFilter = btn.dataset.category;
+                        currentPage = 1;
+                        renderContentGrid();
+                    }
+                });
+            });
+            
+            // Busca
+            searchInput.addEventListener('input', () => {
+                searchTerm = searchInput.value;
+                currentPage = 1;
+                renderContentGrid();
+            });
+            
+            // Botão explorar
+            exploreBtn.addEventListener('click', () => {
+                document.querySelector('.catalog-section').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Botão carregar mais
+            loadMoreBtn.addEventListener('click', loadMoreContents);
+            
+            // Header scroll effect
+            window.addEventListener('scroll', () => {
+                const header = document.getElementById('mainHeader');
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+                
+                // Animar elementos ao rolar
+                document.querySelectorAll('.animate').forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < window.innerHeight - 100) {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+            
+            // Pausar slider ao passar o mouse
+            sliderTrack.addEventListener('mouseenter', () => {
+                if (slideInterval) clearInterval(slideInterval);
+            });
+            
+            // Retomar slider ao remover o mouse
+            sliderTrack.addEventListener('mouseleave', () => {
+                startSlider();
+            });
+        }
+        
+        // Inicializar aplicação
+        function initApp() {
+            loadContents();
+            initEvents();
+            
+            // Inicializar animações
+            document.querySelectorAll('.animate').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.8s, transform 0.8s';
+            });
+            
+            // Disparar scroll para ativar animações
+            setTimeout(() => {
+                window.dispatchEvent(new Event('scroll'));
+            }, 100);
+        }
+        
+        // Iniciar quando o DOM estiver carregado
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+  </html>
