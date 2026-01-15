@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Administrativo - Net Filmes</title>
+    <title>Acesso Administrativo - Net Filmes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -12,10 +12,8 @@
             --light: #ffffff;
             --gray: #757575;
             --card-bg: #181818;
-            --sidebar: #0a0a0a;
             --success: #28a745;
             --danger: #dc3545;
-            --warning: #ffc107;
         }
         
         * {
@@ -26,110 +24,126 @@
         }
         
         body {
-            background-color: #f5f5f5;
-            color: #333;
-            display: flex;
+            background-color: var(--dark);
+            color: var(--light);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
         
-        /* Sidebar */
-        .sidebar {
-            width: 280px;
-            background-color: var(--sidebar);
-            color: white;
-            padding: 30px 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
+        /* Login Container */
+        .login-container {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
         }
         
         .logo {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: var(--primary);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            padding: 0 25px;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
         
         .logo span {
             color: var(--light);
         }
         
-        .admin-info {
-            padding: 0 25px 25px;
-            border-bottom: 1px solid #333;
-            margin-bottom: 20px;
-        }
-        
-        .admin-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(45deg, #e50914, #b81d24);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
+        .login-title {
             font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .nav-links {
-            list-style: none;
-        }
-        
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 15px 25px;
+            margin-bottom: 30px;
             color: #ccc;
-            text-decoration: none;
-            transition: all 0.3s;
-            border-left: 3px solid transparent;
-            cursor: pointer;
         }
         
-        .nav-link:hover, .nav-link.active {
-            background-color: var(--dark);
-            color: white;
-            border-left-color: var(--primary);
+        /* Admin Panel (hidden by default) */
+        .admin-panel {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
         }
         
-        .nav-link i {
-            margin-right: 15px;
-            width: 20px;
+        /* Code Input */
+        .code-input {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .code-digit {
+            width: 100%;
+            height: 50px;
             text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid var(--gray);
+            border-radius: 5px;
+            color: white;
+            transition: all 0.3s;
         }
         
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 30px;
+        .code-digit:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(229, 9, 20, 0.1);
         }
         
-        .header {
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .login-btn:hover {
+            background: #b81d24;
+            transform: translateY(-2px);
+        }
+        
+        .error-message {
+            color: var(--danger);
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        /* Admin Panel Styles */
+        .admin-header {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #ddd;
         }
         
-        .page-title {
-            font-size: 2rem;
-            color: var(--dark);
+        .admin-title {
+            font-size: 1.8rem;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
         
         .btn {
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 5px;
             border: none;
             font-weight: bold;
@@ -141,269 +155,129 @@
             transition: all 0.3s;
         }
         
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
         .btn-primary {
-            background: linear-gradient(to right, #e50914, #b81d24);
+            background: var(--primary);
             color: white;
-        }
-        
-        .btn-success {
-            background-color: var(--success);
-            color: white;
-        }
-        
-        .btn-warning {
-            background-color: var(--warning);
-            color: #333;
         }
         
         .btn-danger {
-            background-color: var(--danger);
+            background: var(--danger);
             color: white;
         }
         
-        .btn-outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         
-        /* Stats Cards */
-        .stats-cards {
+        /* Stats */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
         
         .stat-card {
-            background: white;
+            background: var(--card-bg);
+            padding: 20px;
             border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border-left: 5px solid var(--primary);
-            transition: all 0.3s;
+            text-align: center;
         }
         
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-        
-        .stat-icon.filmes { background: rgba(229, 9, 20, 0.1); color: var(--primary); }
-        .stat-icon.series { background: rgba(32, 201, 151, 0.1); color: #20c997; }
-        .stat-icon.animes { background: rgba(13, 110, 253, 0.1); color: #0d6efd; }
-        .stat-icon.views { background: rgba(111, 66, 193, 0.1); color: #6f42c1; }
-        
-        .stat-info h3 {
+        .stat-number {
             font-size: 2.5rem;
-            margin-bottom: 5px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 10px;
         }
         
-        .stat-info p {
-            color: var(--gray);
-            font-size: 0.9rem;
-        }
-        
-        /* Forms */
+        /* Form */
         .form-section {
-            background: white;
+            background: var(--card-bg);
             border-radius: 10px;
             padding: 30px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             margin-bottom: 30px;
         }
         
         .section-title {
             font-size: 1.5rem;
             margin-bottom: 25px;
-            color: var(--dark);
-            padding-bottom: 15px;
-            border-bottom: 1px solid #eee;
             display: flex;
             align-items: center;
             gap: 10px;
         }
         
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-bottom: 25px;
-        }
-        
         .form-group {
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 20px;
         }
         
-        .form-group label {
-            margin-bottom: 10px;
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: 500;
-            color: #555;
+            color: #ccc;
         }
         
         .form-control {
+            width: 100%;
             padding: 12px 15px;
-            border: 1px solid #ddd;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid var(--gray);
             border-radius: 5px;
+            color: white;
             font-size: 1rem;
-            transition: all 0.3s;
         }
         
         .form-control:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.1);
         }
         
-        textarea.form-control {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        /* File Upload */
-        .file-upload {
-            border: 2px dashed #ddd;
-            border-radius: 10px;
-            padding: 40px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
             margin-bottom: 20px;
         }
         
-        .file-upload:hover, .file-upload.dragover {
-            border-color: var(--primary);
-            background: rgba(229, 9, 20, 0.05);
-        }
-        
-        .upload-icon {
-            font-size: 3rem;
-            color: #ccc;
-            margin-bottom: 15px;
-        }
-        
-        .file-preview {
-            display: none;
-            max-width: 200px;
-            margin-top: 15px;
-            border-radius: 5px;
-        }
-        
-        /* Episodes */
-        .episodes-container {
-            background: #f9f9f9;
-            border-radius: 10px;
-            padding: 25px;
-            margin-top: 20px;
-        }
-        
-        .episode-item {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        
-        .episode-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .remove-episode {
-            background: var(--danger);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
         /* Content List */
-        .content-list-container {
-            background: white;
+        .content-list {
+            background: var(--card-bg);
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-        
-        .content-list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .filters {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .content-list {
-            max-height: 600px;
-            overflow-y: auto;
         }
         
         .content-item {
             display: grid;
-            grid-template-columns: 80px 1fr auto;
+            grid-template-columns: 60px 1fr auto;
             align-items: center;
-            padding: 20px 25px;
-            border-bottom: 1px solid #eee;
+            padding: 20px;
+            border-bottom: 1px solid #333;
             transition: background 0.3s;
         }
         
         .content-item:hover {
-            background: #f8f9fa;
+            background: rgba(255,255,255,0.05);
         }
         
         .content-image {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             object-fit: cover;
-            border-radius: 8px;
+            border-radius: 5px;
         }
         
         .content-info h4 {
-            margin-bottom: 8px;
+            margin-bottom: 5px;
             font-size: 1.1rem;
         }
         
         .content-meta {
             display: flex;
             gap: 15px;
-            font-size: 0.8rem;
-            color: var(--gray);
-        }
-        
-        .content-category {
-            display: inline-block;
-            background: #eee;
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.8rem;
+            color: #777;
+            font-size: 0.9rem;
         }
         
         .content-actions {
@@ -414,178 +288,58 @@
         .action-btn {
             padding: 8px 12px;
             border-radius: 5px;
-            border: 1px solid #ddd;
+            border: 1px solid #333;
             background: transparent;
+            color: white;
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .action-btn:hover {
-            background: #f0f0f0;
-        }
-        
-        .action-btn.edit:hover {
             background: var(--primary);
             border-color: var(--primary);
-            color: white;
         }
         
         .action-btn.delete:hover {
             background: var(--danger);
             border-color: var(--danger);
-            color: white;
         }
         
         /* Messages */
         .message {
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
             display: none;
-            animation: fadeIn 0.3s;
         }
         
         .message.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+            border: 1px solid #28a745;
         }
         
         .message.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .message.warning {
-            background: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Tabs */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 30px;
-        }
-        
-        .tab {
-            padding: 15px 30px;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s;
-        }
-        
-        .tab:hover {
-            background: #f8f9fa;
-        }
-        
-        .tab.active {
-            border-bottom-color: var(--primary);
-            color: var(--primary);
-            font-weight: bold;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 10px;
-            padding: 30px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .modal-title {
-            font-size: 1.5rem;
-            color: var(--dark);
-        }
-        
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #999;
-        }
-        
-        .modal-body {
-            margin-bottom: 25px;
-            color: #555;
-        }
-        
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+            border: 1px solid #dc3545;
         }
         
         /* Responsive */
-        @media (max-width: 1200px) {
-            .sidebar {
-                width: 80px;
-            }
-            
-            .sidebar .logo span,
-            .sidebar .admin-info div:not(.admin-avatar),
-            .sidebar .nav-link span {
-                display: none;
-            }
-            
-            .sidebar .nav-link i {
-                margin-right: 0;
-                font-size: 1.3rem;
-            }
-            
-            .main-content {
-                margin-left: 80px;
-            }
-        }
-        
         @media (max-width: 768px) {
-            .main-content {
-                padding: 20px;
+            .login-container {
+                padding: 30px 20px;
             }
             
-            .header {
+            .code-input {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .admin-header {
                 flex-direction: column;
-                align-items: flex-start;
-                gap: 20px;
+                gap: 15px;
+                text-align: center;
             }
             
             .content-item {
@@ -596,69 +350,61 @@
             .content-actions {
                 justify-content: flex-end;
             }
+        }
+        
+        @media (max-width: 480px) {
+            .code-digit {
+                height: 40px;
+                font-size: 1.2rem;
+            }
             
-            .form-row {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
             
-            .tabs {
-                overflow-x: auto;
-                white-space: nowrap;
+            .form-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <a href="index.html" class="logo">NET<span>Filmes</span></a>
+    <!-- Login Container -->
+    <div class="login-container" id="loginContainer">
+        <div class="logo">NET<span>Filmes</span></div>
+        <h2 class="login-title">Acesso Administrativo</h2>
         
-        <div class="admin-info">
-            <div class="admin-avatar">A</div>
-            <div style="display: none;">
-                <div style="font-weight: bold;">Administrador</div>
-                <div style="color: #999; font-size: 0.9rem;">Super Admin</div>
-            </div>
+        <div class="code-input" id="codeInput">
+            <input type="text" class="code-digit" maxlength="1" data-index="0">
+            <input type="text" class="code-digit" maxlength="1" data-index="1">
+            <input type="text" class="code-digit" maxlength="1" data-index="2">
+            <input type="text" class="code-digit" maxlength="1" data-index="3">
+            <input type="text" class="code-digit" maxlength="1" data-index="4">
+            <input type="text" class="code-digit" maxlength="1" data-index="5">
+            <input type="text" class="code-digit" maxlength="1" data-index="6">
+            <input type="text" class="code-digit" maxlength="1" data-index="7">
+            <input type="text" class="code-digit" maxlength="1" data-index="8">
         </div>
         
-        <ul class="nav-links">
-            <li>
-                <a href="#" class="nav-link active" data-tab="dashboard">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link" data-tab="add-content">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>Adicionar Conteúdo</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" class="nav-link" data-tab="manage-content">
-                    <i class="fas fa-list"></i>
-                    <span>Gerenciar Conteúdo</span>
-                </a>
-            </li>
-            <li>
-                <a href="index.html" class="nav-link">
-                    <i class="fas fa-external-link-alt"></i>
-                    <span>Ver Site</span>
-                </a>
-            </li>
-        </ul>
+        <button class="login-btn" id="loginBtn">
+            <i class="fas fa-lock"></i> Acessar Painel
+        </button>
+        
+        <div class="error-message" id="errorMessage">
+            Código incorreto. Tente novamente.
+        </div>
     </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
+    
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
         <!-- Header -->
-        <div class="header">
-            <h1 class="page-title" id="pageTitle">
-                <i class="fas fa-tachometer-alt"></i> Dashboard
+        <div class="admin-header">
+            <h1 class="admin-title">
+                <i class="fas fa-user-shield"></i> Painel Administrativo
             </h1>
             <div>
-                <button class="btn btn-danger" id="clearDataBtn">
-                    <i class="fas fa-trash"></i> Limpar Dados
+                <button class="btn btn-primary" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Sair
                 </button>
             </div>
         </div>
@@ -666,247 +412,161 @@
         <!-- Messages -->
         <div class="message" id="message"></div>
         
-        <!-- Tabs -->
-        <div class="tabs">
-            <div class="tab active" data-tab="dashboard">Dashboard</div>
-            <div class="tab" data-tab="add-content">Adicionar Conteúdo</div>
-            <div class="tab" data-tab="manage-content">Gerenciar Conteúdo</div>
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="totalContents">0</div>
+                <div>Total de Conteúdos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="moviesCount">0</div>
+                <div>Filmes</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="seriesCount">0</div>
+                <div>Séries</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="animesCount">0</div>
+                <div>Animes</div>
+            </div>
         </div>
         
-        <!-- Dashboard Tab -->
-        <div class="tab-content active" id="dashboard-content">
-            <div class="stats-cards">
-                <div class="stat-card">
-                    <div class="stat-icon filmes"><i class="fas fa-film"></i></div>
-                    <div class="stat-info">
-                        <h3 id="moviesCount">0</h3>
-                        <p>Filmes</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon series"><i class="fas fa-tv"></i></div>
-                    <div class="stat-info">
-                        <h3 id="seriesCount">0</h3>
-                        <p>Séries</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon animes"><i class="fas fa-globe-asia"></i></div>
-                    <div class="stat-info">
-                        <h3 id="animesCount">0</h3>
-                        <p>Animes</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon views"><i class="fas fa-eye"></i></div>
-                    <div class="stat-info">
-                        <h3 id="totalViews">0</h3>
-                        <p>Total de Visualizações</p>
-                    </div>
-                </div>
-            </div>
+        <!-- Add Content Form -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i> Adicionar Novo Conteúdo
+            </h2>
             
-            <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-info-circle"></i> Instruções do Sistema
-                </h2>
-                <div style="line-height: 1.8;">
-                    <p><strong>Como funciona:</strong></p>
-                    <ul style="margin-left: 20px; margin-bottom: 20px;">
-                        <li>Todos os dados são armazenados no seu navegador (localStorage)</li>
-                        <li>Os vídeos são links externos (YouTube, Vimeo, etc.)</li>
-                        <li>As imagens são URLs públicas da internet</li>
-                        <li>Para preservar os dados, não limpe o cache do navegador</li>
-                    </ul>
-                    
-                    <p><strong>Para adicionar conteúdos:</strong></p>
-                    <ol style="margin-left: 20px;">
-                        <li>Vá para a aba "Adicionar Conteúdo"</li>
-                        <li>Preencha todas as informações</li>
-                        <li>Use URLs de imagens públicas para as capas</li>
-                        <li>Use URLs de vídeos públicos (YouTube, etc.)</li>
-                        <li>Para séries/animes, adicione episódios</li>
-                        <li>Clique em "Salvar Conteúdo"</li>
-                    </ol>
-                    
-                    <div style="background: #f0f0f0; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                        <p><strong>Links de exemplo para teste:</strong></p>
-                        <p>Imagens: <code>https://images.unsplash.com/photo-...</code></p>
-                        <p>Vídeos: <code>https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4</code></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Add Content Tab -->
-        <div class="tab-content" id="add-content-content">
-            <div class="form-section">
-                <h2 class="section-title">
-                    <i class="fas fa-plus-circle"></i> Adicionar Novo Conteúdo
-                </h2>
-                
-                <form id="contentForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="title">Título *</label>
-                            <input type="text" id="title" class="form-control" placeholder="Ex: Vingadores: Ultimato" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="category">Categoria *</label>
-                            <select id="category" class="form-control" required>
-                                <option value="">Selecione...</option>
-                                <option value="filme">Filme</option>
-                                <option value="serie">Série</option>
-                                <option value="anime">Anime</option>
-                                <option value="animacao">Animação</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="year">Ano de Lançamento</label>
-                            <input type="number" id="year" class="form-control" value="2024" min="1900" max="2030">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="rating">Classificação (0-5)</label>
-                            <input type="number" id="rating" class="form-control" min="0" max="5" step="0.1" value="4.5">
-                        </div>
+            <form id="contentForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Título *</label>
+                        <input type="text" class="form-control" id="title" placeholder="Ex: Vingadores: Ultimato" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="description">Descrição *</label>
-                        <textarea id="description" class="form-control" placeholder="Descreva o conteúdo..." rows="5" required></textarea>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="imageUrl">URL da Imagem *</label>
-                            <input type="url" id="imageUrl" class="form-control" placeholder="https://exemplo.com/imagem.jpg" required>
-                            <small style="color: #666; margin-top: 5px;">Use URLs de imagens públicas (Unsplash, etc.)</small>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="videoUrl">URL do Vídeo *</label>
-                            <input type="url" id="videoUrl" class="form-control" placeholder="https://exemplo.com/video.mp4" required>
-                            <small style="color: #666; margin-top: 5px;">Para teste: https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4</small>
-                        </div>
-                    </div>
-                    
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="duration">Duração</label>
-                            <input type="text" id="duration" class="form-control" placeholder="Ex: 120 min">
-                        </div>
-                    </div>
-                    
-                    <!-- Episodes Section -->
-                    <div id="episodesContainer" class="episodes-container" style="display: none;">
-                        <h3 style="margin-bottom: 20px;">Episódios</h3>
-                        <div id="episodesList">
-                            <!-- Episódios serão adicionados aqui -->
-                        </div>
-                        <button type="button" class="btn" id="addEpisodeBtn" style="background: #f0f0f0; margin-top: 15px;">
-                            <i class="fas fa-plus"></i> Adicionar Episódio
-                        </button>
-                    </div>
-                    
-                    <div style="margin-top: 30px;">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Salvar Conteúdo
-                        </button>
-                        <button type="reset" class="btn" style="background: #f0f0f0; margin-left: 10px;">
-                            <i class="fas fa-redo"></i> Limpar
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        
-        <!-- Manage Content Tab -->
-        <div class="tab-content" id="manage-content-content">
-            <div class="content-list-container">
-                <div class="content-list-header">
-                    <h3 style="margin: 0;">Conteúdos Cadastrados</h3>
-                    <div class="filters">
-                        <select id="filterCategory" class="form-control" style="width: 150px;">
-                            <option value="all">Todas as Categorias</option>
-                            <option value="filme">Filmes</option>
-                            <option value="serie">Séries</option>
-                            <option value="anime">Animes</option>
+                        <label class="form-label">Categoria *</label>
+                        <select class="form-control" id="category" required>
+                            <option value="">Selecione...</option>
+                            <option value="filme">Filme</option>
+                            <option value="serie">Série</option>
+                            <option value="anime">Anime</option>
                         </select>
-                        <input type="text" id="searchContent" class="form-control" placeholder="Buscar..." style="width: 200px;">
                     </div>
                 </div>
                 
-                <div class="content-list" id="contentList">
-                    <!-- Conteúdos serão listados aqui -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Ano</label>
+                        <input type="number" class="form-control" id="year" value="2024">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Classificação (0-5)</label>
+                        <input type="number" class="form-control" id="rating" min="0" max="5" step="0.1" value="4.5">
+                    </div>
                 </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Descrição *</label>
+                    <textarea class="form-control" id="description" rows="3" placeholder="Descreva o conteúdo..." required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">URL da Imagem *</label>
+                        <input type="url" class="form-control" id="imageUrl" placeholder="https://exemplo.com/imagem.jpg" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">URL do Vídeo *</label>
+                        <input type="url" class="form-control" id="videoUrl" placeholder="https://exemplo.com/video.mp4" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">
+                    <i class="fas fa-save"></i> Salvar Conteúdo
+                </button>
+            </form>
+        </div>
+        
+        <!-- Content List -->
+        <div class="form-section">
+            <h2 class="section-title">
+                <i class="fas fa-list"></i> Conteúdos Cadastrados
+            </h2>
+            
+            <div style="margin-bottom: 20px;">
+                <select class="form-control" id="filterCategory" style="width: 200px; display: inline-block; margin-right: 15px;">
+                    <option value="all">Todas as Categorias</option>
+                    <option value="filme">Filmes</option>
+                    <option value="serie">Séries</option>
+                    <option value="anime">Animes</option>
+                </select>
+                
+                <input type="text" class="form-control" id="searchContent" placeholder="Buscar..." style="width: 200px; display: inline-block;">
+            </div>
+            
+            <div class="content-list" id="contentList">
+                <!-- Conteúdos serão listados aqui -->
             </div>
         </div>
-    </div>
-    
-    <!-- Modal -->
-    <div class="modal" id="confirmationModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Confirmar Ação</h3>
-                <button class="modal-close" id="closeModal">&times;</button>
-            </div>
-            <div class="modal-body" id="modalMessage">
-                Tem certeza que deseja realizar esta ação?
-            </div>
-            <div class="modal-footer">
-                <button class="btn" id="cancelModal" style="background: #f0f0f0;">Cancelar</button>
-                <button class="btn btn-danger" id="confirmModal">Confirmar</button>
-            </div>
+        
+        <!-- Danger Zone -->
+        <div class="form-section" style="border: 2px solid var(--danger);">
+            <h2 class="section-title" style="color: var(--danger);">
+                <i class="fas fa-exclamation-triangle"></i> Zona de Perigo
+            </h2>
+            
+            <p style="margin-bottom: 20px; color: #ccc;">
+                Esta ação irá excluir TODOS os conteúdos e não pode ser desfeita.
+            </p>
+            
+            <button class="btn btn-danger" id="clearDataBtn">
+                <i class="fas fa-trash"></i> Limpar Todos os Dados
+            </button>
         </div>
     </div>
 
     <script>
+        // Código de acesso
+        const ACCESS_CODE = '869667677';
+        
         // Banco de dados
         const STORAGE_KEY = 'netfilmes_contents';
         const VIEWS_KEY = 'netfilmes_views';
         
         // Elementos DOM
-        const messageElement = document.getElementById('message');
+        const loginContainer = document.getElementById('loginContainer');
+        const adminPanel = document.getElementById('adminPanel');
+        const codeInputs = document.querySelectorAll('.code-digit');
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
         const contentForm = document.getElementById('contentForm');
-        const categorySelect = document.getElementById('category');
-        const episodesContainer = document.getElementById('episodesContainer');
-        const episodesList = document.getElementById('episodesList');
-        const addEpisodeBtn = document.getElementById('addEpisodeBtn');
         const contentList = document.getElementById('contentList');
         const filterCategory = document.getElementById('filterCategory');
         const searchContent = document.getElementById('searchContent');
         const clearDataBtn = document.getElementById('clearDataBtn');
+        const messageElement = document.getElementById('message');
         
         // Elementos de estatísticas
+        const totalContentsElement = document.getElementById('totalContents');
         const moviesCountElement = document.getElementById('moviesCount');
         const seriesCountElement = document.getElementById('seriesCount');
         const animesCountElement = document.getElementById('animesCount');
-        const totalViewsElement = document.getElementById('totalViews');
-        
-        // Modal
-        const modal = document.getElementById('confirmationModal');
-        const modalMessage = document.getElementById('modalMessage');
-        const closeModal = document.getElementById('closeModal');
-        const cancelModal = document.getElementById('cancelModal');
-        const confirmModal = document.getElementById('confirmModal');
         
         // Dados
         let allContents = [];
         let nextId = 1;
-        let currentAction = null;
-        let editingContentId = null;
         
         // Inicializar
         function init() {
             loadContents();
+            initEvents();
             updateStats();
             renderContentList();
-            initEvents();
         }
         
         // Carregar conteúdos
@@ -915,7 +575,6 @@
             if (stored) {
                 allContents = JSON.parse(stored);
                 
-                // Determinar próximo ID
                 if (allContents.length > 0) {
                     nextId = Math.max(...allContents.map(c => c.id)) + 1;
                 }
@@ -935,68 +594,63 @@
             const series = allContents.filter(c => c.category === 'serie').length;
             const animes = allContents.filter(c => c.category === 'anime').length;
             
-            // Total de visualizações
-            const viewCounts = JSON.parse(localStorage.getItem(VIEWS_KEY)) || {};
-            const totalViews = Object.values(viewCounts).reduce((sum, count) => sum + count, 0);
-            
+            totalContentsElement.textContent = allContents.length;
             moviesCountElement.textContent = movies;
             seriesCountElement.textContent = series;
             animesCountElement.textContent = animes;
-            totalViewsElement.textContent = totalViews;
         }
         
         // Inicializar eventos
         function initEvents() {
-            // Tabs
-            document.querySelectorAll('.tab, .nav-link').forEach(item => {
-                item.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const tabId = item.dataset.tab;
+            // Navegação entre inputs do código
+            codeInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
                     
-                    if (tabId) {
-                        // Atualizar tabs ativas
-                        document.querySelectorAll('.tab.active, .nav-link.active').forEach(active => {
-                            active.classList.remove('active');
-                        });
-                        
-                        item.classList.add('active');
-                        
-                        // Mostrar conteúdo da tab
-                        document.querySelectorAll('.tab-content').forEach(content => {
-                            content.classList.remove('active');
-                        });
-                        
-                        document.getElementById(`${tabId}-content`).classList.add('active');
-                        
-                        // Atualizar título
-                        const titles = {
-                            'dashboard': 'Dashboard',
-                            'add-content': 'Adicionar Conteúdo',
-                            'manage-content': 'Gerenciar Conteúdo'
-                        };
-                        
-                        document.getElementById('pageTitle').innerHTML = `
-                            <i class="fas fa-${tabId === 'dashboard' ? 'tachometer-alt' : tabId === 'add-content' ? 'plus-circle' : 'list'}"></i>
-                            ${titles[tabId]}
-                        `;
+                    if (value && index < codeInputs.length - 1) {
+                        codeInputs[index + 1].focus();
+                    }
+                    
+                    if (!value && index > 0) {
+                        codeInputs[index - 1].focus();
+                    }
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !input.value && index > 0) {
+                        codeInputs[index - 1].focus();
                     }
                 });
             });
             
-            // Mostrar/ocultar episódios
-            categorySelect.addEventListener('change', () => {
-                if (categorySelect.value === 'serie' || categorySelect.value === 'anime') {
-                    episodesContainer.style.display = 'block';
+            // Login
+            loginBtn.addEventListener('click', () => {
+                const code = Array.from(codeInputs)
+                    .map(input => input.value)
+                    .join('');
+                
+                if (code === ACCESS_CODE) {
+                    loginContainer.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    
+                    // Limpar inputs
+                    codeInputs.forEach(input => input.value = '');
+                    codeInputs[0].focus();
                 } else {
-                    episodesContainer.style.display = 'none';
-                    episodesList.innerHTML = '';
+                    errorMessage.style.display = 'block';
+                    codeInputs.forEach(input => input.value = '');
+                    codeInputs[0].focus();
                 }
             });
             
-            // Adicionar episódio
-            addEpisodeBtn.addEventListener('click', addEpisode);
+            // Logout
+            logoutBtn.addEventListener('click', () => {
+                loginContainer.style.display = 'block';
+                adminPanel.style.display = 'none';
+            });
             
-            // Formulário
+            // Formulário de conteúdo
             contentForm.addEventListener('submit', handleFormSubmit);
             
             // Filtros
@@ -1005,55 +659,16 @@
             
             // Limpar dados
             clearDataBtn.addEventListener('click', () => {
-                showConfirmationModal(
-                    'ATENÇÃO: Isso irá excluir TODOS os conteúdos e visualizações. Esta ação não pode ser desfeita. Tem certeza?',
-                    clearAllData
-                );
-            });
-            
-            // Modal
-            closeModal.addEventListener('click', hideModal);
-            cancelModal.addEventListener('click', hideModal);
-            confirmModal.addEventListener('click', executeAction);
-        }
-        
-        // Adicionar episódio
-        function addEpisode() {
-            const episodeCount = episodesList.children.length + 1;
-            
-            const episodeDiv = document.createElement('div');
-            episodeDiv.className = 'episode-item';
-            episodeDiv.innerHTML = `
-                <div class="episode-header">
-                    <h4 style="margin: 0;">Episódio ${episodeCount}</h4>
-                    <button type="button" class="remove-episode">Remover</button>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Título do Episódio *</label>
-                        <input type="text" class="form-control episode-title" required>
-                    </div>
-                    <div class="form-group">
-                        <label>URL do Vídeo *</label>
-                        <input type="url" class="form-control episode-video" required>
-                    </div>
-                </div>
-            `;
-            
-            episodesList.appendChild(episodeDiv);
-            
-            // Evento para remover episódio
-            episodeDiv.querySelector('.remove-episode').addEventListener('click', () => {
-                episodeDiv.remove();
-                renumberEpisodes();
-            });
-        }
-        
-        // Renumerar episódios
-        function renumberEpisodes() {
-            const episodes = episodesList.querySelectorAll('.episode-item');
-            episodes.forEach((ep, index) => {
-                ep.querySelector('h4').textContent = `Episódio ${index + 1}`;
+                if (confirm('ATENÇÃO: Isso irá excluir TODOS os conteúdos. Esta ação não pode ser desfeita. Tem certeza?')) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem(VIEWS_KEY);
+                    allContents = [];
+                    nextId = 1;
+                    
+                    updateStats();
+                    renderContentList();
+                    showMessage('Todos os dados foram excluídos!', 'success');
+                }
             });
         }
         
@@ -1067,9 +682,8 @@
             const description = document.getElementById('description').value.trim();
             const imageUrl = document.getElementById('imageUrl').value.trim();
             const videoUrl = document.getElementById('videoUrl').value.trim();
-            const year = document.getElementById('year').value;
-            const rating = document.getElementById('rating').value;
-            const duration = document.getElementById('duration').value.trim();
+            const year = document.getElementById('year').value || new Date().getFullYear();
+            const rating = document.getElementById('rating').value || 4.5;
             
             // Validação
             if (!title || !category || !description || !imageUrl || !videoUrl) {
@@ -1077,69 +691,30 @@
                 return;
             }
             
-            // Coletar episódios
-            const episodes = [];
-            if (category === 'serie' || category === 'anime') {
-                const episodeItems = episodesList.querySelectorAll('.episode-item');
-                episodeItems.forEach((item, index) => {
-                    const episodeTitle = item.querySelector('.episode-title').value.trim();
-                    const episodeVideo = item.querySelector('.episode-video').value.trim();
-                    
-                    if (episodeTitle && episodeVideo) {
-                        episodes.push({
-                            number: index + 1,
-                            title: episodeTitle,
-                            videoUrl: episodeVideo
-                        });
-                    }
-                });
-            }
-            
-            // Criar objeto do conteúdo
-            const contentData = {
-                id: editingContentId || nextId,
+            // Criar objeto
+            const content = {
+                id: nextId++,
                 title: title,
                 category: category,
                 description: description,
                 imageUrl: imageUrl,
                 videoUrl: videoUrl,
-                year: year || new Date().getFullYear(),
-                rating: rating || 4.5,
-                duration: duration || '',
+                year: year,
+                rating: rating,
                 views: 0,
-                episodes: episodes,
                 createdAt: new Date().toISOString()
             };
             
             // Salvar
-            if (editingContentId) {
-                // Atualizar conteúdo existente
-                const index = allContents.findIndex(c => c.id === editingContentId);
-                if (index !== -1) {
-                    allContents[index] = {
-                        ...allContents[index],
-                        ...contentData,
-                        updatedAt: new Date().toISOString()
-                    };
-                }
-                editingContentId = null;
-                showMessage('Conteúdo atualizado com sucesso!', 'success');
-            } else {
-                // Adicionar novo conteúdo
-                allContents.push(contentData);
-                nextId++;
-                showMessage('Conteúdo criado com sucesso!', 'success');
-            }
-            
+            allContents.push(content);
             saveContents();
             
             // Limpar formulário
             contentForm.reset();
-            episodesList.innerHTML = '';
-            episodesContainer.style.display = 'none';
+            document.getElementById('year').value = new Date().getFullYear();
+            document.getElementById('rating').value = 4.5;
             
-            // Mudar para aba de gerenciamento
-            document.querySelector('[data-tab="manage-content"]').click();
+            showMessage('Conteúdo salvo com sucesso!', 'success');
         }
         
         // Renderizar lista de conteúdos
@@ -1167,10 +742,9 @@
             
             if (filteredContents.length === 0) {
                 contentList.innerHTML = `
-                    <div style="text-align: center; padding: 60px; color: #666;">
-                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <div style="text-align: center; padding: 40px; color: #777;">
+                        <i class="fas fa-film" style="font-size: 2rem; margin-bottom: 15px;"></i>
                         <p>Nenhum conteúdo encontrado.</p>
-                        <p>Adicione seu primeiro conteúdo!</p>
                     </div>
                 `;
                 return;
@@ -1184,8 +758,7 @@
                 const categoryIcons = {
                     'filme': '🎬',
                     'serie': '📺',
-                    'anime': '🇯🇵',
-                    'animacao': '🐭'
+                    'anime': '🇯🇵'
                 };
                 
                 item.innerHTML = `
@@ -1193,18 +766,12 @@
                     <div>
                         <h4>${content.title}</h4>
                         <div class="content-meta">
-                            <span class="content-category">${categoryIcons[content.category] || '🎬'} ${content.category}</span>
+                            <span>${categoryIcons[content.category] || '🎬'} ${content.category}</span>
                             <span>⭐ ${content.rating}</span>
-                            <span>👁️ ${content.views || 0}</span>
+                            <span>👁️ ${content.views}</span>
                         </div>
-                        <p style="color: #666; margin-top: 8px; font-size: 0.9rem;">
-                            ${content.description.substring(0, 80)}...
-                        </p>
                     </div>
                     <div class="content-actions">
-                        <button class="action-btn edit" onclick="editContent(${content.id})">
-                            <i class="fas fa-edit"></i>
-                        </button>
                         <button class="action-btn delete" onclick="deleteContent(${content.id})">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -1215,96 +782,16 @@
             });
         }
         
-        // Editar conteúdo
-        function editContent(contentId) {
-            const content = allContents.find(c => c.id === contentId);
-            if (!content) return;
-            
-            // Preencher formulário
-            document.getElementById('title').value = content.title;
-            document.getElementById('category').value = content.category;
-            document.getElementById('description').value = content.description;
-            document.getElementById('imageUrl').value = content.imageUrl;
-            document.getElementById('videoUrl').value = content.videoUrl;
-            document.getElementById('year').value = content.year;
-            document.getElementById('rating').value = content.rating;
-            document.getElementById('duration').value = content.duration || '';
-            
-            // Configurar episódios
-            if (content.episodes && content.episodes.length > 0) {
-                episodesContainer.style.display = 'block';
-                episodesList.innerHTML = '';
-                
-                content.episodes.forEach(episode => {
-                    const episodeDiv = document.createElement('div');
-                    episodeDiv.className = 'episode-item';
-                    episodeDiv.innerHTML = `
-                        <div class="episode-header">
-                            <h4 style="margin: 0;">Episódio ${episode.number}</h4>
-                            <button type="button" class="remove-episode">Remover</button>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Título do Episódio *</label>
-                                <input type="text" class="form-control episode-title" value="${episode.title}" required>
-                            </div>
-                            <div class="form-group">
-                                <label>URL do Vídeo *</label>
-                                <input type="url" class="form-control episode-video" value="${episode.videoUrl}" required>
-                            </div>
-                        </div>
-                    `;
-                    
-                    episodesList.appendChild(episodeDiv);
-                    
-                    // Evento para remover episódio
-                    episodeDiv.querySelector('.remove-episode').addEventListener('click', () => {
-                        episodeDiv.remove();
-                        renumberEpisodes();
-                    });
-                });
-            }
-            
-            // Configurar para edição
-            editingContentId = contentId;
-            
-            // Mudar para aba de adicionar conteúdo
-            document.querySelector('[data-tab="add-content"]').click();
-            
-            // Alterar texto do botão
-            const submitBtn = contentForm.querySelector('button[type="submit"]');
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> Atualizar Conteúdo';
-            
-            // Rolar para o topo
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
         // Excluir conteúdo
         function deleteContent(contentId) {
-            showConfirmationModal(
-                'Tem certeza que deseja excluir este conteúdo?',
-                () => {
-                    const index = allContents.findIndex(c => c.id === contentId);
-                    if (index !== -1) {
-                        allContents.splice(index, 1);
-                        saveContents();
-                        showMessage('Conteúdo excluído com sucesso!', 'success');
-                    }
+            if (confirm('Tem certeza que deseja excluir este conteúdo?')) {
+                const index = allContents.findIndex(c => c.id === contentId);
+                if (index !== -1) {
+                    allContents.splice(index, 1);
+                    saveContents();
+                    showMessage('Conteúdo excluído com sucesso!', 'success');
                 }
-            );
-        }
-        
-        // Limpar todos os dados
-        function clearAllData() {
-            localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem(VIEWS_KEY);
-            allContents = [];
-            nextId = 1;
-            
-            updateStats();
-            renderContentList();
-            showMessage('Todos os dados foram excluídos!', 'success');
-            hideModal();
+            }
         }
         
         // Mostrar mensagem
@@ -1315,28 +802,7 @@
             
             setTimeout(() => {
                 messageElement.style.display = 'none';
-            }, 5000);
-        }
-        
-        // Mostrar modal de confirmação
-        function showConfirmationModal(message, action) {
-            modalMessage.textContent = message;
-            currentAction = action;
-            modal.style.display = 'flex';
-        }
-        
-        // Esconder modal
-        function hideModal() {
-            modal.style.display = 'none';
-            currentAction = null;
-        }
-        
-        // Executar ação do modal
-        function executeAction() {
-            if (currentAction) {
-                currentAction();
-            }
-            hideModal();
+            }, 3000);
         }
         
         // Inicializar quando a página carregar
