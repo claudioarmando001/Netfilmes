@@ -3,41 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Radar News PRO | Feed</title>
+    <title>Radar News PRO | Moçambique</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #0f172a; --accent: #e11d48; --bg: #f1f5f9; --card: #ffffff;
-            --text: #0f172a; --text-meta: #64748b; --border: #e2e8f0; --radius: 16px;
+            --text: #0f172a; --text-meta: #64748b; --border: #e2e8f0; --radius: 18px;
         }
         body.dark-mode {
             --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-meta: #94a3b8; --border: #334155;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 80px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 30px; }
         
         .header { position: sticky; top: 0; z-index: 100; background: var(--card); border-bottom: 1px solid var(--border); padding: 15px; }
         .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 800px; margin: 0 auto; }
-        .logo { font-weight: 800; color: var(--accent); font-size: 1.2rem; text-decoration: none; }
+        .logo { font-weight: 800; color: var(--accent); font-size: 1.3rem; text-decoration: none; display: flex; align-items: center; gap: 5px; }
         
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px 0; scrollbar-width: none; max-width: 800px; margin: 0 auto; }
-        .cat-btn { padding: 8px 18px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; cursor: pointer; color: var(--text-meta); white-space: nowrap; }
-        .cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
         .feed { padding: 15px; max-width: 800px; margin: 0 auto; display: grid; gap: 15px; }
-        .news-card { background: var(--card); border-radius: var(--radius); padding: 12px; display: flex; gap: 12px; border: 1px solid var(--border); cursor: pointer; text-decoration: none; color: inherit; transition: transform 0.2s; }
+        .news-card { background: var(--card); border-radius: var(--radius); padding: 12px; display: flex; gap: 15px; border: 1px solid var(--border); cursor: pointer; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; }
         .news-card:active { transform: scale(0.98); }
-        .news-img { width: 100px; height: 100px; border-radius: 12px; object-fit: cover; background: #ddd; }
+        .news-img { width: 110px; height: 110px; border-radius: 14px; object-fit: cover; background: #eee; }
         .news-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .news-source { font-size: 0.6rem; font-weight: 800; padding: 3px 8px; border-radius: 4px; width: fit-content; color: white; text-transform: uppercase; margin-bottom: 5px; }
-        .news-title { font-size: 0.9rem; font-weight: 700; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-source { font-size: 0.65rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; width: fit-content; color: white; text-transform: uppercase; margin-bottom: 6px; }
+        .news-title { font-size: 0.95rem; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-        .loader-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 200; transition: 0.3s; }
-        
-        /* Skeleton Animation */
-        .skeleton { background: linear-gradient(90deg, var(--border) 25%, var(--card) 50%, var(--border) 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
-        @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .loader-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 200; transition: 0.4s; }
     </style>
 </head>
 <body>
@@ -46,86 +38,72 @@
 
 <header class="header">
     <div class="header-top">
-        <a href="#" class="logo">RADAR NEWS <small style="font-size: 0.6rem; border: 1px solid; padding: 2px 4px; border-radius: 4px;">PRO</small></a>
-        <i class="fas fa-moon" onclick="toggleTheme()" id="theme-btn"></i>
-    </div>
-    <div class="categories">
-        <div class="cat-btn active">Recentes</div>
-        <div class="cat-btn">Política</div>
-        <div class="cat-btn">Economia</div>
-        <div class="cat-btn">Tecnologia</div>
+        <a href="index.html" class="logo">RADAR NEWS <span style="font-size: 0.6rem; border: 1px solid; padding: 2px 4px; border-radius: 4px;">PRO</span></a>
+        <i class="fas fa-moon" onclick="toggleTheme()" style="cursor:pointer"></i>
     </div>
 </header>
 
 <main class="feed" id="feed">
-    <div class="news-card"><div class="news-img skeleton"></div><div class="news-info"><div class="skeleton" style="height:15px; width:40%"></div><div class="skeleton" style="height:40px; margin-top:10px"></div></div></div>
-</main>
+    </main>
 
 <script>
 const SOURCES = [
-    { name: "O PAÍS", url: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=6", color: "#e11d48" },
-    { name: "CARTA MZ", url: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=6", color: "#000" }
+    { name: "O PAÍS", url: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=8", color: "#e11d48", slug: "opais" },
+    { name: "CARTA MZ", url: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=8", color: "#000", slug: "carta" },
+    { name: "MZNEWS", url: "https://mznews.co.mz/wp-json/wp/v2/posts?_embed&per_page=8", color: "#2563eb", slug: "mznews" }
 ];
 
-async function fetchNews() {
+async function fetchAllNews() {
     const loader = document.getElementById('loader');
-    const feed = document.getElementById('feed');
     loader.style.width = '30%';
     
     let allPosts = [];
-    
     for (let src of SOURCES) {
         try {
             const res = await fetch(src.url);
             const data = await res.json();
-            const mapped = data.map(p => ({
+            allPosts = [...allPosts, ...data.map(p => ({
                 id: p.id,
                 title: p.title.rendered,
-                content: p.content.rendered,
-                source: src.name,
+                sourceSlug: src.slug,
+                sourceName: src.name,
                 color: src.color,
-                date: new Date(p.date).toLocaleDateString(),
-                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/150'
-            }));
-            allPosts = [...allPosts, ...mapped];
-        } catch (e) { console.error("Erro ao carregar", src.name); }
+                date: new Date(p.date),
+                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/300x200?text=Sem+Imagem'
+            }))];
+        } catch (e) { console.error("Erro na fonte:", src.name); }
     }
     
-    loader.style.width = '100%';
+    // Ordenar por data mais recente
+    allPosts.sort((a, b) => b.date - a.date);
     renderFeed(allPosts);
+    loader.style.width = '100%';
     setTimeout(() => loader.style.width = '0', 500);
 }
 
 function renderFeed(posts) {
-    const feed = document.getElementById('feed');
-    feed.innerHTML = posts.map(post => `
-        <div class="news-card" onclick="readArticle('${btoa(encodeURIComponent(JSON.stringify(post)))}')">
-            <img src="${post.img}" class="news-img">
+    document.getElementById('feed').innerHTML = posts.map(post => `
+        <a href="artigo.html?id=${post.id}&src=${post.sourceSlug}" class="news-card">
+            <img src="${post.img}" class="news-img" loading="lazy">
             <div class="news-info">
                 <div>
-                    <span class="news-source" style="background:${post.color}">${post.source}</span>
+                    <span class="news-source" style="background:${post.color}">${post.sourceName}</span>
                     <div class="news-title">${post.title}</div>
                 </div>
-                <div style="font-size:0.6rem; color:var(--text-meta)">${post.date}</div>
+                <div style="font-size:0.65rem; color:var(--text-meta)">${post.date.toLocaleDateString()}</div>
             </div>
-        </div>
+        </a>
     `).join('');
-}
-
-function readArticle(encodedData) {
-    const data = decodeURIComponent(atob(encodedData));
-    localStorage.setItem('current_article', data);
-    window.location.href = 'artigo.html';
 }
 
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
-    localStorage.setItem('dark', document.body.classList.contains('dark-mode'));
+    localStorage.setItem('dark-mode', document.body.classList.contains('dark-mode'));
 }
 
 window.onload = () => {
-    if(localStorage.getItem('dark') === 'true') document.body.classList.add('dark-mode');
-    fetchNews();
+    if(localStorage.getItem('dark-mode') === 'true') document.body.classList.add('dark-mode');
+    fetchAllNews();
 };
 </script>
 </body>
