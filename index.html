@@ -3,113 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Notícias CLD - O seu portal de notícias de Moçambique em tempo real.">
     <title>Notícias CLD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --primary: #1a73e8; --bg: #ffffff; --surface: #f8f9fa;
             --text: #202124; --text-sec: #5f6368; --border: #e8eaed; 
-            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
 
-        /* Header & Nav */
         .header { position: sticky; top: 0; background: rgba(255,255,255,0.98); backdrop-filter: blur(8px); z-index: 1000; padding: 12px 16px; border-bottom: 1px solid var(--border); }
         .nav-top { display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; }
-        .brand { display: flex; align-items: center; gap: 8px; font-size: 20px; font-weight: 800; color: #1f1f1f; text-decoration: none; }
+        .brand { font-size: 20px; font-weight: 800; color: #1f1f1f; text-decoration: none; }
         .brand span { color: var(--primary); }
 
-        /* Search & Filter (Estilo Imagem) */
-        .container-ui { max-width: 800px; margin: 0 auto; padding: 0 16px; }
-        .search-box { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; margin-top: 15px; }
+        .search-box { background: var(--surface); border: 1px solid var(--border); border-radius: 28px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; max-width: 800px; margin: 15px auto 0; }
         .search-box input { border: none; background: transparent; width: 100%; font-size: 15px; outline: none; }
 
-        .categories { display: flex; gap: 8px; overflow-x: auto; padding: 16px 0; scrollbar-width: none; }
-        .cat-chip { padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border); font-size: 13px; font-weight: 600; white-space: nowrap; color: var(--text-sec); background: white; }
-        .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
-
-        /* Feed Hierarchy */
         .feed { max-width: 800px; margin: 0 auto; padding: 16px; }
 
         /* Card Destaque */
-        .card-hero { display: block; text-decoration: none; color: inherit; background: white; border: 1px solid var(--border); border-radius: 24px; overflow: hidden; margin-bottom: 24px; position: relative; box-shadow: var(--shadow-md); }
+        .card-hero { display: block; text-decoration: none; color: inherit; background: white; border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
         .card-hero img { width: 100%; height: 240px; object-fit: cover; }
-        .badge-float { position: absolute; top: 16px; left: 16px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
         .card-hero .info { padding: 20px; }
-        .card-hero h2 { font-size: 22px; margin-bottom: 10px; line-height: 1.2; font-weight: 800; }
-        .card-hero p { color: var(--text-sec); font-size: 14px; line-height: 1.6; }
-
-        /* Card List */
+        .card-hero h2 { font-size: 22px; margin-bottom: 10px; font-weight: 800; line-height: 1.2; }
+        
+        /* Card Lista */
         .card-list { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #f1f3f4; text-decoration: none; color: inherit; align-items: center; }
         .card-list .text { flex: 1; }
-        .card-list h3 { font-size: 15px; font-weight: 700; line-height: 1.4; }
-        .card-list img { width: 85px; height: 85px; border-radius: 16px; object-fit: cover; background: #eee; }
+        .card-list h3 { font-size: 15px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+        .card-list img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; }
+
+        .meta-info { font-size: 11px; color: var(--text-sec); display: flex; align-items: center; gap: 8px; font-weight: 600; }
+        .meta-info i { font-size: 10px; color: var(--primary); }
 
         /* Modal Contacto */
-        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; backdrop-filter: blur(4px); }
-        .modal-content { background: white; padding: 30px; border-radius: 28px; width: 100%; max-width: 350px; text-align: center; position: relative; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        .modal h2 { margin-bottom: 20px; font-size: 18px; }
-        .contact-item { display: flex; align-items: center; gap: 15px; background: var(--surface); padding: 15px; border-radius: 16px; margin-bottom: 10px; text-decoration: none; color: var(--text); font-weight: 600; font-size: 14px; border: 1px solid var(--border); }
-        .contact-item i { color: var(--primary); font-size: 18px; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 25px; border-radius: 24px; width: 90%; max-width: 350px; text-align: center; }
+        .contact-btn { display: flex; align-items: center; gap: 12px; background: var(--surface); padding: 12px; border-radius: 12px; margin-bottom: 10px; text-decoration: none; color: var(--text); font-weight: 700; border: 1px solid var(--border); }
 
-        /* FABs */
-        .fab-group { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 12px; }
-        .btn-fab { width: 56px; height: 56px; border-radius: 18px; border: none; color: white; font-size: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .fab-msg { position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; border-radius: 18px; background: #28a745; color: white; border: none; font-size: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header class="header">
     <div class="nav-top">
-        <a href="index.html" class="brand"><i class="fas fa-bolt"></i> Notícias <span>CLD</span></a>
-        <i class="fas fa-redo-alt" onclick="location.reload()" style="color:var(--text-sec); cursor:pointer"></i>
+        <a href="index.html" class="brand">Notícias <span>CLD</span></a>
+        <i class="fas fa-redo-alt" onclick="location.reload()"></i>
     </div>
 </header>
 
-<div class="container-ui">
-    <div class="search-box">
-        <i class="fas fa-search" style="color:var(--text-sec)"></i>
-        <input type="text" placeholder="Pesquisar notícias..." id="qInput" onkeyup="doSearch()">
-    </div>
-    <div class="categories">
-        <div class="cat-chip active">Recentes</div>
-        <div class="cat-chip">Moçambique</div>
-        <div class="cat-chip">Economia</div>
-        <div class="cat-chip">Mundo</div>
-    </div>
+<div class="search-box">
+    <i class="fas fa-search" style="color:var(--text-sec)"></i>
+    <input type="text" placeholder="Pesquisar..." id="qInput" onkeyup="doSearch()">
 </div>
 
 <main class="feed" id="newsFeed"></main>
 
-<div class="modal" id="contactModal" onclick="closeModal(event)">
+<div class="modal" id="contactModal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <h2>Contactar Suporte</h2>
-        <a href="https://wa.me/258869667677" class="contact-item">
-            <i class="fab fa-whatsapp"></i> WhatsApp
-        </a>
-        <a href="tel:+258869667677" class="contact-item">
-            <i class="fas fa-phone-alt"></i> Chamar
-        </a>
-        <a href="mailto:claudioarmando001@gmail.com" class="contact-item">
-            <i class="far fa-envelope"></i> E-mail
-        </a>
-        <button onclick="document.getElementById('contactModal').style.display='none'" style="margin-top:15px; border:none; background:none; color:var(--text-sec); font-weight:700">Fechar</button>
+        <h3 style="margin-bottom:20px">Contacto</h3>
+        <a href="https://wa.me/258869667677" class="contact-btn"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+        <a href="mailto:claudioarmando001@gmail.com" class="contact-btn"><i class="far fa-envelope"></i> E-mail</a>
     </div>
 </div>
 
-<div class="fab-group">
-    <button class="btn-fab" style="background:var(--primary)" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
-    <button class="btn-fab" style="background:#28a745" onclick="document.getElementById('contactModal').style.display='flex'"><i class="fas fa-comment-alt"></i></button>
-</div>
+<button class="fab-msg" onclick="document.getElementById('contactModal').style.display='flex'"><i class="fas fa-comment-dots"></i></button>
 
 <script>
     const SOURCES = [
-        { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=8" },
-        { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=8" }
+        { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=10" },
+        { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=10" }
     ];
 
     let allPosts = [];
@@ -122,7 +90,6 @@
                 data.forEach(p => allPosts.push({
                     id: p.id, title: p.title.rendered, src: s.name, slug: s.slug,
                     img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
-                    excerpt: p.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 100) + '...',
                     date: new Date(p.date)
                 }));
             } catch(e){}
@@ -131,27 +98,31 @@
         render(allPosts);
     }
 
+    function formatDate(date) {
+        const d = new Date(date);
+        return d.toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    }
+
     function render(posts) {
         const feed = document.getElementById('newsFeed');
         feed.innerHTML = '';
         posts.forEach((p, i) => {
+            const dateStr = formatDate(p.date);
             if(i === 0) {
                 feed.innerHTML += `
                     <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card-hero">
-                        <div class="badge-float">Destaque</div>
                         <img src="${p.img}">
                         <div class="info">
-                            <h2>${p.title}</h2>
-                            <p>${p.excerpt}</p>
-                            <div style="margin-top:15px; font-size:12px; font-weight:700; color:var(--primary)">${p.src} • agora</div>
+                            <div class="meta-info"><i class="fas fa-circle"></i> ${p.src} • ${dateStr}</div>
+                            <h2 style="margin-top:8px">${p.title}</h2>
                         </div>
                     </a>`;
             } else {
                 feed.innerHTML += `
                     <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card-list">
                         <div class="text">
+                            <div class="meta-info">${p.src} • ${dateStr}</div>
                             <h3>${p.title}</h3>
-                            <div style="font-size:11px; color:var(--text-sec); margin-top:5px">${p.src}</div>
                         </div>
                         <img src="${p.img}">
                     </a>`;
@@ -163,8 +134,6 @@
         const q = document.getElementById('qInput').value.toLowerCase();
         render(allPosts.filter(p => p.title.toLowerCase().includes(q)));
     }
-
-    function closeModal(e) { if(e.target.id === 'contactModal') e.target.style.display = 'none'; }
 
     window.onload = fetchAll;
 </script>
