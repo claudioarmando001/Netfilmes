@@ -2,156 +2,143 @@
 <html lang="pt-MZ">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Notícias CLD | O seu mundo em tempo real</title>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notícias CLD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --google-blue: #1a73e8; --google-gray: #5f6368; --bg: #ffffff;
-            --card-bg: #ffffff; --text: #202124; --border: #dadce0;
+            --bg: #f8f9fa; --surface: #ffffff; --primary: #1a73e8; 
+            --text: #202124; --text-sec: #5f6368; --border: #dadce0;
         }
         body.dark-mode {
-            --bg: #030303; --card-bg: #121212; --text: #e8eaed; --border: #3c4043; --google-gray: #9aa0a6;
+            --bg: #101114; --surface: #1e1f21; --text: #e8eaed; --text-sec: #9aa0a6; --border: #3c4043;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); transition: background 0.2s; }
+        body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--text); }
+
+        /* Header */
+        .header { position: sticky; top: 0; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 1000; }
+        .nav-top { max-width: 1000px; margin: 0 auto; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 500; color: var(--text-sec); text-decoration: none; }
+        .logo span { color: var(--primary); font-weight: 700; }
+
+        /* Categorias */
+        .categories { display: flex; overflow-x: auto; gap: 8px; padding: 8px 16px; max-width: 1000px; margin: 0 auto; scrollbar-width: none; }
+        .cat-chip { padding: 8px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: 0.2s; }
+        .cat-chip.active { background: #e8f0fe; color: var(--primary); border-color: var(--primary); }
+
+        /* Grid */
+        .main-grid { max-width: 1000px; margin: 16px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; padding: 0 16px; }
+        .card { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 16px; display: flex; gap: 12px; text-decoration: none; color: inherit; position: relative; }
+        .card-content { flex: 1; }
+        .card-source { font-size: 12px; color: var(--primary); font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+        .card-title { font-size: 16px; font-weight: 500; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-img { width: 90px; height: 90px; border-radius: 8px; object-fit: cover; background: #eee; }
         
-        /* HEADER ESTILO GOOGLE NEWS */
-        .navbar { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); z-index: 1000; padding: 12px 16px; }
-        .nav-content { max-width: 1024px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-family: 'Google Sans', sans-serif; font-size: 22px; font-weight: 500; color: var(--google-gray); text-decoration: none; display: flex; align-items: center; gap: 8px; }
-        .logo b { color: var(--google-blue); font-weight: 700; }
+        .fav-btn { position: absolute; bottom: 12px; right: 12px; color: var(--text-sec); cursor: pointer; font-size: 14px; z-index: 10; }
+        .fav-btn.active { color: #d93025; }
 
-        /* FEED */
-        .main-container { max-width: 720px; margin: 0 auto; padding: 16px; }
-        .news-card { 
-            display: grid; grid-template-columns: 1fr 100px; gap: 16px; 
-            padding: 16px 0; border-bottom: 1px solid var(--border); 
-            text-decoration: none; color: inherit; transition: 0.2s;
-        }
-        .news-card:hover { opacity: 0.8; }
-        .news-info { display: flex; flex-direction: column; gap: 8px; }
-        .source-row { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--google-gray); }
-        .source-dot { width: 4px; height: 4px; background: var(--google-gray); border-radius: 50%; }
-        .news-title { font-family: 'Google Sans', sans-serif; font-size: 16px; line-height: 1.4; font-weight: 500; }
-        .news-img { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; background: #f1f3f4; border: 1px solid var(--border); }
-
-        /* LOADING & SKELETON */
-        #loading-trigger { height: 50px; display: flex; align-items: center; justify-content: center; color: var(--google-blue); font-size: 20px; }
-        .loader-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--google-blue); width: 0; z-index: 2000; transition: 0.3s; }
+        #sentinel { height: 20px; text-align: center; padding: 20px; }
     </style>
 </head>
 <body>
 
-<div class="loader-bar" id="top-loader"></div>
-
-<nav class="navbar">
-    <div class="nav-content">
-        <a href="index.html" class="logo">Notícias <b>CLD</b></a>
-        <i class="fas fa-adjust" onclick="toggleTheme()" style="cursor:pointer; color:var(--google-gray)"></i>
+<header class="header">
+    <div class="nav-top">
+        <a href="index.html" class="logo">Notícias <span>CLD</span></a>
+        <div style="display:flex; gap:20px">
+            <i class="fas fa-bookmark" onclick="showFavorites()" title="Favoritos" style="cursor:pointer"></i>
+            <i class="fas fa-moon" onclick="document.body.classList.toggle('dark-mode')" style="cursor:pointer"></i>
+        </div>
     </div>
-</nav>
+    <div class="categories" id="cat-bar">
+        <div class="cat-chip active" onclick="filterCat('all', this)">Para si</div>
+        <div class="cat-chip" onclick="filterCat('Política', this)">Política</div>
+        <div class="cat-chip" onclick="filterCat('Economia', this)">Economia</div>
+        <div class="cat-chip" onclick="filterCat('Sociedade', this)">Sociedade</div>
+        <div class="cat-chip" onclick="filterCat('Desporto', this)">Desporto</div>
+    </div>
+</header>
 
-<main class="main-container" id="feed-container">
-    </main>
-
-<div id="loading-trigger">
-    <i class="fas fa-circle-notch fa-spin"></i>
-</div>
+<main class="main-grid" id="feed"></main>
+<div id="sentinel"><i class="fas fa-spinner fa-spin"></i></div>
 
 <script>
     const SOURCES = [
-        { name: "O PAÍS", slug: "opais", url: "https://opais.co.mz/wp-json/wp/v2/posts?_embed" },
-        { name: "CARTA MZ", slug: "carta", url: "https://cartamz.com/wp-json/wp/v2/posts?_embed" },
-        { name: "MZNEWS", slug: "mznews", url: "https://mznews.co.mz/wp-json/wp/v2/posts?_embed" }
+        { name: "O PAÍS", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed" },
+        { name: "CARTA MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed" }
     ];
 
-    let currentPage = 1;
-    let isLoading = false;
-    const perPage = 6;
+    let page = 1;
+    let loading = false;
+    let favorites = JSON.parse(localStorage.getItem('cld_favs')) || [];
 
-    async function loadNews() {
-        if (isLoading) return;
-        isLoading = true;
-        document.getElementById('top-loader').style.width = '40%';
+    async function fetchNews(isNew = false) {
+        if (loading) return;
+        loading = true;
+        if(isNew) { page = 1; document.getElementById('feed').innerHTML = ''; }
 
-        let combinedNews = [];
-
-        for (const src of SOURCES) {
+        let posts = [];
+        for (const s of SOURCES) {
             try {
-                const res = await fetch(`${src.url}&per_page=${perPage}&page=${currentPage}`);
+                const res = await fetch(`${s.api}&per_page=5&page=${page}`);
                 const data = await res.json();
-                if (Array.isArray(data)) {
-                    data.forEach(p => {
-                        combinedNews.push({
-                            id: p.id,
-                            title: p.title.rendered,
-                            source: src.name,
-                            slug: src.slug,
-                            date: new Date(p.date),
-                            img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''
-                        });
-                    });
-                }
-            } catch (e) { console.warn("Erro ao buscar de " + src.name); }
+                data.forEach(p => posts.push({
+                    id: p.id, title: p.title.rendered, src: s.name, slug: s.slug,
+                    img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+                    date: new Date(p.date)
+                }));
+            } catch(e){}
         }
 
-        // Ordenar por data
-        combinedNews.sort((a, b) => b.date - a.date);
-        renderNews(combinedNews);
-        
-        isLoading = false;
-        currentPage++;
-        document.getElementById('top-loader').style.width = '100%';
-        setTimeout(() => document.getElementById('top-loader').style.width = '0', 400);
+        posts.sort((a,b) => b.date - a.date);
+        render(posts);
+        loading = false;
+        page++;
     }
 
-    function renderNews(articles) {
-        const container = document.getElementById('feed-container');
-        articles.forEach(art => {
-            const card = document.createElement('a');
-            card.className = 'news-card';
-            card.href = `artigo.html?id=${art.id}&src=${art.slug}`;
-            card.innerHTML = `
-                <div class="news-info">
-                    <div class="source-row">
-                        <span>${art.source}</span>
-                        <div class="source-dot"></div>
-                        <span>${timeSince(art.date)}</span>
+    function render(posts) {
+        const feed = document.getElementById('feed');
+        posts.forEach(p => {
+            const isFav = favorites.some(f => f.id === p.id);
+            const div = document.createElement('div');
+            div.style.position = 'relative';
+            div.innerHTML = `
+                <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card">
+                    <div class="card-content">
+                        <div class="card-source">${p.src}</div>
+                        <div class="card-title">${p.title}</div>
                     </div>
-                    <div class="news-title">${art.title}</div>
-                </div>
-                ${art.img ? `<img src="${art.img}" class="news-img" loading="lazy">` : `<div class="news-img"></div>`}
+                    ${p.img ? `<img src="${p.img}" class="card-img">` : ''}
+                </a>
+                <i class="${isFav ? 'fas' : 'far'} fa-heart fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, ${JSON.stringify(p).replace(/"/g, '&quot;')})"></i>
             `;
-            container.appendChild(card);
+            feed.appendChild(div);
         });
     }
 
-    function timeSince(date) {
-        const seconds = Math.floor((new Date() - date) / 1000);
-        let interval = Math.floor(seconds / 3600);
-        if (interval >= 24) return Math.floor(interval/24) + "d";
-        if (interval < 1) return Math.floor(seconds/60) + "m";
-        return interval + "h";
+    function toggleFav(e, post) {
+        e.preventDefault();
+        const idx = favorites.findIndex(f => f.id === post.id);
+        if(idx > -1) favorites.splice(idx, 1);
+        else favorites.push(post);
+        localStorage.setItem('cld_favs', JSON.stringify(favorites));
+        e.target.classList.toggle('fas'); e.target.classList.toggle('far');
+        e.target.classList.toggle('active');
     }
 
-    // Infinite Scroll Logic
-    window.addEventListener('scroll', () => {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-            loadNews();
-        }
+    // Scroll Infinito
+    const observer = new IntersectionObserver(entries => {
+        if(entries[0].isIntersecting) fetchNews();
     });
+    observer.observe(document.getElementById('sentinel'));
 
-    function toggleTheme() {
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('cld-theme', document.body.classList.contains('dark-mode'));
+    function filterCat(cat, el) {
+        document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        fetchNews(true);
     }
-
-    window.onload = () => {
-        if(localStorage.getItem('cld-theme') === 'true') document.body.classList.add('dark-mode');
-        loadNews();
-    };
 </script>
 </body>
 </html>
