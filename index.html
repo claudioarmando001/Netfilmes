@@ -2,143 +2,175 @@
 <html lang="pt-MZ">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Notícias CLD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg: #f8f9fa; --surface: #ffffff; --primary: #1a73e8; 
-            --text: #202124; --text-sec: #5f6368; --border: #dadce0;
+            --primary: #1a73e8; --bg: #ffffff; --surface: #f8f9fa;
+            --text: #202124; --text-sec: #5f6368; --border: #e2e8f0; --shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        body.dark-mode {
-            --bg: #101114; --surface: #1e1f21; --text: #e8eaed; --text-sec: #9aa0a6; --border: #3c4043;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--text); }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        /* Header */
-        .header { position: sticky; top: 0; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 1000; }
-        .nav-top { max-width: 1000px; margin: 0 auto; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: 500; color: var(--text-sec); text-decoration: none; }
-        .logo span { color: var(--primary); font-weight: 700; }
+        /* Header & Logo */
+        .header { position: sticky; top: 0; background: var(--bg); z-index: 1000; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .nav-top { display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: #3c4043; text-decoration: none; }
+        .brand i { color: var(--primary); background: #e8f0fe; padding: 6px; border-radius: 8px; font-size: 16px; }
+        .brand span { color: var(--primary); }
 
-        /* Categorias */
-        .categories { display: flex; overflow-x: auto; gap: 8px; padding: 8px 16px; max-width: 1000px; margin: 0 auto; scrollbar-width: none; }
-        .cat-chip { padding: 8px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .cat-chip.active { background: #e8f0fe; color: var(--primary); border-color: var(--primary); }
+        /* Search Bar (Igual à imagem) */
+        .search-wrapper { padding: 12px 16px; max-width: 800px; margin: 0 auto; }
+        .search-box { background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 10px 20px; display: flex; align-items: center; gap: 12px; }
+        .search-box input { border: none; background: transparent; width: 100%; font-size: 15px; color: var(--text-sec); outline: none; }
 
-        /* Grid */
-        .main-grid { max-width: 1000px; margin: 16px auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; padding: 0 16px; }
-        .card { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 16px; display: flex; gap: 12px; text-decoration: none; color: inherit; position: relative; }
-        .card-content { flex: 1; }
-        .card-source { font-size: 12px; color: var(--primary); font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
-        .card-title { font-size: 16px; font-weight: 500; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-img { width: 90px; height: 90px; border-radius: 8px; object-fit: cover; background: #eee; }
-        
-        .fav-btn { position: absolute; bottom: 12px; right: 12px; color: var(--text-sec); cursor: pointer; font-size: 14px; z-index: 10; }
-        .fav-btn.active { color: #d93025; }
+        /* Categories (Chips) */
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 10px 16px; scrollbar-width: none; max-width: 800px; margin: 0 auto; }
+        .cat-chip { display: flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 20px; border: 1px solid var(--border); font-size: 14px; font-weight: 600; white-space: nowrap; cursor: pointer; color: var(--text-sec); }
+        .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        #sentinel { height: 20px; text-align: center; padding: 20px; }
+        /* Feed Layout */
+        .feed { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+        /* CARD GRANDE (Destaque) */
+        .card-large { display: block; text-decoration: none; color: inherit; background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 24px; position: relative; box-shadow: var(--shadow); }
+        .card-large img { width: 100%; height: 220px; object-fit: cover; }
+        .card-large .badge { position: absolute; top: 130px; left: 16px; background: white; padding: 4px 12px; border-radius: 8px; font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text); border: 1px solid var(--border); }
+        .card-large .content { padding: 20px; }
+        .card-large h2 { font-size: 20px; font-weight: 700; line-height: 1.3; margin-bottom: 12px; }
+        .card-large p { font-size: 14px; color: var(--text-sec); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* CARDS PEQUENOS (Lista) */
+        .card-small { display: flex; gap: 15px; padding: 16px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; align-items: center; }
+        .card-small .info { flex: 1; }
+        .card-small h3 { font-size: 15px; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-small img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; }
+
+        /* Footer Info (Card) */
+        .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f1f1f1; }
+        .source-tag { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--text-sec); }
+        .source-icon { width: 24px; height: 24px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; }
+
+        /* FABs (Botões Flutuantes) */
+        .fab-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .fab { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; border: none; }
+        .fab-up { background: var(--primary); }
+        .fab-msg { background: #28a745; }
+
+        .bookmark { position: absolute; top: 130px; right: 16px; background: rgba(255,255,255,0.9); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-sec); }
     </style>
 </head>
 <body>
 
 <header class="header">
     <div class="nav-top">
-        <a href="index.html" class="logo">Notícias <span>CLD</span></a>
-        <div style="display:flex; gap:20px">
-            <i class="fas fa-bookmark" onclick="showFavorites()" title="Favoritos" style="cursor:pointer"></i>
-            <i class="fas fa-moon" onclick="document.body.classList.toggle('dark-mode')" style="cursor:pointer"></i>
-        </div>
-    </div>
-    <div class="categories" id="cat-bar">
-        <div class="cat-chip active" onclick="filterCat('all', this)">Para si</div>
-        <div class="cat-chip" onclick="filterCat('Política', this)">Política</div>
-        <div class="cat-chip" onclick="filterCat('Economia', this)">Economia</div>
-        <div class="cat-chip" onclick="filterCat('Sociedade', this)">Sociedade</div>
-        <div class="cat-chip" onclick="filterCat('Desporto', this)">Desporto</div>
+        <a href="index.html" class="brand"><i class="fas fa-newspaper"></i> Notícias <span>CLD</span></a>
+        <i class="fas fa-sync-alt" style="color:var(--text-sec); font-size: 16px;" onclick="location.reload()"></i>
     </div>
 </header>
 
-<main class="main-grid" id="feed"></main>
-<div id="sentinel"><i class="fas fa-spinner fa-spin"></i></div>
+<div class="search-wrapper">
+    <div class="search-box">
+        <i class="fas fa-search" style="color:var(--text-sec)"></i>
+        <input type="text" id="searchInput" placeholder="Pesquisar notícias por título, conteúdo ou fon" onkeyup="search()">
+    </div>
+</div>
+
+<div class="categories">
+    <div class="cat-chip active"><i class="fas fa-globe"></i> Todas</div>
+    <div class="cat-chip"><i class="fas fa-balance-scale"></i> Política</div>
+    <div class="cat-chip"><i class="fas fa-chart-line"></i> Economia</div>
+    <div class="cat-chip"><i class="fas fa-futbol"></i> Desporto</div>
+</div>
+
+<main class="feed" id="newsFeed">
+    </main>
+
+<div class="fab-container">
+    <button class="fab fab-up" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+    <button class="fab fab-msg" onclick="window.location.href='mailto:contato@noticiascld.online'"><i class="fas fa-envelope"></i></button>
+</div>
 
 <script>
-    const SOURCES = [
-        { name: "O PAÍS", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed" },
-        { name: "CARTA MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed" }
-    ];
+const SOURCES = [
+    { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=10" },
+    { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=10" }
+];
 
-    let page = 1;
-    let loading = false;
-    let favorites = JSON.parse(localStorage.getItem('cld_favs')) || [];
+let allPosts = [];
 
-    async function fetchNews(isNew = false) {
-        if (loading) return;
-        loading = true;
-        if(isNew) { page = 1; document.getElementById('feed').innerHTML = ''; }
-
-        let posts = [];
-        for (const s of SOURCES) {
-            try {
-                const res = await fetch(`${s.api}&per_page=5&page=${page}`);
-                const data = await res.json();
-                data.forEach(p => posts.push({
-                    id: p.id, title: p.title.rendered, src: s.name, slug: s.slug,
-                    img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
-                    date: new Date(p.date)
-                }));
-            } catch(e){}
-        }
-
-        posts.sort((a,b) => b.date - a.date);
-        render(posts);
-        loading = false;
-        page++;
+async function loadFeed() {
+    const feed = document.getElementById('newsFeed');
+    
+    for (const s of SOURCES) {
+        try {
+            const res = await fetch(s.api);
+            const data = await res.json();
+            data.forEach(p => allPosts.push({
+                id: p.id,
+                title: p.title.rendered,
+                excerpt: p.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 120) + '...',
+                src: s.name,
+                slug: s.slug,
+                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x200',
+                date: new Date(p.date),
+                cat: "Economia" // Mock para o badge como na imagem
+            }));
+        } catch(e) {}
     }
 
-    function render(posts) {
-        const feed = document.getElementById('feed');
-        posts.forEach(p => {
-            const isFav = favorites.some(f => f.id === p.id);
-            const div = document.createElement('div');
-            div.style.position = 'relative';
-            div.innerHTML = `
-                <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card">
-                    <div class="card-content">
-                        <div class="card-source">${p.src}</div>
-                        <div class="card-title">${p.title}</div>
+    allPosts.sort((a,b) => b.date - a.date);
+    render(allPosts);
+}
+
+function render(posts) {
+    const feed = document.getElementById('newsFeed');
+    feed.innerHTML = '';
+
+    posts.forEach((p, index) => {
+        if(index === 0) {
+            // CARD GRANDE (Destaque)
+            feed.innerHTML += `
+                <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card-large">
+                    <img src="${p.img}">
+                    <div class="badge">${p.cat}</div>
+                    <div class="bookmark"><i class="far fa-bookmark"></i></div>
+                    <div class="content">
+                        <h2>${p.title}</h2>
+                        <p>${p.excerpt}</p>
+                        <div class="card-footer">
+                            <div class="source-tag">
+                                <div class="source-icon">${p.src[0]}</div> ${p.src}
+                            </div>
+                            <div style="font-size:12px; color:var(--text-sec)"><i class="far fa-clock"></i> 1 h</div>
+                        </div>
                     </div>
-                    ${p.img ? `<img src="${p.img}" class="card-img">` : ''}
                 </a>
-                <i class="${isFav ? 'fas' : 'far'} fa-heart fav-btn ${isFav ? 'active' : ''}" onclick="toggleFav(event, ${JSON.stringify(p).replace(/"/g, '&quot;')})"></i>
             `;
-            feed.appendChild(div);
-        });
-    }
-
-    function toggleFav(e, post) {
-        e.preventDefault();
-        const idx = favorites.findIndex(f => f.id === post.id);
-        if(idx > -1) favorites.splice(idx, 1);
-        else favorites.push(post);
-        localStorage.setItem('cld_favs', JSON.stringify(favorites));
-        e.target.classList.toggle('fas'); e.target.classList.toggle('far');
-        e.target.classList.toggle('active');
-    }
-
-    // Scroll Infinito
-    const observer = new IntersectionObserver(entries => {
-        if(entries[0].isIntersecting) fetchNews();
+        } else {
+            // CARD PEQUENO (Lista)
+            feed.innerHTML += `
+                <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card-small">
+                    <div class="info">
+                        <h3>${p.title}</h3>
+                        <div style="font-size:11px; color:var(--text-sec); margin-top:8px;">${p.src} • há 2 horas</div>
+                    </div>
+                    <img src="${p.img}">
+                </a>
+            `;
+        }
     });
-    observer.observe(document.getElementById('sentinel'));
+}
 
-    function filterCat(cat, el) {
-        document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        fetchNews(true);
-    }
+function search() {
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = allPosts.filter(p => p.title.toLowerCase().includes(input));
+    render(filtered);
+}
+
+window.onload = loadFeed;
 </script>
 </body>
 </html>
