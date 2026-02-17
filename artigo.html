@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lendo Artigo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0f172a; --accent: #e11d48; --bg: #ffffff; --card: #f8fafc;
+            --text: #0f172a; --text-meta: #64748b; --border: #e2e8f0;
+        }
+        body.dark-mode {
+            --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-meta: #94a3b8; --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; transition: 0.3s; }
+        
+        .toolbar { position: sticky; top: 0; background: var(--bg); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); z-index: 100; }
+        .back-btn { cursor: pointer; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; text-decoration: none; color: inherit; font-weight: 700; }
+        
+        .container { max-width: 700px; margin: 0 auto; padding: 20px; }
+        .source-tag { font-weight: 800; text-transform: uppercase; font-size: 0.7rem; color: var(--accent); letter-spacing: 1px; }
+        h1 { font-size: 1.8rem; line-height: 1.2; margin: 10px 0 20px 0; font-weight: 800; }
+        
+        .featured-img { width: 100%; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        
+        /* Estilo para o conteúdo do WordPress */
+        .article-body { font-family: 'Lora', serif; font-size: 1.15rem; color: var(--text); }
+        .article-body p { margin-bottom: 20px; }
+        .article-body img { max-width: 100%; border-radius: 12px; height: auto; }
+        
+        .action-bar { display: flex; gap: 15px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); }
+        .btn-action { flex: 1; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<nav class="toolbar">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <div style="display:flex; gap:20px">
+        <i class="fas fa-volume-up" onclick="speakContent()" style="cursor:pointer"></i>
+        <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer"></i>
+    </div>
+</nav>
+
+<article class="container">
+    <div id="meta-area">
+        <span class="source-tag" id="source-name">FONTE</span>
+        <h1 id="art-title">Carregando título...</h1>
+    </div>
+    
+    <img id="art-img" src="" class="featured-img" onerror="this.style.display='none'">
+    
+    <div id="art-content" class="article-body">
+        </div>
+
+    <div class="action-bar">
+        <button class="btn-action" onclick="window.print()"><i class="fas fa-print"></i> PDF</button>
+        <button class="btn-action" id="theme-toggle"><i class="fas fa-adjust"></i> Tema</button>
+    </div>
+</article>
+
+<script>
+    const article = JSON.parse(localStorage.getItem('current_article'));
+
+    if(!article) window.location.href = 'index.html';
+
+    window.onload = () => {
+        if(localStorage.getItem('dark') === 'true') document.body.classList.add('dark-mode');
+        
+        document.title = article.title;
+        document.getElementById('source-name').innerText = article.source;
+        document.getElementById('source-name').style.color = article.color;
+        document.getElementById('art-title').innerText = article.title;
+        document.getElementById('art-img').src = article.img;
+        document.getElementById('art-content').innerHTML = article.content;
+    };
+
+    document.getElementById('theme-toggle').onclick = () => {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('dark', document.body.classList.contains('dark-mode'));
+    };
+
+    function speakContent() {
+        const text = document.getElementById('art-content').innerText;
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'pt-PT';
+        window.speechSynthesis.speak(msg);
+    }
+
+    async function share() {
+        try {
+            await navigator.share({
+                title: article.title,
+                text: 'Vi isso no Radar News PRO',
+                url: window.location.href
+            });
+        } catch (e) {}
+    }
+</script>
+</body>
+</html>
