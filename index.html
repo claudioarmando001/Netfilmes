@@ -3,108 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Radar News PRO | Moçambique</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <title>Notícias CLD | O seu mundo em tempo real</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0f172a; --accent: #e11d48; --bg: #f1f5f9; --card: #ffffff;
-            --text: #0f172a; --text-meta: #64748b; --border: #e2e8f0; --radius: 18px;
+            --google-blue: #1a73e8; --google-gray: #5f6368; --bg: #ffffff;
+            --card-bg: #ffffff; --text: #202124; --border: #dadce0;
         }
         body.dark-mode {
-            --bg: #020617; --card: #1e293b; --text: #f8fafc; --text-meta: #94a3b8; --border: #334155;
+            --bg: #030303; --card-bg: #121212; --text: #e8eaed; --border: #3c4043; --google-gray: #9aa0a6;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 30px; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); color: var(--text); transition: background 0.2s; }
         
-        .header { position: sticky; top: 0; z-index: 100; background: var(--card); border-bottom: 1px solid var(--border); padding: 15px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; max-width: 800px; margin: 0 auto; }
-        .logo { font-weight: 800; color: var(--accent); font-size: 1.3rem; text-decoration: none; display: flex; align-items: center; gap: 5px; }
-        
-        .feed { padding: 15px; max-width: 800px; margin: 0 auto; display: grid; gap: 15px; }
-        .news-card { background: var(--card); border-radius: var(--radius); padding: 12px; display: flex; gap: 15px; border: 1px solid var(--border); cursor: pointer; text-decoration: none; color: inherit; transition: transform 0.2s, box-shadow 0.2s; }
-        .news-card:active { transform: scale(0.98); }
-        .news-img { width: 110px; height: 110px; border-radius: 14px; object-fit: cover; background: #eee; }
-        .news-info { flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
-        .news-source { font-size: 0.65rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; width: fit-content; color: white; text-transform: uppercase; margin-bottom: 6px; }
-        .news-title { font-size: 0.95rem; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        /* HEADER ESTILO GOOGLE NEWS */
+        .navbar { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); z-index: 1000; padding: 12px 16px; }
+        .nav-content { max-width: 1024px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-family: 'Google Sans', sans-serif; font-size: 22px; font-weight: 500; color: var(--google-gray); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .logo b { color: var(--google-blue); font-weight: 700; }
 
-        .loader-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--accent); width: 0%; z-index: 200; transition: 0.4s; }
+        /* FEED */
+        .main-container { max-width: 720px; margin: 0 auto; padding: 16px; }
+        .news-card { 
+            display: grid; grid-template-columns: 1fr 100px; gap: 16px; 
+            padding: 16px 0; border-bottom: 1px solid var(--border); 
+            text-decoration: none; color: inherit; transition: 0.2s;
+        }
+        .news-card:hover { opacity: 0.8; }
+        .news-info { display: flex; flex-direction: column; gap: 8px; }
+        .source-row { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--google-gray); }
+        .source-dot { width: 4px; height: 4px; background: var(--google-gray); border-radius: 50%; }
+        .news-title { font-family: 'Google Sans', sans-serif; font-size: 16px; line-height: 1.4; font-weight: 500; }
+        .news-img { width: 100px; height: 100px; border-radius: 8px; object-fit: cover; background: #f1f3f4; border: 1px solid var(--border); }
+
+        /* LOADING & SKELETON */
+        #loading-trigger { height: 50px; display: flex; align-items: center; justify-content: center; color: var(--google-blue); font-size: 20px; }
+        .loader-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--google-blue); width: 0; z-index: 2000; transition: 0.3s; }
     </style>
 </head>
 <body>
 
-<div class="loader-bar" id="loader"></div>
+<div class="loader-bar" id="top-loader"></div>
 
-<header class="header">
-    <div class="header-top">
-        <a href="index.html" class="logo">RADAR NEWS <span style="font-size: 0.6rem; border: 1px solid; padding: 2px 4px; border-radius: 4px;">PRO</span></a>
-        <i class="fas fa-moon" onclick="toggleTheme()" style="cursor:pointer"></i>
+<nav class="navbar">
+    <div class="nav-content">
+        <a href="index.html" class="logo">Notícias <b>CLD</b></a>
+        <i class="fas fa-adjust" onclick="toggleTheme()" style="cursor:pointer; color:var(--google-gray)"></i>
     </div>
-</header>
+</nav>
 
-<main class="feed" id="feed">
+<main class="main-container" id="feed-container">
     </main>
 
+<div id="loading-trigger">
+    <i class="fas fa-circle-notch fa-spin"></i>
+</div>
+
 <script>
-const SOURCES = [
-    { name: "O PAÍS", url: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=8", color: "#e11d48", slug: "opais" },
-    { name: "CARTA MZ", url: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=8", color: "#000", slug: "carta" },
-    { name: "MZNEWS", url: "https://mznews.co.mz/wp-json/wp/v2/posts?_embed&per_page=8", color: "#2563eb", slug: "mznews" }
-];
+    const SOURCES = [
+        { name: "O PAÍS", slug: "opais", url: "https://opais.co.mz/wp-json/wp/v2/posts?_embed" },
+        { name: "CARTA MZ", slug: "carta", url: "https://cartamz.com/wp-json/wp/v2/posts?_embed" },
+        { name: "MZNEWS", slug: "mznews", url: "https://mznews.co.mz/wp-json/wp/v2/posts?_embed" }
+    ];
 
-async function fetchAllNews() {
-    const loader = document.getElementById('loader');
-    loader.style.width = '30%';
-    
-    let allPosts = [];
-    for (let src of SOURCES) {
-        try {
-            const res = await fetch(src.url);
-            const data = await res.json();
-            allPosts = [...allPosts, ...data.map(p => ({
-                id: p.id,
-                title: p.title.rendered,
-                sourceSlug: src.slug,
-                sourceName: src.name,
-                color: src.color,
-                date: new Date(p.date),
-                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/300x200?text=Sem+Imagem'
-            }))];
-        } catch (e) { console.error("Erro na fonte:", src.name); }
+    let currentPage = 1;
+    let isLoading = false;
+    const perPage = 6;
+
+    async function loadNews() {
+        if (isLoading) return;
+        isLoading = true;
+        document.getElementById('top-loader').style.width = '40%';
+
+        let combinedNews = [];
+
+        for (const src of SOURCES) {
+            try {
+                const res = await fetch(`${src.url}&per_page=${perPage}&page=${currentPage}`);
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    data.forEach(p => {
+                        combinedNews.push({
+                            id: p.id,
+                            title: p.title.rendered,
+                            source: src.name,
+                            slug: src.slug,
+                            date: new Date(p.date),
+                            img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''
+                        });
+                    });
+                }
+            } catch (e) { console.warn("Erro ao buscar de " + src.name); }
+        }
+
+        // Ordenar por data
+        combinedNews.sort((a, b) => b.date - a.date);
+        renderNews(combinedNews);
+        
+        isLoading = false;
+        currentPage++;
+        document.getElementById('top-loader').style.width = '100%';
+        setTimeout(() => document.getElementById('top-loader').style.width = '0', 400);
     }
-    
-    // Ordenar por data mais recente
-    allPosts.sort((a, b) => b.date - a.date);
-    renderFeed(allPosts);
-    loader.style.width = '100%';
-    setTimeout(() => loader.style.width = '0', 500);
-}
 
-function renderFeed(posts) {
-    document.getElementById('feed').innerHTML = posts.map(post => `
-        <a href="artigo.html?id=${post.id}&src=${post.sourceSlug}" class="news-card">
-            <img src="${post.img}" class="news-img" loading="lazy">
-            <div class="news-info">
-                <div>
-                    <span class="news-source" style="background:${post.color}">${post.sourceName}</span>
-                    <div class="news-title">${post.title}</div>
+    function renderNews(articles) {
+        const container = document.getElementById('feed-container');
+        articles.forEach(art => {
+            const card = document.createElement('a');
+            card.className = 'news-card';
+            card.href = `artigo.html?id=${art.id}&src=${art.slug}`;
+            card.innerHTML = `
+                <div class="news-info">
+                    <div class="source-row">
+                        <span>${art.source}</span>
+                        <div class="source-dot"></div>
+                        <span>${timeSince(art.date)}</span>
+                    </div>
+                    <div class="news-title">${art.title}</div>
                 </div>
-                <div style="font-size:0.65rem; color:var(--text-meta)">${post.date.toLocaleDateString()}</div>
-            </div>
-        </a>
-    `).join('');
-}
+                ${art.img ? `<img src="${art.img}" class="news-img" loading="lazy">` : `<div class="news-img"></div>`}
+            `;
+            container.appendChild(card);
+        });
+    }
 
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('dark-mode', document.body.classList.contains('dark-mode'));
-}
+    function timeSince(date) {
+        const seconds = Math.floor((new Date() - date) / 1000);
+        let interval = Math.floor(seconds / 3600);
+        if (interval >= 24) return Math.floor(interval/24) + "d";
+        if (interval < 1) return Math.floor(seconds/60) + "m";
+        return interval + "h";
+    }
 
-window.onload = () => {
-    if(localStorage.getItem('dark-mode') === 'true') document.body.classList.add('dark-mode');
-    fetchAllNews();
-};
+    // Infinite Scroll Logic
+    window.addEventListener('scroll', () => {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+            loadNews();
+        }
+    });
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        localStorage.setItem('cld-theme', document.body.classList.contains('dark-mode'));
+    }
+
+    window.onload = () => {
+        if(localStorage.getItem('cld-theme') === 'true') document.body.classList.add('dark-mode');
+        loadNews();
+    };
 </script>
 </body>
 </html>
