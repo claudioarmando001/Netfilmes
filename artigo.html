@@ -2,108 +2,99 @@
 <html lang="pt-MZ">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Notícias CLD | Artigo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lendo - CLD</title>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Georgia&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --text: #202124; --bg: #ffffff; --border: #dadce0; --gray: #5f6368; --blue: #1a73e8; }
-        body.dark-mode { --text: #e8eaed; --bg: #030303; --border: #3c4043; --gray: #9aa0a6; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --text: #202124; --bg: #ffffff; --primary: #1a73e8; }
+        body.dark-mode { --text: #e8eaed; --bg: #101114; }
         body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
         
-        .header-bar { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
-        .back-btn { text-decoration: none; color: var(--text); font-size: 18px; }
-
-        .article-container { max-width: 700px; margin: 0 auto; padding: 24px 16px; }
-        .source-name { color: var(--blue); font-weight: 700; text-transform: uppercase; font-size: 13px; margin-bottom: 12px; display: block; }
-        h1 { font-size: 28px; line-height: 1.2; margin-bottom: 20px; font-weight: 500; }
+        .nav { position: sticky; top: 0; background: var(--bg); padding: 12px; border-bottom: 1px solid #dadce0; display: flex; justify-content: space-between; z-index: 100; }
+        .container { max-width: 700px; margin: 0 auto; padding: 24px 16px; }
         
-        .hero-img { width: calc(100% + 32px); margin-left: -16px; height: auto; max-height: 400px; object-fit: cover; margin-bottom: 24px; }
+        h1 { font-size: 32px; line-height: 1.2; font-weight: 500; margin-bottom: 20px; }
+        .meta { color: var(--primary); font-weight: 700; font-size: 14px; margin-bottom: 16px; display: block; }
+        .main-img { width: 100%; border-radius: 16px; margin-bottom: 24px; }
         
-        .content { font-family: 'Georgia', serif; font-size: 19px; line-height: 1.8; color: var(--text); }
+        .content { font-family: 'Georgia', serif; font-size: 20px; line-height: 1.8; }
         .content p { margin-bottom: 24px; }
-        .content img { max-width: 100%; border-radius: 8px; height: auto; }
+        .content img { max-width: 100%; border-radius: 8px; }
 
-        .fab-share { 
-            position: fixed; bottom: 24px; right: 24px; width: 56px; height: 56px; 
-            background: var(--blue); color: white; border-radius: 16px; 
-            display: flex; align-items: center; justify-content: center; 
-            box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4); border: none; font-size: 20px; cursor: pointer;
-        }
-        #loading { text-align: center; padding: 100px 0; }
+        /* Agregador Final */
+        .related { margin-top: 50px; padding-top: 30px; border-top: 2px solid #eee; }
+        .related-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
+        .related-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .rel-card { display: flex; gap: 8px; text-decoration: none; color: inherit; font-size: 13px; font-weight: 500; background: #f8f9fa; padding: 8px; border-radius: 8px; }
+        .rel-card img { width: 60px; height: 60px; border-radius: 4px; object-fit: cover; }
+        
+        @media (max-width: 600px) { .related-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<div class="header-bar">
-    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
-    <div style="display:flex; gap:20px; color: var(--gray)">
-        <i class="fas fa-headphones" onclick="readAloud()" style="cursor:pointer"></i>
-        <i class="fas fa-adjust" onclick="toggleTheme()" style="cursor:pointer"></i>
-    </div>
-</div>
+<nav class="nav">
+    <a href="index.html" style="color:inherit; text-decoration:none"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer"></i>
+</nav>
 
-<div id="loading"><i class="fas fa-spinner fa-spin"></i></div>
+<article class="container">
+    <span class="meta" id="meta-src"></span>
+    <h1 id="title">Carregando...</h1>
+    <img src="" id="img" class="main-img">
+    <div class="content" id="content"></div>
 
-<main class="article-container" id="art-body" style="display:none">
-    <span class="source-name" id="src-name"></span>
-    <h1 id="art-title"></h1>
-    <img src="" id="art-img" class="hero-img">
-    <div class="content" id="art-content"></div>
-</main>
-
-<button class="fab-share" onclick="share()"><i class="fas fa-share-alt"></i></button>
+    <section class="related">
+        <div class="related-title">Mais para ler</div>
+        <div class="related-grid" id="related-news"></div>
+    </section>
+</article>
 
 <script>
     const API_MAP = {
-        'opais': { name: 'O PAÍS', api: 'https://opais.co.mz/wp-json/wp/v2/posts/' },
-        'carta': { name: 'CARTA MZ', api: 'https://cartamz.com/wp-json/wp/v2/posts/' },
-        'mznews': { name: 'MZNEWS', api: 'https://mznews.co.mz/wp-json/wp/v2/posts/' }
+        'opais': { name: 'O PAÍS', url: 'https://opais.co.mz/wp-json/wp/v2/posts/' },
+        'carta': { name: 'CARTA MZ', url: 'https://cartamz.com/wp-json/wp/v2/posts/' }
     };
 
-    async function fetchArticle() {
-        const p = new URLSearchParams(window.location.search);
-        const id = p.get('id');
-        const src = p.get('src');
-
-        if (!id || !API_MAP[src]) return;
-
+    async function load() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const src = urlParams.get('src');
+        
         try {
-            const res = await fetch(`${API_MAP[src].api}${id}?_embed`);
+            const res = await fetch(`${API_MAP[src].url}${id}?_embed`);
             const data = await res.json();
-
-            document.getElementById('src-name').innerText = API_MAP[src].name;
-            document.getElementById('art-title').innerHTML = data.title.rendered;
-            document.getElementById('art-img').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-            document.getElementById('art-content').innerHTML = data.content.rendered;
             
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('art-body').style.display = 'block';
-        } catch (e) {
-            document.getElementById('loading').innerText = "Erro ao carregar notícia.";
-        }
+            document.getElementById('meta-src').innerText = API_MAP[src].name;
+            document.getElementById('title').innerHTML = data.title.rendered;
+            document.getElementById('img').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+            document.getElementById('content').innerHTML = data.content.rendered;
+            
+            loadRelated(src);
+        } catch(e) {}
+    }
+
+    async function loadRelated(src) {
+        const res = await fetch(`${API_MAP[src].url}?per_page=6&_embed`);
+        const data = await res.json();
+        const container = document.getElementById('related-news');
+        
+        data.forEach(p => {
+            container.innerHTML += `
+                <a href="artigo.html?id=${p.id}&src=${src}" class="rel-card">
+                    <img src="${p._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
+                    <span>${p.title.rendered}</span>
+                </a>
+            `;
+        });
     }
 
     function share() {
-        navigator.share ? navigator.share({ title: document.title, url: window.location.href }) : alert("Link copiado!");
+        navigator.share({ title: document.title, url: window.location.href });
     }
 
-    function readAloud() {
-        const msg = new SpeechSynthesisUtterance(document.getElementById('art-content').innerText);
-        msg.lang = 'pt-PT';
-        window.speechSynthesis.speak(msg);
-    }
-
-    function toggleTheme() {
-        document.body.classList.toggle('dark-mode');
-        localStorage.setItem('cld-theme', document.body.classList.contains('dark-mode'));
-    }
-
-    window.onload = () => {
-        if(localStorage.getItem('cld-theme') === 'true') document.body.classList.add('dark-mode');
-        fetchArticle();
-    }
+    window.onload = load;
 </script>
 </body>
 </html>
