@@ -3,102 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:type" content="article">
-    <title>Notícias de Última Hora</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <title>Leitura | Notícias Flash</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #ff0050; --text: #111111; --border: #eeeeee; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: var(--text); line-height: 1.6; }
-        .top-nav { position: sticky; top: 0; background: #fff; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .container { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
-        
-        .date-src { font-size: 12px; color: var(--primary); font-weight: 800; margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 1px; }
-        h1 { font-size: 32px; line-height: 1.1; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px; }
-        .hero { width: 100%; border-radius: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        
-        .content { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: #333; }
-        .content p { margin-bottom: 20px; }
-        .content img { width: 100%; border-radius: 15px; height: auto; margin: 15px 0; }
-
-        .more-section { margin-top: 50px; padding-top: 30px; border-top: 5px solid var(--surface); }
-        .mini-card { display: flex; gap: 12px; text-decoration: none; color: inherit; padding: 15px 0; border-bottom: 1px solid #eee; align-items: center; }
-        .mini-card h5 { font-size: 15px; font-weight: 700; flex: 1; }
-        .mini-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
+        :root { --primary: #e50914; --text: #111; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.8; color: var(--text); padding-bottom: 50px; }
+        .nav { position: sticky; top: 0; background: #fff; padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; z-index: 100; }
+        .container { max-width: 750px; margin: 0 auto; padding: 20px; }
+        h1 { font-size: 30px; font-weight: 800; line-height: 1.2; margin: 20px 0; }
+        .meta { color: var(--primary); font-weight: 800; text-transform: uppercase; font-size: 12px; }
+        .main-img { width: 100%; border-radius: 20px; margin-bottom: 30px; }
+        .content { font-size: 19px; color: #333; }
+        .content img { max-width: 100%; border-radius: 10px; height: auto; }
+        .back-btn { text-decoration: none; color: #000; font-weight: 700; }
     </style>
 </head>
 <body>
 
-<div class="top-nav">
-    <a href="index.html" style="color:inherit; text-decoration:none; font-weight:700"><i class="fas fa-arrow-left"></i> Voltar</a>
-    <i class="fas fa-share-alt" onclick="shareArticle()" style="cursor:pointer; color:var(--primary); font-size: 20px;"></i>
+<div class="nav">
+    <a href="index.html" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="navigator.share({url: window.location.href})" style="cursor:pointer"></i>
 </div>
 
 <div class="container">
-    <span class="date-src" id="artMeta"></span>
-    <h1 id="artTitle">Carregando fofoca fresquinha...</h1>
-    <img src="" id="artImg" class="hero">
+    <span class="meta" id="artMeta">Carregando...</span>
+    <h1 id="artTitle">...</h1>
+    <img src="" id="artImg" class="main-img">
     <div class="content" id="artContent"></div>
-
-    <section class="more-section">
-        <h4 style="margin-bottom:15px; text-transform: uppercase;">🔥 Mais quentes agora</h4>
-        <div id="agregador"></div>
-    </section>
 </div>
 
 <script>
     const APIS = { 
-        'tmz': 'https://www.tmz.com/wp-json/wp/v2/posts/', 
-        'enews': 'https://www.eonline.com/wp-json/wp/v2/posts/' 
+        'thr': 'https://www.hollywoodreporter.com/wp-json/wp/v2/posts/', 
+        'billboard': 'https://www.billboard.com/wp-json/wp/v2/posts/',
+        'variety': 'https://variety.com/wp-json/wp/v2/posts/',
+        'rollingstone': 'https://www.rollingstone.com/wp-json/wp/v2/posts/'
     };
 
     async function load() {
-        const p = new URLSearchParams(window.location.search);
-        const id = p.get('id');
-        const src = p.get('src');
+        const urlParams = new URLSearchParams(window.location.search);
+        const id = urlParams.get('id');
+        const src = urlParams.get('src');
 
         try {
             const r = await fetch(`${APIS[src]}${id}?_embed`);
             const data = await r.json();
             
-            const title = data.title.rendered;
-            const img = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-
-            document.title = title;
-            document.getElementById('artTitle').innerHTML = title;
-            document.getElementById('artImg').src = img;
+            document.title = data.title.rendered;
+            document.getElementById('artTitle').innerHTML = data.title.rendered;
+            document.getElementById('artImg').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
             document.getElementById('artContent').innerHTML = data.content.rendered;
-            document.getElementById('artMeta').innerText = `${src.toUpperCase()} • DE ÚLTIMA HORA`;
-
-            loadMore(src);
-        } catch(e){
-            document.getElementById('artTitle').innerText = "Erro ao carregar artigo.";
+            document.getElementById('artMeta').innerText = src.toUpperCase();
+        } catch(e) { 
+            document.getElementById('artTitle').innerText = "Erro ao carregar notícia."; 
         }
     }
-
-    async function loadMore(src) {
-        const r = await fetch(`${APIS[src]}?_embed&per_page=6`);
-        const rel = await r.json();
-        const agg = document.getElementById('agregador');
-        rel.forEach(n => {
-            agg.innerHTML += `
-                <a href="artigo.html?id=${n.id}&src=${src}" class="mini-card">
-                    <h5>${n.title.rendered}</h5>
-                    <img src="${n._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
-                </a>`;
-        });
-    }
-
-    function shareArticle() {
-        if (navigator.share) {
-            navigator.share({
-                title: document.getElementById('artTitle').innerText,
-                text: 'Olha o que saiu no Notícias de Última Hora!',
-                url: window.location.href
-            });
-        }
-    }
-
     window.onload = load;
 </script>
 </body>
