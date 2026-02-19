@@ -3,114 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Notícias de Última Hora</title>
+    <title>Notícias de Última Hora | Hollywood & Celebs</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #ff0050; --bg: #ffffff; --surface: #f8f9fa;
-            --text: #111111; --text-sec: #666666; --border: #eeeeee; 
+            --primary: #e50914; /* Vermelho Cinema */
+            --bg: #ffffff; --surface: #f8f9fa;
+            --text: #000000; --text-sec: #444444; --border: #ececec; 
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
-        .header { position: sticky; top: 0; background: white; z-index: 1000; padding: 12px 16px; border-bottom: 2px solid var(--primary); }
-        .nav-top { display: flex; align-items: center; justify-content: space-between; max-width: 800px; margin: 0 auto; }
-        .brand { font-size: 20px; font-weight: 800; color: #1f1f1f; text-decoration: none; text-transform: uppercase; }
+        .header { position: sticky; top: 0; background: white; z-index: 1000; padding: 15px; border-bottom: 2px solid var(--primary); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .nav-top { display: flex; align-items: center; justify-content: space-between; max-width: 900px; margin: 0 auto; }
+        .brand { font-size: 22px; font-weight: 800; color: #000; text-decoration: none; letter-spacing: -1px; }
         .brand span { color: var(--primary); }
 
-        .search-box { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; max-width: 800px; margin: 15px auto; }
-        .search-box input { border: none; background: transparent; width: 100%; font-size: 15px; outline: none; }
+        .search-box { background: var(--surface); border-radius: 12px; padding: 12px 20px; display: flex; align-items: center; gap: 12px; max-width: 900px; margin: 15px auto; border: 1px solid var(--border); }
+        .search-box input { border: none; background: transparent; width: 100%; font-size: 16px; outline: none; }
 
-        .feed { max-width: 800px; margin: 0 auto; padding: 0 16px; }
+        .feed { max-width: 900px; margin: 0 auto; padding: 0 16px; }
 
-        /* Estado de Carregamento */
-        .loading { text-align: center; padding: 40px; color: var(--text-sec); }
-
-        .card-hero { display: block; text-decoration: none; color: inherit; background: white; border-radius: 20px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .card-hero img { width: 100%; height: 250px; object-fit: cover; background: #eee; }
-        .card-hero .info { padding: 20px; }
-        .card-hero h2 { font-size: 22px; font-weight: 800; line-height: 1.2; margin-top: 8px; }
+        .card-hero { display: block; text-decoration: none; color: inherit; background: white; border-radius: 20px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .card-hero img { width: 100%; height: 350px; object-fit: cover; background: #333; }
+        .card-hero .info { padding: 25px; }
+        .card-hero h2 { font-size: 26px; font-weight: 800; line-height: 1.1; margin-top: 10px; }
         
-        .card-list { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #eee; text-decoration: none; color: inherit; align-items: center; }
+        .card-list { display: flex; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; align-items: center; }
         .card-list .text { flex: 1; }
-        .card-list h3 { font-size: 15px; font-weight: 700; line-height: 1.4; }
-        .card-list img { width: 85px; height: 85px; border-radius: 12px; object-fit: cover; background: #eee; }
+        .card-list h3 { font-size: 17px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+        .card-list img { width: 110px; height: 110px; border-radius: 16px; object-fit: cover; background: #eee; flex-shrink: 0; }
 
-        .meta-info { font-size: 10px; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+        .meta-info { font-size: 11px; color: var(--primary); font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 5px; }
+        
+        .loading-footer { text-align: center; padding: 30px; font-weight: 700; color: var(--text-sec); }
     </style>
 </head>
 <body>
 
 <header class="header">
     <div class="nav-top">
-        <a href="#" class="brand">Notícias de <span>Última Hora</span></a>
-        <i class="fas fa-sync-alt" onclick="fetchAll()"></i>
+        <a href="index.html" class="brand">NOTÍCIAS <span>FLASH</span></a>
+        <i class="fas fa-bolt" style="color: var(--primary)"></i>
     </div>
 </header>
 
 <div class="search-box">
     <i class="fas fa-search" style="color:var(--text-sec)"></i>
-    <input type="text" placeholder="Pesquisar famosos..." id="qInput" onkeyup="doSearch()">
+    <input type="text" placeholder="Atores, cantores, filmes ou jogadores..." id="qInput" onkeyup="doSearch()">
 </div>
 
-<main class="feed" id="newsFeed">
-    <div class="loading"><i class="fas fa-spinner fa-spin"></i> Buscando fofocas mundiais...</div>
-</main>
+<main class="feed" id="newsFeed"></main>
+<div id="loader" class="loading-footer"><i class="fas fa-circle-notch fa-spin"></i> Carregando mais novidades...</div>
 
 <script>
-    // Usando fontes de entretenimento que permitem acesso (CORS-friendly ou maiores)
+    // Canais focados em Hollywood, Cinema, Música e Esportes
     const SOURCES = [
-        { name: "Variety", slug: "variety", api: "https://variety.com/wp-json/wp/v2/posts?_embed&per_page=8" },
-        { name: "Rolling Stone", slug: "rollingstone", api: "https://www.rollingstone.com/wp-json/wp/v2/posts?_embed&per_page=8" }
+        { name: "Hollywood Reporter", slug: "thr", api: "https://www.hollywoodreporter.com/wp-json/wp/v2/posts" },
+        { name: "Billboard", slug: "billboard", api: "https://www.billboard.com/wp-json/wp/v2/posts" },
+        { name: "Variety", slug: "variety", api: "https://variety.com/wp-json/wp/v2/posts" },
+        { name: "Rolling Stone", slug: "rollingstone", api: "https://www.rollingstone.com/wp-json/wp/v2/posts" }
     ];
 
     let allPosts = [];
+    let currentPage = 1;
+    let isFetching = false;
 
-    async function fetchAll() {
-        allPosts = [];
-        const feed = document.getElementById('newsFeed');
+    async function fetchNews(page) {
+        if(isFetching) return;
+        isFetching = true;
         
+        let newBatch = [];
+
         for (const s of SOURCES) {
             try {
-                const response = await fetch(s.api);
-                if (!response.ok) continue;
+                const response = await fetch(`${s.api}?_embed&per_page=4&page=${page}`);
                 const data = await response.json();
                 
-                data.forEach(p => {
-                    allPosts.push({
-                        id: p.id,
-                        title: p.title.rendered,
-                        src: s.name,
-                        slug: s.slug,
-                        img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x250?text=News',
-                        date: new Date(p.date)
+                if(Array.isArray(data)) {
+                    data.forEach(p => {
+                        newBatch.push({
+                            id: p.id,
+                            title: p.title.rendered,
+                            src: s.name,
+                            slug: s.slug,
+                            img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/600x400',
+                            date: new Date(p.date)
+                        });
                     });
-                });
-            } catch (error) {
-                console.error("Erro na fonte " + s.name, error);
-            }
+                }
+            } catch (e) { console.warn("Erro ao buscar de " + s.name); }
         }
 
-        allPosts.sort((a, b) => b.date - a.date);
+        // Ordenar por data
+        newBatch.sort((a, b) => b.date - a.date);
+        allPosts = [...allPosts, ...newBatch];
         render(allPosts);
+        isFetching = false;
     }
 
     function render(posts) {
         const feed = document.getElementById('newsFeed');
-        if (posts.length === 0) {
-            feed.innerHTML = '<div class="loading">Nenhuma notícia encontrada no momento.</div>';
-            return;
-        }
-
+        const searchTerm = document.getElementById('qInput').value.toLowerCase();
+        
+        const filtered = posts.filter(p => p.title.toLowerCase().includes(searchTerm));
+        
         feed.innerHTML = '';
-        posts.forEach((p, i) => {
-            if (i === 0) {
+        filtered.forEach((p, i) => {
+            if (i === 0 && !searchTerm) {
                 feed.innerHTML += `
                     <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card-hero">
                         <img src="${p.img}">
                         <div class="info">
-                            <div class="meta-info">Destaque Mundial • ${p.src}</div>
+                            <div class="meta-info"><i class="fas fa-star"></i> EXCLUSIVO • ${p.src}</div>
                             <h2>${p.title}</h2>
                         </div>
                     </a>`;
@@ -128,13 +134,20 @@
     }
 
     function doSearch() {
-        const q = document.getElementById('qInput').value.toLowerCase();
-        const filtered = allPosts.filter(p => p.title.toLowerCase().includes(q));
-        render(filtered);
+        render(allPosts);
     }
 
-    // Iniciar
-    fetchAll();
+    // Lógica de Scroll Infinito
+    window.onscroll = function() {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
+            if(!isFetching) {
+                currentPage++;
+                fetchNews(currentPage);
+            }
+        }
+    };
+
+    window.onload = () => fetchNews(currentPage);
 </script>
 </body>
 </html>
