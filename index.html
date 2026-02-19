@@ -25,20 +25,21 @@
 
         .feed { max-width: 900px; margin: 0 auto; padding: 0 16px; }
 
-        .card-hero { display: block; text-decoration: none; color: inherit; background: white; border-radius: 20px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+        .card-hero { display: block; text-decoration: none; color: inherit; background: white; border-radius: 20px; overflow: hidden; margin-bottom: 30px; box-shadow: 0 15px 30px rgba(0,0,0,0.08); transition: 0.3s; }
         .card-hero img { width: 100%; height: 350px; object-fit: cover; background: #333; }
         .card-hero .info { padding: 25px; }
         .card-hero h2 { font-size: 26px; font-weight: 800; line-height: 1.2; margin: 10px 0; }
         
-        .card-list { display: flex; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; align-items: center; }
+        .card-list { display: flex; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--border); text-decoration: none; color: inherit; align-items: center; transition: 0.2s; }
+        .card-list:active { background: #f0f0f0; }
         .card-list .text { flex: 1; }
         .card-list h3 { font-size: 17px; font-weight: 700; line-height: 1.4; margin: 5px 0; }
         .card-list img { width: 110px; height: 110px; border-radius: 16px; object-fit: cover; background: #eee; flex-shrink: 0; }
 
         .meta-info { font-size: 11px; color: var(--primary); font-weight: 800; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
-        .date { color: var(--text-sec); font-weight: 400; }
+        .date { color: var(--text-sec); font-weight: 400; text-transform: none; }
         
-        .loading-footer { text-align: center; padding: 30px; font-weight: 700; color: var(--text-sec); }
+        .loading-footer { text-align: center; padding: 40px; font-weight: 700; color: var(--primary); font-size: 20px; }
     </style>
 </head>
 <body>
@@ -52,11 +53,11 @@
 
 <div class="search-box">
     <i class="fas fa-search" style="color:var(--text-sec)"></i>
-    <input type="text" placeholder="Pesquisar notícias..." id="qInput" onkeyup="doSearch()">
+    <input type="text" placeholder="Pesquisar em tempo real..." id="qInput" onkeyup="doSearch()">
 </div>
 
 <main class="feed" id="newsFeed"></main>
-<div id="loader" class="loading-footer"><i class="fas fa-circle-notch fa-spin"></i> Atualizando notícias em tempo real...</div>
+<div id="loader" class="loading-footer"><i class="fas fa-circle-notch fa-spin"></i></div>
 
 <script>
     const SOURCES = [
@@ -69,112 +70,127 @@
     let allPosts = [];
     let currentPage = 1;
     let isFetching = false;
+    let noMoreContent = false;
 
-    // Função para tradução automática via API pública (Google Translate)
-    async function translateText(text) {
+    // Tradução otimizada: Traduz o bloco inteiro de uma vez para ganhar velocidade
+    async function translateBatch(posts) {
+        const combinedText = posts.map(p => p.title).join(' ||| ');
         try {
-            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${encodeURIComponent(text)}`);
+            const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=pt&dt=t&q=${encodeURIComponent(combinedText)}`);
             const data = await res.json();
-            return data[0].map(x => x[0]).join('');
+            const translatedFull = data[0].map(x => x[0]).join('');
+            const translatedArray = translatedFull.split(' ||| ');
+            
+            return posts.map((p, i) => ({
+                ...p,
+                title: translatedArray[i] || p.title
+            }));
         } catch (e) {
-            return text; // Caso falhe, retorna o original em inglês
+            return posts;
         }
     }
 
-    // Formata a data para "há X minutos" ou data simples
     function formatDate(dateStr) {
         const date = new Date(dateStr);
-        return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+        const agora = new Date();
+        const diffInMinutes = Math.floor((agora - date) / (1000 * 60));
+        
+        if (diffInMinutes < 60) return `há ${diffInMinutes} min`;
+        if (diffInMinutes < 1440) return `há ${Math.floor(diffInMinutes/60)} horas`;
+        return date.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
     }
 
-    async function fetchNews(page) {
-        if(isFetching) return;
+    async function fetchNews() {
+        if(isFetching || noMoreContent) return;
         isFetching = true;
+        document.getElementById('loader').style.display = 'block';
         
         let newBatch = [];
 
-        for (const s of SOURCES) {
+        // Buscando mais posts por página (6 por fonte = 24 notícias por scroll)
+        const fetchPromises = SOURCES.map(async (s) => {
             try {
-                const response = await fetch(`${s.api}?_embed&per_page=3&page=${page}`);
+                const response = await fetch(`${s.api}?_embed&per_page=6&page=${currentPage}`);
                 const data = await response.json();
                 
                 if(Array.isArray(data)) {
-                    for (const p of data) {
-                        // Traduz o título antes de salvar
-                        const translatedTitle = await translateText(p.title.rendered);
-                        
-                        newBatch.push({
-                            id: p.id,
-                            title: translatedTitle,
-                            src: s.name,
-                            slug: s.slug,
-                            img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/600x400',
-                            date: p.date,
-                            rawDate: new Date(p.date)
-                        });
-                    }
+                    return data.map(p => ({
+                        id: p.id,
+                        title: p.title.rendered,
+                        src: s.name,
+                        slug: s.slug,
+                        img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/600x400',
+                        date: p.date,
+                        rawDate: new Date(p.date)
+                    }));
                 }
-            } catch (e) { console.warn("Erro ao buscar de " + s.name); }
+            } catch (e) { return []; }
+            return [];
+        });
+
+        const results = await Promise.all(fetchPromises);
+        newBatch = results.flat();
+
+        if(newBatch.length === 0) {
+            noMoreContent = true;
+            document.getElementById('loader').innerHTML = "Você chegou ao fim.";
+            return;
         }
 
-        newBatch.sort((a, b) => b.rawDate - a.rawDate);
-        allPosts = [...allPosts, ...newBatch];
-        render(allPosts);
+        // Traduz o lote coletado antes de renderizar
+        const translatedBatch = await translateBatch(newBatch);
+
+        translatedBatch.sort((a, b) => b.rawDate - a.rawDate);
+        allPosts = [...allPosts, ...translatedBatch];
+        
+        render();
         isFetching = false;
+        currentPage++;
     }
 
-    function render(posts) {
+    function render() {
         const feed = document.getElementById('newsFeed');
         const searchTerm = document.getElementById('qInput').value.toLowerCase();
+        const filtered = allPosts.filter(p => p.title.toLowerCase().includes(searchTerm));
         
-        const filtered = posts.filter(p => p.title.toLowerCase().includes(searchTerm));
-        
-        feed.innerHTML = '';
+        // Usamos um fragmento para melhorar a performance de renderização
+        let html = '';
         filtered.forEach((p, i) => {
             const dateHTML = `<span class="date">• ${formatDate(p.date)}</span>`;
-            
             if (i === 0 && !searchTerm) {
-                feed.innerHTML += `
+                html += `
                     <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card-hero">
                         <img src="${p.img}">
                         <div class="info">
-                            <div class="meta-info">
-                                <span><i class="fas fa-star"></i> ${p.src}</span> 
-                                ${dateHTML}
-                            </div>
+                            <div class="meta-info"><span><i class="fas fa-star"></i> ${p.src}</span> ${dateHTML}</div>
                             <h2>${p.title}</h2>
                         </div>
                     </a>`;
             } else {
-                feed.innerHTML += `
+                html += `
                     <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card-list">
                         <div class="text">
-                            <div class="meta-info">
-                                <span>${p.src}</span> 
-                                ${dateHTML}
-                            </div>
+                            <div class="meta-info"><span>${p.src}</span> ${dateHTML}</div>
                             <h3>${p.title}</h3>
                         </div>
                         <img src="${p.img}">
                     </a>`;
             }
         });
+        feed.innerHTML = html;
     }
 
-    function doSearch() {
-        render(allPosts);
-    }
+    function doSearch() { render(); }
 
-    window.onscroll = function() {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
-            if(!isFetching) {
-                currentPage++;
-                fetchNews(currentPage);
-            }
+    // Scroll Infinito Inteligente (detecta proximidade do fim)
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 1000) {
+            fetchNews();
         }
-    };
+    });
 
-    window.onload = () => fetchNews(currentPage);
+    // Carga inicial
+    window.onload = () => fetchNews();
 </script>
 </body>
 </html>
