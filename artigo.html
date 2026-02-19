@@ -1,57 +1,56 @@
 <!DOCTYPE html>
-<html lang="pt-MZ">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <meta property="og:type" content="article">
-    <meta property="og:title" id="meta-title" content="Notícias CLD">
-    <meta property="og:description" id="meta-desc" content="Leia a notícia completa no Notícias CLD.">
-    <meta property="og:image" id="meta-img" content="">
-
-    <title>Notícias CLD</title>
+    <title>Notícias de Última Hora</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #1a73e8; --text: #1f1f1f; --border: #e8eaed; }
+        :root { --primary: #ff0050; --text: #111111; --border: #eeeeee; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: var(--text); line-height: 1.6; }
-        .top-nav { position: sticky; top: 0; background: #fff; padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .top-nav { position: sticky; top: 0; background: #fff; padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; z-index: 100; }
         .container { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
         
-        .date-src { font-size: 12px; color: var(--primary); font-weight: 800; margin-bottom: 12px; display: block; text-transform: uppercase; }
-        h1 { font-size: 28px; line-height: 1.2; font-weight: 800; margin-bottom: 24px; }
-        .hero { width: 100%; border-radius: 20px; margin-bottom: 24px; }
+        .date-src { font-size: 12px; color: var(--primary); font-weight: 800; margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 1px; }
+        h1 { font-size: 32px; line-height: 1.1; font-weight: 800; margin-bottom: 24px; letter-spacing: -1px; }
+        .hero { width: 100%; border-radius: 24px; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         
-        .content { font-family: 'Lora', serif; font-size: 20px; line-height: 1.8; color: #333; }
-        .content p { margin-bottom: 24px; }
+        .content { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 18px; line-height: 1.7; color: #333; }
+        .content p { margin-bottom: 20px; }
+        .content img { width: 100%; border-radius: 15px; height: auto; margin: 15px 0; }
 
-        .more-section { margin-top: 50px; padding-top: 30px; border-top: 4px solid #f8f9fa; }
-        .mini-card { display: flex; gap: 12px; text-decoration: none; color: inherit; padding: 12px 0; border-bottom: 1px solid #f1f3f4; align-items: center; }
-        .mini-card h5 { font-size: 14px; font-weight: 700; flex: 1; }
-        .mini-card img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
+        .more-section { margin-top: 50px; padding-top: 30px; border-top: 5px solid var(--surface); }
+        .mini-card { display: flex; gap: 12px; text-decoration: none; color: inherit; padding: 15px 0; border-bottom: 1px solid #eee; align-items: center; }
+        .mini-card h5 { font-size: 15px; font-weight: 700; flex: 1; }
+        .mini-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
     </style>
 </head>
 <body>
 
 <div class="top-nav">
-    <a href="index.html" style="color:inherit; text-decoration:none; font-weight:700"><i class="fas fa-chevron-left"></i> Voltar</a>
-    <i class="fas fa-share-alt" onclick="shareArticle()" style="cursor:pointer; color:var(--primary)"></i>
+    <a href="index.html" style="color:inherit; text-decoration:none; font-weight:700"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="shareArticle()" style="cursor:pointer; color:var(--primary); font-size: 20px;"></i>
 </div>
 
 <div class="container">
     <span class="date-src" id="artMeta"></span>
-    <h1 id="artTitle">...</h1>
+    <h1 id="artTitle">Carregando fofoca fresquinha...</h1>
     <img src="" id="artImg" class="hero">
     <div class="content" id="artContent"></div>
 
     <section class="more-section">
-        <h4 style="margin-bottom:15px">Mais Notícias</h4>
+        <h4 style="margin-bottom:15px; text-transform: uppercase;">🔥 Mais quentes agora</h4>
         <div id="agregador"></div>
     </section>
 </div>
 
 <script>
-    const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
+    const APIS = { 
+        'tmz': 'https://www.tmz.com/wp-json/wp/v2/posts/', 
+        'enews': 'https://www.eonline.com/wp-json/wp/v2/posts/' 
+    };
 
     async function load() {
         const p = new URLSearchParams(window.location.search);
@@ -64,22 +63,17 @@
             
             const title = data.title.rendered;
             const img = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-            const description = data.excerpt.rendered.replace(/<[^>]*>?/gm, '').substring(0, 150);
 
-            // Atualizar UI
             document.title = title;
             document.getElementById('artTitle').innerHTML = title;
             document.getElementById('artImg').src = img;
             document.getElementById('artContent').innerHTML = data.content.rendered;
-            document.getElementById('artMeta').innerText = `${src === 'opais' ? 'O País' : 'Carta MZ'} • ${new Date(data.date).toLocaleString('pt-MZ')}`;
-
-            // Atualizar Meta Tags para Partilha
-            document.querySelector('meta[property="og:title"]').setAttribute("content", title);
-            document.querySelector('meta[property="og:description"]').setAttribute("content", description);
-            document.querySelector('meta[property="og:image"]').setAttribute("content", img);
+            document.getElementById('artMeta').innerText = `${src.toUpperCase()} • DE ÚLTIMA HORA`;
 
             loadMore(src);
-        } catch(e){}
+        } catch(e){
+            document.getElementById('artTitle').innerText = "Erro ao carregar artigo.";
+        }
     }
 
     async function loadMore(src) {
@@ -99,7 +93,7 @@
         if (navigator.share) {
             navigator.share({
                 title: document.getElementById('artTitle').innerText,
-                text: 'Confira esta notícia no Notícias CLD',
+                text: 'Olha o que saiu no Notícias de Última Hora!',
                 url: window.location.href
             });
         }
