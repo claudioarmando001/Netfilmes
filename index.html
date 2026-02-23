@@ -3,123 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícias CLD | Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Notícias CLD | O Seu Portal de Moçambique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #1a73e8; --bg: #fff; --txt: #202124; --brd: #dadce0; }
+        :root {
+            --primary: #0061ff;
+            --bg: #f4f7fa;
+            --card-bg: #ffffff;
+            --text-main: #1a1d23;
+            --text-sec: #677489;
+            --accent: #eef2ff;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f1115; --card-bg: #1a1d23; --text-main: #f4f7fa; --text-sec: #94a3b8; --accent: #2d3748;
+            }
+        }
+
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--txt); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text-main); line-height: 1.5; }
 
-        .header { position: sticky; top: 0; background: #fff; z-index: 1000; padding: 12px 16px; border-bottom: 1px solid var(--brd); display: flex; align-items: center; gap: 15px; }
-        .logo { font-size: 20px; font-weight: 700; text-decoration: none; color: var(--txt); flex: 1; }
-        .logo span { color: var(--p); }
+        /* Navigation Glassmorphism */
+        .navbar { position: sticky; top: 0; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 1000; padding: 16px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .nav-content { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--text-main); letter-spacing: -0.5px; }
+        .logo span { color: var(--primary); }
 
-        /* Categorias com Scroll */
-        .cats { display: flex; gap: 8px; overflow-x: auto; padding: 12px; border-bottom: 1px solid var(--brd); scrollbar-width: none; }
-        .cat { padding: 8px 16px; border: 1px solid var(--brd); border-radius: 20px; font-size: 14px; white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .cat.active { background: #e8f0fe; color: var(--p); border-color: var(--p); }
+        /* Categorias Modernas */
+        .cat-container { padding: 15px 0; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+        .cat-pill { display: inline-block; padding: 10px 20px; margin-right: 10px; border-radius: 12px; background: var(--card-bg); font-size: 14px; font-weight: 600; color: var(--text-sec); cursor: pointer; transition: all 0.3s; border: 1px solid transparent; }
+        .cat-pill.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(0, 97, 255, 0.3); }
 
-        /* Feed */
-        .feed { max-width: 600px; margin: 0 auto; padding: 16px; }
+        /* Feed Grid */
+        .feed { max-width: 1100px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
         
-        /* Card Estilo Profissional */
-        .n-card { display: block; text-decoration: none; color: inherit; border: 1px solid var(--brd); border-radius: 16px; margin-bottom: 20px; overflow: hidden; animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .news-card { background: var(--card-bg); border-radius: 20px; overflow: hidden; text-decoration: none; color: inherit; transition: transform 0.3s, box-shadow 0.3s; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); display: flex; flex-direction: column; }
+        .news-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
         
-        .n-img { width: 100%; height: 200px; object-fit: cover; background: #f1f3f4; }
-        .n-body { padding: 16px; }
-        .n-body h2 { font-size: 19px; line-height: 1.3; margin-bottom: 8px; }
-        .n-footer { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #5f6368; }
-        .src-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--p); }
+        .card-img { width: 100%; height: 200px; object-fit: cover; background: var(--accent); }
+        .card-info { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .card-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--primary); margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+        .card-title { font-size: 18px; font-weight: 700; line-height: 1.4; margin-bottom: 12px; color: var(--text-main); }
+        .card-meta { margin-top: auto; font-size: 12px; color: var(--text-sec); display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--accent); padding-top: 15px; }
 
-        /* Loader de Scroll Infinito */
-        #inf-loader { text-align: center; padding: 20px; display: none; }
+        /* Scroll Infinito Loader */
+        .loader-wrap { text-align: center; padding: 40px; }
+        .spinner { width: 30px; height: 30px; border: 3px solid var(--accent); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <a href="#" class="logo">Notícias <span>CLD</span></a>
-    <i class="fas fa-search"></i>
-</header>
+<nav class="navbar">
+    <div class="nav-content">
+        <a href="#" class="logo">Notícias <span>CLD</span></a>
+        <div class="search-trigger"><i class="fas fa-search"></i></div>
+    </div>
+</nav>
 
-<div class="cats">
-    <div class="cat active">Todas</div>
-    <div class="cat">Política</div>
-    <div class="cat">Economia</div>
-    <div class="cat">Desporto</div>
-    <div class="cat">Mundo</div>
-    <div class="cat">Tecnologia</div>
+<div style="max-width: 1100px; margin: 0 auto; padding: 0 20px;">
+    <div class="cat-container">
+        <div class="cat-pill active">Para Você</div>
+        <div class="cat-pill">Moçambique</div>
+        <div class="cat-pill">Economia</div>
+        <div class="cat-pill">Política</div>
+        <div class="cat-pill">Tecnologia</div>
+        <div class="cat-pill">Desporto</div>
+    </div>
 </div>
 
 <main class="feed" id="mainFeed"></main>
-<div id="inf-loader"><i class="fas fa-circle-notch fa-spin"></i> Carregando mais...</div>
+
+<div class="loader-wrap" id="loading">
+    <div class="spinner"></div>
+</div>
 
 <script>
     const SOURCES = [
-        { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=5" },
-        { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=5" }
+        { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=6" },
+        { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=6" }
     ];
 
     let page = 1;
-    let loading = false;
+    let isFetching = false;
 
-    // Função para carregar e injetar notícias UMA A UMA
-    async function fetchIndividual(source) {
-        try {
-            const r = await fetch(`${source.api}&page=${page}`);
-            const posts = await r.json();
-            
-            for (const p of posts) {
-                renderPost({
-                    id: p.id,
-                    title: p.title.rendered,
-                    src: source.name,
-                    slug: source.slug,
-                    img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x200?text=Sem+Imagem',
-                    date: new Date(p.date).toLocaleDateString()
-                });
-            }
-        } catch(e) {}
+    async function fetchNews() {
+        if (isFetching) return;
+        isFetching = true;
+        
+        const fetches = SOURCES.map(s => 
+            fetch(`${s.api}&page=${page}`)
+            .then(res => res.json())
+            .then(posts => posts.map(p => ({...p, sourceName: s.name, sourceSlug: s.slug})))
+            .catch(() => [])
+        );
+
+        const results = await Promise.all(fetches);
+        const combined = results.flat().sort((a,b) => new Date(b.date) - new Date(a.date));
+        
+        combined.forEach(post => renderCard(post));
+        
+        isFetching = false;
+        page++;
     }
 
-    function renderPost(p) {
+    function renderCard(p) {
         const feed = document.getElementById('mainFeed');
+        const img = p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x250/eef2ff/677489?text=Noticias+CLD';
+        const date = new Date(p.date).toLocaleDateString('pt-MZ', { day: '2-digit', month: 'short' });
+        
         const card = document.createElement('a');
-        card.className = 'n-card';
-        card.href = `artigo.html?id=${p.id}&src=${p.slug}`;
+        card.className = 'news-card';
+        card.href = `artigo.html?id=${p.id}&src=${p.sourceSlug}`;
         card.innerHTML = `
-            <img class="n-img" src="${p.img}" loading="lazy">
-            <div class="n-body">
-                <div class="n-footer"><div class="src-dot"></div> ${p.src} • ${p.date}</div>
-                <h2 style="margin-top:8px">${p.title}</h2>
+            <img class="card-img" src="${img}" loading="lazy">
+            <div class="card-info">
+                <div class="card-tag"><i class="fas fa-bolt"></i> ${p.sourceName}</div>
+                <h2 class="card-title">${p.title.rendered}</h2>
+                <div class="card-meta">
+                    <span><i class="far fa-calendar-alt"></i> ${date}</span>
+                    <span><i class="far fa-clock"></i> 2 min</span>
+                </div>
             </div>
         `;
         feed.appendChild(card);
     }
 
-    async function loadAll() {
-        if(loading) return;
-        loading = true;
-        document.getElementById('inf-loader').style.display = 'block';
-        
-        // Executa as buscas em paralelo, mas os posts aparecem conforme chegam
-        await Promise.all(SOURCES.map(s => fetchIndividual(s)));
-        
-        loading = false;
-        document.getElementById('inf-loader').style.display = 'none';
-        page++;
-    }
-
-    // Lógica de Scroll Infinito
     window.onscroll = () => {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-            loadAll();
-        }
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) fetchNews();
     };
 
-    window.onload = loadAll;
+    window.onload = fetchNews;
 </script>
 </body>
 </html>
