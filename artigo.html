@@ -7,85 +7,86 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #0061ff; --text: #1a1d23; --bg: #ffffff; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); }
+        :root { --p: #0061ff; --t: #1a1d23; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; margin: 0; padding-top: 60px; }
+        .top { position: fixed; top: 0; width: 100%; background: #fff; border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; z-index: 100; }
         
-        .nav-back { position: fixed; top: 0; left: 0; right: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); padding: 15px 20px; z-index: 100; border-bottom: 1px solid #eee; display: flex; align-items: center; justify-content: space-between; }
+        .art-container { max-width: 740px; margin: 0 auto; padding: 20px; }
+        h1 { font-size: 32px; font-weight: 800; line-height: 1.2; margin: 10px 0 20px; }
         
-        .content-wrap { max-width: 740px; margin: 80px auto 40px; padding: 0 20px; }
-        .meta-top { color: var(--primary); font-weight: 800; font-size: 13px; text-transform: uppercase; margin-bottom: 15px; display: block; }
-        h1 { font-size: 34px; line-height: 1.2; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
+        /* Funcionalidade: Botão de Áudio */
+        .audio-btn { background: var(--p); color: #fff; border: none; padding: 10px 20px; border-radius: 30px; font-weight: 700; margin-bottom: 25px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
         
-        .main-image { width: 100%; border-radius: 24px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        
-        .article-text { font-family: 'Lora', serif; font-size: 20px; line-height: 1.8; color: #2d3436; }
-        .article-text p { margin-bottom: 25px; }
+        .main-img { width: 100%; border-radius: 20px; margin-bottom: 30px; }
+        .body-text { font-family: 'Lora', serif; font-size: 20px; line-height: 1.8; color: #333; }
 
-        /* Agregador Inferior */
-        .more-news { margin-top: 60px; padding-top: 40px; border-top: 2px solid #f0f3f5; }
-        .more-news h3 { font-size: 22px; margin-bottom: 20px; }
-        .mini-list { display: flex; flex-direction: column; gap: 15px; }
-        .mini-card { display: flex; gap: 15px; text-decoration: none; color: inherit; background: #f8fabb; padding: 15px; border-radius: 16px; border: 1px solid #f0f3f5; transition: 0.3s; }
-        .mini-card:hover { border-color: var(--primary); background: #fff; }
-        .mini-card img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; }
-        .mini-card h4 { font-size: 15px; line-height: 1.4; font-weight: 700; }
+        .relacionadas { margin-top: 50px; background: #f8f9fa; padding: 25px; border-radius: 24px; }
+        .r-card { display: flex; gap: 12px; text-decoration: none; color: inherit; margin-bottom: 15px; background: #fff; padding: 10px; border-radius: 15px; }
+        .r-card img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
     </style>
 </head>
 <body>
 
-<div class="nav-back">
-    <a href="index.html" style="color:var(--text); text-decoration:none; font-weight:700"><i class="fas fa-chevron-left"></i> Voltar</a>
-    <i class="fas fa-share-alt" onclick="share()" style="color:var(--primary); cursor:pointer"></i>
+<div class="top">
+    <a href="index.html" style="text-decoration:none; color:#000; font-weight:700">← Voltar</a>
+    <i class="fas fa-share-alt" onclick="share()"></i>
 </div>
 
-<main class="content-wrap">
-    <span class="meta-top" id="sourceTag">Carregando...</span>
-    <h1 id="artTitle"></h1>
-    <img id="artImg" class="main-image">
-    <div id="artContent" class="article-text"></div>
+<main class="art-container">
+    <h1 id="title"></h1>
+    
+    <button class="audio-btn" onclick="listen()">
+        <i class="fas fa-play"></i> Ouvir Notícia
+    </button>
 
-    <section class="more-news">
-        <h3><i class="fas fa-plus-circle"></i> Mais Notícias</h3>
-        <div id="agregador" class="mini-list"></div>
-    </section>
+    <img id="mainImg" class="main-img">
+    <div id="content" class="body-text"></div>
+
+    <div class="relacionadas">
+        <h3 style="margin-bottom:15px">Últimas Notícias</h3>
+        <div id="miniFeed"></div>
+    </div>
 </main>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
 
     async function load() {
-        const urlP = new URLSearchParams(window.location.search);
-        const id = urlP.get('id');
-        const src = urlP.get('src');
+        const p = new URLSearchParams(window.location.search);
+        const id = p.get('id');
+        const src = p.get('src');
 
         const r = await fetch(`${APIS[src]}${id}?_embed`);
-        const p = await r.json();
+        const data = await r.json();
 
-        document.getElementById('artTitle').innerText = p.title.rendered.replace(/&#8220;|&#8221;/g, '"');
-        document.getElementById('artImg').src = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-        document.getElementById('artContent').innerHTML = p.content.rendered;
-        document.getElementById('sourceTag').innerText = src === 'opais' ? 'O País' : 'Carta MZ';
+        document.getElementById('title').innerText = data.title.rendered.replace(/<[^>]*>?/gm, '');
+        document.getElementById('mainImg').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+        document.getElementById('content').innerHTML = data.content.rendered;
 
-        loadMini(src);
+        loadRecentes(src);
     }
 
-    async function loadMini(src) {
+    // Funcionalidade: Ouvir Notícia (Text-to-Speech)
+    function listen() {
+        const text = document.getElementById('content').innerText;
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'pt-PT';
+        window.speechSynthesis.speak(msg);
+    }
+
+    async function loadRecentes(src) {
         const r = await fetch(`${APIS[src]}?per_page=5&_embed`);
         const posts = await r.json();
-        const html = posts.map(n => `
-            <a href="artigo.html?id=${n.id}&src=${src}" class="mini-card">
+        document.getElementById('miniFeed').innerHTML = posts.map(n => `
+            <a href="artigo.html?id=${n.id}&src=${src}" class="r-card">
                 <img src="${n._embedded?.['wp:featuredmedia']?.[0]?.source_url}">
-                <div>
-                    <h4>${n.title.rendered}</h4>
-                    <span style="font-size:12px; color:var(--primary)">Ler agora →</span>
-                </div>
+                <h4 style="font-size:14px">${n.title.rendered}</h4>
             </a>
         `).join('');
-        document.getElementById('agregador').innerHTML = html;
     }
 
     function share() {
-        navigator.share({ title: document.getElementById('artTitle').innerText, url: window.location.href });
+        navigator.share({ title: document.title, url: window.location.href });
     }
 
     window.onload = load;
