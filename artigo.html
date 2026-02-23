@@ -3,89 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lendo notícia...</title>
+    <title>Notícias CLD</title>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #1a73e8; --txt: #202124; --border: #dadce0; }
-        body { font-family: 'Google Sans', sans-serif; background: #fff; margin: 0; }
-        
-        /* Loader Melhorado */
-        #loader { position: fixed; inset: 0; background: #fff; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        
-        .nav { position: sticky; top: 0; background: #fff; border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; }
+        :root { --p: #1a73e8; --brd: #dadce0; }
+        body { font-family: 'Google Sans', sans-serif; margin: 0; line-height: 1.6; }
+        .nav { position: sticky; top:0; background:#fff; border-bottom:1px solid var(--brd); padding:12px 16px; display:flex; justify-content:space-between; z-index:100;}
         .container { max-width: 700px; margin: 0 auto; padding: 20px; }
-
-        h1 { font-size: 26px; line-height: 1.3; margin: 15px 0; font-weight: 700; }
-        .hero-img { width: 100%; border-radius: 12px; margin-bottom: 20px; }
         
-        .content { font-family: 'Lora', serif; font-size: 19px; line-height: 1.8; color: #333; }
-        .content p { margin-bottom: 20px; }
+        /* Skeleton de carregamento */
+        #loader { text-align:center; padding:50px; }
+        
+        h1 { font-size: 28px; font-weight: 700; margin-bottom: 20px; }
+        .main-img { width: 100%; border-radius: 12px; margin-bottom: 25px; }
+        .content { font-family: 'Lora', serif; font-size: 20px; color: #333; }
 
-        /* Mini Agregador */
-        .mini-feed { margin-top: 40px; border-top: 2px solid var(--border); padding-top: 20px; }
-        .mini-item { display: flex; gap: 12px; text-decoration: none; color: inherit; padding: 12px 0; border-bottom: 1px solid #f1f3f4; }
-        .mini-item img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; }
-        .mini-item h4 { font-size: 14px; line-height: 1.4; flex: 1; font-weight: 500; }
+        /* Mini Agregador Estilo Lista Google */
+        .mini-feed { margin-top: 50px; border-top: 1px solid var(--brd); padding-top: 25px; }
+        .mini-card { display: flex; gap: 12px; text-decoration: none; color: inherit; padding: 12px 0; border-bottom: 1px solid #f1f3f4; align-items: center; }
+        .mini-card h4 { font-size: 15px; font-weight: 500; flex: 1; line-height: 1.4; }
+        .mini-card img { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; }
     </style>
 </head>
 <body>
 
-<div id="loader">
-    <i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--primary)"></i>
-    <p style="margin-top:10px">Buscando notícia...</p>
+<div class="nav">
+    <a href="index.html" style="color:inherit; text-decoration:none"><i class="fas fa-chevron-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="share()"></i>
 </div>
 
-<nav class="nav">
-    <a href="index.html" style="color:var(--txt); text-decoration:none"><i class="fas fa-arrow-left"></i> Voltar</a>
-    <i class="fas fa-share-alt" onclick="navigator.share({title: document.title, url: window.location.href})"></i>
-</nav>
+<main class="container">
+    <div id="loader"><i class="fas fa-spinner fa-spin fa-2x"></i><br>Processando notícia...</div>
+    <div id="article" style="display:none">
+        <h1 id="title"></h1>
+        <img id="img" class="main-img">
+        <div id="text" class="content"></div>
 
-<article class="container">
-    <span id="meta" style="color:var(--primary); font-weight:700; font-size:12px"></span>
-    <h1 id="title"></h1>
-    <img id="img" class="hero-img">
-    <div id="body" class="content"></div>
-
-    <section class="mini-feed">
-        <h3 style="margin-bottom:15px">Mais Notícias recentes</h3>
-        <div id="miniAgregador"></div>
-    </section>
-</article>
+        <section class="mini-feed">
+            <h3 style="margin-bottom:15px">Últimas de Moçambique</h3>
+            <div id="relacionadas"></div>
+        </section>
+    </div>
+</main>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
 
     async function load() {
-        const p = new URLSearchParams(window.location.search);
-        const id = p.get('id');
-        const src = p.get('src');
+        const urlP = new URLSearchParams(window.location.search);
+        const id = urlP.get('id');
+        const src = urlP.get('src');
 
         try {
             const r = await fetch(`${APIS[src]}${id}?_embed`);
             const data = await r.json();
-            
-            document.title = data.title.rendered;
-            document.getElementById('title').innerHTML = data.title.rendered;
-            document.getElementById('img').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-            document.getElementById('body').innerHTML = data.content.rendered;
-            document.getElementById('meta').innerText = `${src.toUpperCase()} • ${new Date(data.date).toLocaleDateString()}`;
 
+            document.getElementById('title').innerText = data.title.rendered.replace(/<[^>]*>?/gm, '');
+            document.getElementById('img').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+            document.getElementById('text').innerHTML = data.content.rendered;
+            
             document.getElementById('loader').style.display = 'none';
-            loadMini(src);
-        } catch(e){}
+            document.getElementById('article').style.display = 'block';
+            
+            loadMore(src);
+        } catch(e) {}
     }
 
-    async function loadMini(src) {
+    async function loadMore(src) {
         const r = await fetch(`${APIS[src]}?per_page=5&_embed`);
         const posts = await r.json();
-        const container = document.getElementById('miniAgregador');
-        container.innerHTML = posts.map(n => `
-            <a href="artigo.html?id=${n.id}&src=${src}" class="mini-item">
-                <h4>${n.title.rendered}</h4>
-                <img src="${n._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
+        document.getElementById('relacionadas').innerHTML = posts.map(p => `
+            <a href="artigo.html?id=${p.id}&src=${src}" class="mini-card">
+                <h4>${p.title.rendered}</h4>
+                <img src="${p._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
             </a>
         `).join('');
+    }
+
+    function share() {
+        navigator.share({ title: document.title, url: window.location.href });
     }
 
     window.onload = load;
