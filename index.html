@@ -3,109 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícias CLD | Início</title>
+    <title>Notícias CLD | Super Fast</title>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg: #ffffff; --surface: #ffffff; --text: #202124; --text-sec: #5f6368;
-            --border: #dadce0; --blue: #1a73e8; --skeleton: #eeeeee;
-        }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #121212; --surface: #1e1e1e; --text: #e8eaed; --text-sec: #9aa0a6;
-                --border: #3c4043; --skeleton: #333333;
-            }
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; }
-
-        /* Header */
-        .header { position: sticky; top: 0; background: var(--surface); z-index: 1000; border-bottom: 1px solid var(--border); padding: 12px 20px; }
-        .nav-container { max-width: 1000px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-        .logo { font-size: 22px; font-weight: 700; color: var(--text); text-decoration: none; }
-        .logo span { color: var(--blue); }
-
-        /* Feed */
-        .feed { max-width: 1000px; margin: 0 auto; padding: 20px; display: grid; gap: 24px; }
+        :root { --bg: #ffffff; --surf: #ffffff; --txt: #202124; --blue: #1a73e8; --brd: #dadce0; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #121212; --surf: #1e1e1e; --txt: #e8eaed; --brd: #3c4043; } }
         
-        /* Cards */
-        .hero-card { display: block; text-decoration: none; color: inherit; border-radius: 16px; overflow: hidden; border: 1px solid var(--border); }
-        .hero-card img { width: 100%; height: 250px; object-fit: cover; background: var(--skeleton); border-bottom: 1px solid var(--border); }
-        .list-card { display: flex; gap: 16px; text-decoration: none; color: inherit; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-        .list-text { flex: 1; }
-        .list-card img { width: 100px; height: 100px; border-radius: 12px; object-fit: cover; background: var(--skeleton); }
-
-        .meta { font-size: 12px; color: var(--text-sec); margin-bottom: 6px; font-weight: 500; }
-        .meta b { color: var(--blue); }
-        h2 { font-size: 22px; line-height: 1.3; margin-top: 8px; }
-        h3 { font-size: 16px; line-height: 1.4; font-weight: 500; }
-
-        /* Skeleton Animation */
-        .skeleton { background: var(--skeleton); animation: pulse 1.5s infinite; border-radius: 4px; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--txt); }
+        .header { position: sticky; top: 0; background: var(--surf); z-index: 1000; border-bottom: 1px solid var(--brd); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+        
+        .feed { max-width: 800px; margin: 0 auto; padding: 15px; }
+        .card { display: flex; gap: 15px; text-decoration: none; color: inherit; padding: 15px 0; border-bottom: 1px solid var(--brd); transition: opacity 0.2s; }
+        .card:active { opacity: 0.6; }
+        .card-txt { flex: 1; }
+        .card-txt h3 { font-size: 16px; line-height: 1.4; margin-top: 5px; }
+        .card img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; background: #eee; }
+        
+        .badge { font-size: 11px; font-weight: 700; color: var(--blue); text-transform: uppercase; }
+        .fav-btn { color: var(--blue); font-size: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
 
 <header class="header">
-    <div class="nav-container">
-        <a href="index.html" class="logo">Notícias <span>CLD</span></a>
-        <i class="fas fa-search"></i>
-    </div>
+    <h1 style="font-size:20px">Notícias <b>CLD</b></h1>
+    <a href="favoritos.html" style="color:inherit"><i class="far fa-bookmark"></i></a>
 </header>
 
-<main class="feed" id="newsFeed">
-    <div class="hero-card">
-        <div style="height:250px" class="skeleton"></div>
-        <div style="padding:20px"><div class="skeleton" style="height:20px; width:30%"></div><div class="skeleton" style="height:30px; margin-top:10px"></div></div>
-    </div>
-</main>
+<main class="feed" id="newsFeed"></main>
 
 <script>
     const SOURCES = [
-        { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=10" },
-        { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=10" }
+        { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed&per_page=12" },
+        { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed&per_page=12" }
     ];
 
-    async function loadNews() {
-        let allPosts = [];
+    async function init() {
+        // 1. Carregar do Cache para velocidade instantânea
+        const cached = localStorage.getItem('news_cache');
+        if(cached) render(JSON.parse(cached));
+
+        // 2. Buscar dados novos em segundo plano
+        let all = [];
         for (const s of SOURCES) {
             try {
                 const r = await fetch(s.api);
                 const data = await r.json();
-                data.forEach(p => allPosts.push({
+                data.forEach(p => all.push({
                     id: p.id, title: p.title.rendered, src: s.name, slug: s.slug,
                     img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
                     date: new Date(p.date)
                 }));
             } catch(e) {}
         }
-        allPosts.sort((a,b) => b.date - a.date);
-        render(allPosts);
+        all.sort((a,b) => b.date - a.date);
+        localStorage.setItem('news_cache', JSON.stringify(all));
+        render(all);
     }
 
     function render(posts) {
         const feed = document.getElementById('newsFeed');
-        feed.innerHTML = '';
-        posts.forEach((p, i) => {
-            const dateStr = p.date.toLocaleDateString('pt-MZ', { day:'numeric', month:'short' });
-            if(i === 0) {
-                feed.innerHTML += `
-                    <a href="artigo.html?id=${p.id}&src=${p.slug}" class="hero-card">
-                        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/400x200?text=CLD'">
-                        <div style="padding:20px"><div class="meta"><b>${p.src}</b> • ${dateStr}</div><h2>${p.title}</h2></div>
-                    </a>`;
-            } else {
-                feed.innerHTML += `
-                    <a href="artigo.html?id=${p.id}&src=${p.slug}" class="list-card">
-                        <div class="list-text"><div class="meta"><b>${p.src}</b> • ${dateStr}</div><h3>${p.title}</h3></div>
-                        <img src="${p.img}" onerror="this.src='https://via.placeholder.com/100?text=CLD'">
-                    </a>`;
-            }
-        });
+        feed.innerHTML = posts.map(p => `
+            <a href="artigo.html?id=${p.id}&src=${p.slug}" class="card">
+                <div class="card-txt">
+                    <span class="badge">${p.src}</span>
+                    <h3>${p.title}</h3>
+                </div>
+                <img src="${p.img}" loading="lazy">
+            </a>
+        `).join('');
     }
-    window.onload = loadNews;
+    init();
 </script>
 </body>
 </html>
