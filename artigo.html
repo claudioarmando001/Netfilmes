@@ -3,74 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícias CLD</title>
+    <title>Lendo notícia...</title>
     <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg: #ffffff; --txt: #202124; --blue: #1a73e8; --brd: #dadce0; --fs: 19px; }
-        @media (prefers-color-scheme: dark) { :root { --bg: #121212; --txt: #e8eaed; --brd: #3c4043; } }
+        :root { --primary: #1a73e8; --txt: #202124; --border: #dadce0; }
+        body { font-family: 'Google Sans', sans-serif; background: #fff; margin: 0; }
         
-        body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--txt); margin: 0; }
+        /* Loader Melhorado */
+        #loader { position: fixed; inset: 0; background: #fff; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* Funcionalidade 1: Barra de Progresso */
-        #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--blue); width: 0%; z-index: 2001; transition: 0.1s; }
-        
-        .nav { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--brd); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; }
+        .nav { position: sticky; top: 0; background: #fff; border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 1000; }
         .container { max-width: 700px; margin: 0 auto; padding: 20px; }
-        
-        /* Funcionalidade 2: Modo de Leitura */
-        .reader-controls { display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid var(--brd); padding-bottom: 10px; }
-        .btn-tool { background: none; border: 1px solid var(--brd); color: var(--txt); padding: 5px 12px; border-radius: 6px; cursor: pointer; }
 
-        h1 { font-size: 28px; line-height: 1.3; }
-        .meta-bar { font-size: 13px; color: var(--blue); font-weight: 700; margin: 15px 0; display: flex; justify-content: space-between; }
+        h1 { font-size: 26px; line-height: 1.3; margin: 15px 0; font-weight: 700; }
+        .hero-img { width: 100%; border-radius: 12px; margin-bottom: 20px; }
         
-        .content { font-family: 'Lora', serif; font-size: var(--fs); line-height: 1.8; }
-        .content img { max-width: 100%; border-radius: 8px; }
+        .content { font-family: 'Lora', serif; font-size: 19px; line-height: 1.8; color: #333; }
+        .content p { margin-bottom: 20px; }
 
-        /* Funcionalidade 3: Voltar ao Topo */
-        #scrollTop { position: fixed; bottom: 80px; right: 20px; background: var(--blue); color: #fff; width: 45px; height: 45px; border-radius: 50%; display: none; align-items: center; justify-content: center; border: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        
-        .fab-share { position: fixed; bottom: 20px; right: 20px; background: var(--blue); color: white; width: 56px; height: 56px; border-radius: 50%; border: none; font-size: 20px; }
+        /* Mini Agregador */
+        .mini-feed { margin-top: 40px; border-top: 2px solid var(--border); padding-top: 20px; }
+        .mini-item { display: flex; gap: 12px; text-decoration: none; color: inherit; padding: 12px 0; border-bottom: 1px solid #f1f3f4; }
+        .mini-item img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; }
+        .mini-item h4 { font-size: 14px; line-height: 1.4; flex: 1; font-weight: 500; }
     </style>
 </head>
 <body>
 
-<div id="progress-bar"></div>
+<div id="loader">
+    <i class="fas fa-circle-notch fa-spin fa-2x" style="color:var(--primary)"></i>
+    <p style="margin-top:10px">Buscando notícia...</p>
+</div>
 
 <nav class="nav">
-    <a href="index.html" style="color:inherit; text-decoration:none"><i class="fas fa-arrow-left"></i></a>
-    <div style="font-weight:700">Notícias CLD</div>
-    <i class="far fa-bookmark" id="favIcon" onclick="toggleFavorite()" style="cursor:pointer"></i>
+    <a href="index.html" style="color:var(--txt); text-decoration:none"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="navigator.share({title: document.title, url: window.location.href})"></i>
 </nav>
 
-<main class="container">
-    <div id="loading">Carregando notícia...</div>
-    
-    <div id="artArea" style="display:none">
-        <h1 id="title"></h1>
-        
-        <div class="meta-bar">
-            <span id="srcName"></span>
-            <span id="readingTime"><i class="far fa-clock"></i> -- min</span>
-        </div>
+<article class="container">
+    <span id="meta" style="color:var(--primary); font-weight:700; font-size:12px"></span>
+    <h1 id="title"></h1>
+    <img id="img" class="hero-img">
+    <div id="body" class="content"></div>
 
-        <div class="reader-controls">
-            <button class="btn-tool" onclick="changeFont(-2)">A-</button>
-            <button class="btn-tool" onclick="changeFont(2)">A+</button>
-            <button class="btn-tool" onclick="share()"><i class="fas fa-share"></i> Partilhar</button>
-        </div>
-
-        <div class="content" id="content"></div>
-    </div>
-</main>
-
-<button id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="fas fa-chevron-up"></i></button>
-<button class="fab-share" onclick="share()"><i class="fas fa-share-alt"></i></button>
+    <section class="mini-feed">
+        <h3 style="margin-bottom:15px">Mais Notícias recentes</h3>
+        <div id="miniAgregador"></div>
+    </section>
+</article>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
-    let currentArticle = null;
 
     async function load() {
         const p = new URLSearchParams(window.location.search);
@@ -80,64 +64,28 @@
         try {
             const r = await fetch(`${APIS[src]}${id}?_embed`);
             const data = await r.json();
-            currentArticle = data;
-
-            document.getElementById('title').innerText = data.title.rendered.replace(/<\/?[^>]+(>|$)/g, "");
-            document.getElementById('content').innerHTML = data.content.rendered;
-            document.getElementById('srcName').innerText = src.toUpperCase();
             
-            // Funcionalidade 4: Tempo de Leitura
-            const words = data.content.rendered.split(' ').length;
-            const time = Math.ceil(words / 200); 
-            document.getElementById('readingTime').innerHTML = `<i class="far fa-clock"></i> ${time} min de leitura`;
+            document.title = data.title.rendered;
+            document.getElementById('title').innerHTML = data.title.rendered;
+            document.getElementById('img').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
+            document.getElementById('body').innerHTML = data.content.rendered;
+            document.getElementById('meta').innerText = `${src.toUpperCase()} • ${new Date(data.date).toLocaleDateString()}`;
 
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('artArea').style.display = 'block';
-            
-            checkFav(id);
-        } catch(e) { }
+            document.getElementById('loader').style.display = 'none';
+            loadMini(src);
+        } catch(e){}
     }
 
-    // Funcionalidade 1: Barra de Progresso + Voltar ao Topo
-    window.onscroll = function() {
-        let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-        let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        let scrolled = (winScroll / height) * 100;
-        document.getElementById("progress-bar").style.width = scrolled + "%";
-        
-        document.getElementById("scrollTop").style.display = winScroll > 300 ? "flex" : "none";
-    };
-
-    // Funcionalidade 2: Ajuste de Fonte
-    function changeFont(step) {
-        const el = document.getElementById('content');
-        let cur = parseInt(window.getComputedStyle(el).fontSize);
-        el.style.fontSize = (cur + step) + "px";
-    }
-
-    // Funcionalidade 5: Favoritos
-    function toggleFavorite() {
-        let favs = JSON.parse(localStorage.getItem('favs') || '[]');
-        const id = currentArticle.id;
-        const index = favs.findIndex(f => f.id === id);
-        
-        if(index > -1) {
-            favs.splice(index, 1);
-            document.getElementById('favIcon').className = 'far fa-bookmark';
-        } else {
-            favs.push({id: id, title: currentArticle.title.rendered, src: currentArticle.src});
-            document.getElementById('favIcon').className = 'fas fa-bookmark';
-        }
-        localStorage.setItem('favs', JSON.stringify(favs));
-    }
-
-    function checkFav(id) {
-        let favs = JSON.parse(localStorage.getItem('favs') || '[]');
-        if(favs.some(f => f.id == id)) document.getElementById('favIcon').className = 'fas fa-bookmark';
-    }
-
-    function share() {
-        navigator.share({ title: document.title, url: window.location.href });
+    async function loadMini(src) {
+        const r = await fetch(`${APIS[src]}?per_page=5&_embed`);
+        const posts = await r.json();
+        const container = document.getElementById('miniAgregador');
+        container.innerHTML = posts.map(n => `
+            <a href="artigo.html?id=${n.id}&src=${src}" class="mini-item">
+                <h4>${n.title.rendered}</h4>
+                <img src="${n._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
+            </a>
+        `).join('');
     }
 
     window.onload = load;
