@@ -3,101 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carregando notícia...</title>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <title>Carregando...</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg: #ffffff; --text: #202124; --text-sec: #5f6368; --border: #dadce0; --blue: #1a73e8;
-        }
+        :root { --bg: #ffffff; --text: #202124; --text-sec: #5f6368; --border: #dadce0; --blue: #1a73e8; }
         @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #121212; --text: #e8eaed; --text-sec: #9aa0a6; --border: #3c4043;
-            }
+            :root { --bg: #121212; --text: #e8eaed; --text-sec: #9aa0a6; --border: #3c4043; }
         }
         body { font-family: 'Google Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; line-height: 1.6; }
 
-        /* Overlay de Carregamento */
-        #loading-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .loading-bar { width: 140px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; margin-top: 20px; }
-        .loading-bar div { height: 100%; background: var(--blue); width: 0%; animation: loadProgress 2s ease-in-out infinite; }
-        @keyframes loadProgress { 0% { width: 0%; } 50% { width: 70%; } 100% { width: 100%; } }
+        /* Professional Loader */
+        #loading-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top: 3px solid var(--blue); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .top-nav { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; z-index: 100; }
-        .article-container { max-width: 700px; margin: 0 auto; padding: 24px 16px; }
-
-        .src-badge { color: var(--blue); font-weight: 700; font-size: 13px; text-transform: uppercase; margin-bottom: 12px; display: block; }
-        h1 { font-size: 30px; line-height: 1.25; margin-bottom: 24px; font-weight: 700; }
+        .top-nav { position: sticky; top: 0; background: var(--bg); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; gap: 20px; z-index: 100; }
+        .container { max-width: 700px; margin: 0 auto; padding: 24px 16px; }
         
-        .main-img { width: 100%; border-radius: 16px; margin-bottom: 30px; }
+        .src-label { color: var(--blue); font-weight: 700; font-size: 13px; text-transform: uppercase; margin-bottom: 8px; display: block; }
+        h1 { font-size: 28px; line-height: 1.25; margin-bottom: 20px; }
+        .main-img { width: 100%; border-radius: 12px; margin-bottom: 24px; display: none; }
         
-        /* Estilo do Conteúdo */
-        .article-body { font-family: 'Lora', serif; font-size: 20px; color: var(--text); }
-        .article-body p { margin-bottom: 24px; }
-        .article-body img { width: 100%; height: auto; border-radius: 12px; margin: 10px 0; }
+        .content { font-family: 'Lora', serif; font-size: 19px; color: var(--text); }
+        .content p { margin-bottom: 20px; }
+        .content img { width: 100%; height: auto; border-radius: 8px; }
 
-        .share-fab { position: fixed; bottom: 20px; right: 20px; background: var(--blue); color: white; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: none; }
+        .fab-share { position: fixed; bottom: 25px; right: 25px; background: var(--blue); color: white; width: 56px; height: 56px; border-radius: 50%; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div id="loading-screen">
-    <div style="font-size: 20px; font-weight: 700;">Notícias <span style="color:var(--blue)">CLD</span></div>
-    <div class="loading-bar"><div></div></div>
-    <p style="margin-top: 10px; font-size: 14px; color: var(--text-sec)">Buscando notícia...</p>
+<div id="loading-overlay">
+    <div class="spinner"></div>
+    <p style="margin-top:15px; font-weight:500">Carregando notícia...</p>
 </div>
 
-<nav class="top-nav">
-    <a href="index.html" style="color:var(--text); text-decoration:none"><i class="fas fa-chevron-left"></i> Voltar</a>
-    <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="24" height="24">
-</nav>
+<div class="top-nav">
+    <a href="index.html" style="color:var(--text); text-decoration:none"><i class="fas fa-arrow-left"></i></a>
+    <span style="font-weight:500">Notícias CLD</span>
+</div>
 
-<article class="article-container">
-    <span class="src-badge" id="sourceTag">Carregando...</span>
+<main class="container">
+    <span class="src-label" id="artMeta"></span>
     <h1 id="artTitle"></h1>
     <img src="" id="artImg" class="main-img">
-    <div id="artBody" class="article-body"></div>
-</article>
+    <div class="content" id="artContent"></div>
+</main>
 
-<button class="share-fab" onclick="share()"><i class="fas fa-share-alt"></i></button>
+<button class="fab-share" onclick="shareArticle()"><i class="fas fa-share-alt"></i></button>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
 
-    async function loadArticle() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const id = urlParams.get('id');
-        const src = urlParams.get('src');
+    async function load() {
+        const p = new URLSearchParams(window.location.search);
+        const id = p.get('id');
+        const src = p.get('src');
 
         try {
             const r = await fetch(`${APIS[src]}${id}?_embed`);
-            const p = await r.json();
-
-            document.title = p.title.rendered;
-            document.getElementById('artTitle').innerHTML = p.title.rendered;
-            document.getElementById('artBody').innerHTML = p.content.rendered;
-            document.getElementById('sourceTag').innerText = src === 'opais' ? 'O País' : 'Carta MZ';
+            const data = await r.json();
             
-            const img = p._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-            if(img) document.getElementById('artImg').src = img;
+            // Limpeza de título para SEO e Partilha
+            const cleanTitle = data.title.rendered.replace(/<\/?[^>]+(>|$)/g, "");
+            document.title = cleanTitle;
+            document.getElementById('artTitle').innerText = cleanTitle;
+            
+            const img = data._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+            if(img) {
+                const el = document.getElementById('artImg');
+                el.src = img;
+                el.style.display = 'block';
+            }
 
-            // Esconder loader após carregar
-            setTimeout(() => {
-                document.getElementById('loading-screen').style.display = 'none';
-            }, 800);
+            document.getElementById('artContent').innerHTML = data.content.rendered;
+            document.getElementById('artMeta').innerText = `${src === 'opais' ? 'O País' : 'Carta MZ'} • ${new Date(data.date).toLocaleDateString()}`;
 
+            // Remove loading
+            document.getElementById('loading-overlay').style.display = 'none';
         } catch(e) {
-            document.getElementById('loading-screen').innerHTML = "Erro ao carregar noticia.";
+            document.getElementById('loading-overlay').innerHTML = "Erro ao carregar noticia.";
         }
     }
 
-    function share() {
+    function shareArticle() {
+        const title = document.getElementById('artTitle').innerText;
         if (navigator.share) {
-            navigator.share({ title: document.title, url: window.location.href });
+            navigator.share({
+                title: title,
+                text: `Confira esta notícia no Notícias CLD:`,
+                url: window.location.href
+            });
+        } else {
+            // Fallback: Copiar Link
+            navigator.clipboard.writeText(window.location.href);
+            alert("Link copiado!");
         }
     }
 
-    window.onload = loadArticle;
+    window.onload = load;
 </script>
 </body>
 </html>
