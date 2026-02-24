@@ -3,188 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícias CLD | Artigo</title>
+    <title>Notícias CLD | Lendo Notícia</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; --s: #677489; }
-        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; --s: #94a3b8; } body { background: #0f1115 !important; } .top { background: #0f1115 !important; border-bottom: 1px solid #222 !important; } .r-card { background: #1a1d23 !important; } }
-
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); margin: 0; padding-top: 60px; transition: 0.3s; }
+        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; } body { background: #0f1115; } }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); margin: 0; padding-top: 60px; }
         
-        .top { position: fixed; top: 0; width: 100%; background: #fff; border-bottom: 1px solid #eee; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; }
-        .top a { text-decoration: none; color: var(--t); font-weight: 700; display: flex; align-items: center; gap: 8px; }
-
+        .top { position: fixed; top: 0; width: 100%; background: var(--bg); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; }
+        
         .art-container { max-width: 740px; margin: 0 auto; padding: 20px; }
-        h1 { font-size: 30px; font-weight: 800; line-height: 1.2; margin: 10px 0 25px; color: var(--t); }
+        h1 { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
         
-        /* Barra de Ações */
-        .actions { display: flex; gap: 10px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 10px; }
-        .btn-action { border: none; padding: 12px 20px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; transition: 0.2s; white-space: nowrap; }
+        .actions { display: flex; gap: 10px; margin-bottom: 25px; }
+        .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
         .audio-btn { background: var(--p); color: #fff; }
         .save-btn { background: rgba(0,0,0,0.05); color: var(--t); }
         .save-btn.active { background: #ffd700; color: #000; }
-        @media (prefers-color-scheme: dark) { .save-btn { background: rgba(255,255,255,0.1); } }
 
-        .main-img { width: 100%; border-radius: 24px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        
-        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.8; color: var(--t); opacity: 0.9; }
-        .body-text img { max-width: 100%; height: auto; border-radius: 15px; margin: 20px 0; }
-        .body-text p { margin-bottom: 20px; }
+        .main-img { width: 100%; border-radius: 20px; margin-bottom: 25px; }
+        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.7; }
+        .body-text p { margin-bottom: 18px; }
 
-        .relacionadas { margin-top: 50px; background: rgba(0,0,0,0.03); padding: 25px; border-radius: 28px; }
-        .r-card { display: flex; gap: 12px; text-decoration: none; color: inherit; margin-bottom: 15px; background: #fff; padding: 12px; border-radius: 18px; transition: 0.2s; }
-        .r-card:hover { transform: scale(1.02); }
-        .r-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
-        
-        #loader-art { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px; color: var(--p); }
+        footer { background: rgba(0,0,0,0.02); padding: 30px 20px; text-align: center; margin-top: 50px; border-radius: 30px 30px 0 0; }
+        .contact-box { font-size: 14px; color: #666; }
+        .contact-box a { color: var(--p); text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="top">
-    <a href="index.html"><i class="fas fa-chevron-left"></i> Voltar</a>
-    <div style="display:flex; gap: 20px; align-items: center;">
-        <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer; font-size: 1.2rem;"></i>
-    </div>
+    <a href="index.html" style="text-decoration:none; color:var(--t); font-weight:700"><i class="fas fa-arrow-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer"></i>
 </div>
 
-<div id="loader-art"><i class="fas fa-circle-notch fa-spin"></i></div>
-
-<main class="art-container" id="mainArt" style="display:none">
-    <h1 id="title"></h1>
+<main class="art-container">
+    <h1 id="title">Carregando...</h1>
     
     <div class="actions">
-        <button class="btn-action audio-btn" onclick="listen()">
-            <i class="fas fa-play" id="audioIcon"></i> <span id="audioTxt">Ouvir Notícia</span>
-        </button>
-        <button id="saveBtn" class="btn-action save-btn" onclick="toggleSave()">
-            <i class="far fa-bookmark"></i> Guardar
-        </button>
+        <button class="btn audio-btn" onclick="listen()"><i class="fas fa-play"></i> Ouvir</button>
+        <button id="saveBtn" class="btn save-btn" onclick="toggleSave()"><i class="far fa-bookmark"></i> Guardar</button>
     </div>
 
     <img id="mainImg" class="main-img">
     <div id="content" class="body-text"></div>
-
-    <div class="relacionadas">
-        <h3 style="margin-bottom:20px; font-weight:800">Mais do mesmo portal</h3>
-        <div id="miniFeed"></div>
-    </div>
 </main>
+
+<footer>
+    <div class="contact-box">
+        <p>Gostou desta notícia? Entre em contacto:</p>
+        <p><i class="fas fa-phone"></i> <a href="tel:+258869667677">+258 869 667 677</a></p>
+        <p><i class="fas fa-envelope"></i> <a href="mailto:claudioarmando001@gmail.com">claudioarmando001@gmail.com</a></p>
+    </div>
+</footer>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
-    let currentArticleData = null;
-    let isSpeaking = false;
+    let articleData = null;
 
     async function load() {
         const p = new URLSearchParams(window.location.search);
-        const id = p.get('id');
-        const src = p.get('src');
+        const id = p.get('id'), src = p.get('src');
+        const r = await fetch(`${APIS[src]}${id}?_embed`);
+        const data = await r.json();
 
-        try {
-            const r = await fetch(`${APIS[src]}${id}?_embed`);
-            const data = await r.json();
-
-            // Armazenar dados para a função de "Guardar"
-            currentArticleData = {
-                id: data.id,
-                title: data.title.rendered,
-                src: src === 'opais' ? 'O País' : 'Carta MZ',
-                slug: src,
-                img: data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
-                date: data.date
-            };
-
-            document.getElementById('title').innerHTML = data.title.rendered;
-            document.getElementById('mainImg').src = currentArticleData.img;
-            document.getElementById('content').innerHTML = data.content.rendered;
-            
-            document.getElementById('loader-art').style.display = 'none';
-            document.getElementById('mainArt').style.display = 'block';
-
-            checkIfSaved();
-            loadRecentes(src);
-        } catch (e) {
-            alert("Erro ao carregar notícia.");
-        }
-    }
-
-    // --- FUNÇÃO: GUARDAR NOTÍCIA ---
-    function toggleSave() {
-        let saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
-        const index = saved.findIndex(item => item.id === currentArticleData.id);
-
-        if (index > -1) {
-            saved.splice(index, 1);
-            updateSaveBtn(false);
-        } else {
-            saved.push(currentArticleData);
-            updateSaveBtn(true);
-        }
-        localStorage.setItem('cld_saved', JSON.stringify(saved));
-    }
-
-    function checkIfSaved() {
-        let saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
-        if (saved.some(item => item.id === currentArticleData.id)) {
-            updateSaveBtn(true);
-        }
-    }
-
-    function updateSaveBtn(isSaved) {
-        const btn = document.getElementById('saveBtn');
-        if (isSaved) {
-            btn.classList.add('active');
-            btn.innerHTML = '<i class="fas fa-bookmark"></i> Guardado';
-        } else {
-            btn.classList.remove('active');
-            btn.innerHTML = '<i class="far fa-bookmark"></i> Guardar';
-        }
-    }
-
-    // --- FUNÇÃO: OUVIR (TTS) ---
-    function listen() {
-        if (isSpeaking) {
-            window.speechSynthesis.cancel();
-            isSpeaking = false;
-            document.getElementById('audioTxt').innerText = "Ouvir Notícia";
-            document.getElementById('audioIcon').className = "fas fa-play";
-            return;
-        }
-
-        const text = document.getElementById('content').innerText;
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'pt-PT';
-        msg.onend = () => {
-            isSpeaking = false;
-            document.getElementById('audioTxt').innerText = "Ouvir Notícia";
-            document.getElementById('audioIcon').className = "fas fa-play";
+        articleData = {
+            id: data.id, title: data.title.rendered, slug: src,
+            img: data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+            src: src === 'opais' ? 'O País' : 'Carta MZ'
         };
 
-        window.speechSynthesis.speak(msg);
-        isSpeaking = true;
-        document.getElementById('audioTxt').innerText = "Parar Áudio";
-        document.getElementById('audioIcon').className = "fas fa-stop";
+        document.getElementById('title').innerHTML = data.title.rendered;
+        document.getElementById('mainImg').src = articleData.img;
+        document.getElementById('content').innerHTML = data.content.rendered;
+        
+        // Atualiza o título da aba para o nome da notícia
+        document.title = articleData.title.replace(/<[^>]*>?/gm, '');
+        
+        checkSaved();
     }
 
-    async function loadRecentes(src) {
-        const r = await fetch(`${APIS[src]}?per_page=5&_embed`);
-        const posts = await r.json();
-        document.getElementById('miniFeed').innerHTML = posts.map(n => `
-            <a href="artigo.html?id=${n.id}&src=${src}" class="r-card">
-                <img src="${n._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
-                <div style="display:flex; flex-direction:column; justify-content:center">
-                    <h4 style="font-size:14px; margin:0; line-height:1.2">${n.title.rendered}</h4>
-                </div>
-            </a>
-        `).join('');
+    function toggleSave() {
+        let saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
+        const idx = saved.findIndex(i => i.id === articleData.id);
+        if(idx > -1) {
+            saved.splice(idx, 1);
+        } else {
+            saved.push(articleData);
+        }
+        localStorage.setItem('cld_saved', JSON.stringify(saved));
+        checkSaved();
+    }
+
+    function checkSaved() {
+        const saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
+        const isSaved = saved.some(i => i.id === articleData.id);
+        const btn = document.getElementById('saveBtn');
+        btn.classList.toggle('active', isSaved);
+        btn.innerHTML = isSaved ? '<i class="fas fa-bookmark"></i> Guardado' : '<i class="far fa-bookmark"></i> Guardar';
+    }
+
+    function listen() {
+        const msg = new SpeechSynthesisUtterance(document.getElementById('content').innerText);
+        msg.lang = 'pt-PT';
+        window.speechSynthesis.speak(msg);
     }
 
     function share() {
-        if (navigator.share) {
-            navigator.share({ title: document.getElementById('title').innerText, url: window.location.href });
-        }
+        navigator.share({ title: document.title, url: window.location.href });
     }
 
     window.onload = load;
