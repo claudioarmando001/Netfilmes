@@ -10,56 +10,53 @@
         :root { --p: #0061ff; --bg: #f8f9fa; --c: #fff; --t: #1a1d23; --s: #677489; }
         @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --c: #1a1d23; --t: #f4f7fa; --s: #94a3b8; } }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); -webkit-font-smoothing: antialiased; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); }
         
-        /* Navegação Otimizada */
         .nav { position: sticky; top: 0; background: var(--bg); backdrop-filter: blur(12px); z-index: 1000; padding: 12px 20px; border-bottom: 1px solid rgba(0,0,0,0.05); }
         .nav-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .logo { font-size: 22px; font-weight: 800; color: var(--t); text-decoration: none; }
         .logo span { color: var(--p); }
         
-        .search-bar { background: var(--c); border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 10px; }
-        .search-bar input { border: none; background: transparent; width: 100%; outline: none; color: var(--t); font-size: 16px; }
+        .search-bar { background: var(--c); border-radius: 12px; padding: 10px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .search-bar input { border: none; background: transparent; width: 100%; outline: none; color: var(--t); font-family: inherit; width: 100%; }
         
         .filters { display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; scrollbar-width: none; }
         .filters::-webkit-scrollbar { display: none; }
-        .filter-btn { padding: 8px 16px; border-radius: 20px; border: none; background: var(--c); color: var(--s); font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 13px; }
+        .filter-btn { padding: 8px 16px; border-radius: 20px; border: none; background: var(--c); color: var(--s); font-weight: 600; cursor: pointer; white-space: nowrap; font-size: 13px; transition: 0.3s; }
         .filter-btn.active { background: var(--p); color: #fff; }
 
-        .feed { max-width: 700px; margin: 0 auto; padding: 15px; }
-        .card { background: var(--c); border-radius: 24px; margin-bottom: 20px; overflow: hidden; text-decoration: none; color: inherit; display: block; transition: transform 0.2s; border: 1px solid rgba(0,0,0,0.03); }
-        .card:active { transform: scale(0.98); }
-        
-        /* Imagem Responsiva no Feed */
-        .img-box { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #eee; overflow: hidden; }
-        .img-box img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.4s; }
-        .cat-badge { position: absolute; top: 12px; left: 12px; background: var(--p); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; z-index: 2; }
+        .feed { max-width: 700px; margin: 0 auto; padding: 15px; min-height: 100vh; }
+        .card { background: var(--c); border-radius: 24px; margin-bottom: 20px; overflow: hidden; text-decoration: none; color: inherit; display: block; border: 1px solid rgba(0,0,0,0.03); animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .img-box { position: relative; width: 100%; aspect-ratio: 16/9; background: #eee; }
+        .img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .cat-badge { position: absolute; top: 12px; left: 12px; background: var(--p); color: #fff; padding: 4px 12px; border-radius: 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
         
         .info { padding: 18px; }
         .meta-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 11px; }
         .source { font-weight: 800; color: var(--p); }
         .title { font-size: 18px; font-weight: 700; line-height: 1.3; }
 
-        #loader { text-align: center; padding: 20px; color: var(--p); display: none; }
-        
+        #loader { text-align: center; padding: 40px; color: var(--p); display: none; }
         #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; display: none; flex-direction: column; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
 <div id="splash">
-    <div style="width: 40px; height: 40px; border: 4px solid var(--p); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+    <i class="fas fa-circle-notch fa-spin fa-3x" style="color: var(--p)"></i>
     <p style="margin-top:20px; font-weight:700">Carregando notícia...</p>
 </div>
 
 <nav class="nav">
     <div class="nav-top">
         <a href="index.html" class="logo">Notícias <span>CLD</span></a>
-        <i class="fas fa-bookmark" onclick="location.href='?view=saved'" style="color: var(--p); cursor: pointer;"></i>
+        <i class="fas fa-bookmark" style="color: var(--p); font-size: 20px;"></i>
     </div>
     <div class="search-bar">
         <i class="fas fa-search" style="color: var(--s)"></i>
-        <input type="text" id="searchInput" placeholder="Pesquisar..." onkeyup="if(event.key==='Enter') startSearch()">
+        <input type="text" id="searchInput" placeholder="Pesquisar notícias..." onkeyup="if(event.key==='Enter') startSearch()">
     </div>
     <div class="filters">
         <button class="filter-btn active" onclick="filterByCat(this, '')">Tudo</button>
@@ -67,7 +64,6 @@
         <button class="filter-btn" onclick="filterByCat(this, '13')">Economia</button>
         <button class="filter-btn" onclick="filterByCat(this, '11')">Sociedade</button>
         <button class="filter-btn" onclick="filterByCat(this, '18')">Desporto</button>
-        <button class="filter-btn" onclick="filterByCat(this, '4')">Mundo</button>
     </div>
 </nav>
 
@@ -79,49 +75,75 @@
         { name: "O País", slug: "opais", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed" },
         { name: "Carta MZ", slug: "carta", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed" }
     ];
+    
     let currentCat = '';
     let currentSearch = '';
 
-    // Cache System
-    function getCache() { return JSON.parse(localStorage.getItem('cld_cache') || '[]'); }
-    function setCache(data) { localStorage.setItem('cld_cache', JSON.stringify(data.slice(0, 20))); }
-
     async function loadNews() {
-        // Mostrar cache instantaneamente
-        const cached = getCache();
-        if (cached.length > 0 && !currentSearch && !currentCat) renderFeed(cached);
-
+        const feed = document.getElementById('feed');
         document.getElementById('loader').style.display = 'block';
-        const params = `&search=${currentSearch}&categories=${currentCat}&per_page=10`;
         
-        try {
-            const fetches = SOURCES.map(s => fetch(s.api + params).then(r => r.json()));
-            const results = await Promise.all(fetches);
-            const data = results.flat().map(p => ({
-                id: p.id, title: p.title.rendered,
-                src: p.link.includes('opais') ? 'O País' : 'Carta MZ',
-                slug: p.link.includes('opais') ? 'opais' : 'carta',
-                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
-                date: p.date,
-                cat: p._embedded?.['wp:term']?.[0]?.[0]?.name || 'Geral'
-            })).sort((a,b) => new Date(b.date) - new Date(a.date));
+        // Se for filtro novo, limpa o feed. Se for inicial, tenta carregar cache
+        if (!currentSearch && !currentCat) {
+            const cache = localStorage.getItem('cld_news_cache');
+            if (cache) renderCards(JSON.parse(cache));
+        } else {
+            feed.innerHTML = '';
+        }
 
-            renderFeed(data);
-            if (!currentSearch && !currentCat) setCache(data);
-        } catch(e) {}
+        let allPosts = [];
+        
+        // Busca paralela para velocidade máxima
+        const requests = SOURCES.map(async (s) => {
+            try {
+                let url = `${s.api}&per_page=8`;
+                if (currentSearch) url += `&search=${encodeURIComponent(currentSearch)}`;
+                if (currentCat) url += `&categories=${currentCat}`;
+                
+                const response = await fetch(url);
+                const posts = await response.json();
+                
+                return posts.map(p => ({
+                    id: p.id,
+                    title: p.title.rendered,
+                    src: s.name,
+                    slug: s.slug,
+                    img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x225?text=Sem+Imagem',
+                    date: p.date,
+                    cat: p._embedded?.['wp:term']?.[0]?.[0]?.name || 'Geral'
+                }));
+            } catch (e) {
+                console.error("Erro ao carregar de " + s.name, e);
+                return [];
+            }
+        });
+
+        const results = await Promise.all(requests);
+        allPosts = results.flat().sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        if (allPosts.length > 0) {
+            renderCards(allPosts);
+            if (!currentSearch && !currentCat) localStorage.setItem('cld_news_cache', JSON.stringify(allPosts));
+        } else if (feed.innerHTML === '') {
+            feed.innerHTML = `<p style="text-align:center; padding:50px; opacity:0.5;">Nenhuma notícia encontrada.</p>`;
+        }
+
         document.getElementById('loader').style.display = 'none';
     }
 
-    function renderFeed(data) {
+    function renderCards(posts) {
         const feed = document.getElementById('feed');
-        feed.innerHTML = '';
-        data.forEach(p => {
+        feed.innerHTML = ''; // Evita duplicação
+        posts.forEach(p => {
             const card = document.createElement('a');
             card.className = 'card';
             card.href = `artigo.html?id=${p.id}&src=${p.slug}`;
             card.onclick = () => document.getElementById('splash').style.display = 'flex';
             card.innerHTML = `
-                <div class="img-box"><span class="cat-badge">${p.cat}</span><img src="${p.img}" loading="lazy" onload="this.style.opacity=1" style="opacity:0"></div>
+                <div class="img-box">
+                    <span class="cat-badge">${p.cat}</span>
+                    <img src="${p.img}" loading="lazy">
+                </div>
                 <div class="info">
                     <div class="meta-row"><span class="source">${p.src}</span><span>${new Date(p.date).toLocaleDateString()}</span></div>
                     <h2 class="title">${p.title}</h2>
@@ -130,7 +152,11 @@
         });
     }
 
-    function startSearch() { currentSearch = document.getElementById('searchInput').value; loadNews(); }
+    function startSearch() {
+        currentSearch = document.getElementById('searchInput').value;
+        loadNews();
+    }
+
     function filterByCat(btn, id) {
         document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
@@ -140,6 +166,5 @@
 
     window.onload = loadNews;
 </script>
-<style> @keyframes spin { to { transform: rotate(360deg); } } </style>
 </body>
 </html>
