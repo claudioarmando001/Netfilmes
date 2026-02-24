@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Notícias CLD | Premium</title>
+    <title>Notícias CLD</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -11,17 +11,13 @@
 
     <style>
         :root {
-            --primary: #0061ff; --bg: #f1f5f9; 
+            --primary: #0061ff; --bg: #f8fafc; 
             --card: #ffffff; --text: #0f172a; --text-meta: #64748b; 
-            --border: #e2e8f0; --radius: 24px; --shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-        body.dark-mode {
-            --bg: #020617; --card: #1e293b; --text: #f8fafc; 
-            --text-meta: #94a3b8; --border: #334155;
+            --border: #e2e8f0; --radius: 20px; --shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); transition: 0.3s; padding-bottom: 20px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 20px; }
 
         .loader-bar { position: fixed; top: 0; left: 0; height: 3px; background: var(--primary); z-index: 10000; width: 0%; transition: 0.3s; }
 
@@ -30,61 +26,58 @@
         .header-top { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
         .logo { font-weight: 800; font-size: 1.4rem; color: var(--text); letter-spacing: -1px; text-decoration: none; }
         .logo span { color: var(--primary); }
+        .btn-saved { color: var(--primary); font-size: 1.2rem; cursor: pointer; text-decoration: none; }
 
         .search-container { margin: 12px auto 0; max-width: 800px; position: relative; }
-        .search-input { width: 100%; padding: 14px 45px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit; font-size: 15px; }
+        .search-input { width: 100%; padding: 12px 45px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-family: inherit; font-size: 15px; }
         .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-meta); }
 
-        /* Categories - Mais opções */
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px 0; scrollbar-width: none; max-width: 1200px; margin: 0 auto; }
+        /* Categories */
+        .categories { display: flex; gap: 8px; overflow-x: auto; padding: 15px 0; scrollbar-width: none; max-width: 1200px; margin: 0 auto; }
         .categories::-webkit-scrollbar { display: none; }
-        .cat-btn { padding: 10px 20px; border-radius: 30px; background: var(--card); border: 1px solid var(--border); font-size: 0.85rem; font-weight: 700; white-space: nowrap; cursor: pointer; color: var(--text-meta); transition: 0.2s; }
-        .cat-btn.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(0,97,255,0.3); }
+        .cat-btn { padding: 8px 18px; border-radius: 20px; background: var(--card); border: 1px solid var(--border); font-size: 0.8rem; font-weight: 700; white-space: nowrap; cursor: pointer; color: var(--text-meta); transition: 0.2s; }
+        .cat-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-        /* Feed Grid */
-        .feed { padding: 0 15px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 20px; }
+        /* Feed */
+        .feed { padding: 0 15px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 16px; }
 
-        /* Card Destaque */
+        /* CARD DESTAQUE MENOR */
         .news-item.featured { grid-column: 1 / -1; flex-direction: column; padding: 0; overflow: hidden; }
-        .news-item.featured .news-img { width: 100%; height: 260px; border-radius: 0; }
-        .news-item.featured .news-info { padding: 20px; }
-        .news-item.featured .news-title { font-size: 1.4rem; }
+        .news-item.featured .news-img { width: 100%; height: 210px; border-radius: 0; }
+        .news-item.featured .news-info { padding: 15px; }
+        .news-item.featured .news-title { font-size: 1.25rem; }
 
         /* Cards Normais */
-        .news-item { background: var(--card); border-radius: var(--radius); padding: 14px; display: flex; gap: 15px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; text-decoration: none; color: inherit; }
-        .news-item:active { transform: scale(0.98); }
-
-        .news-img { width: 110px; height: 110px; border-radius: 18px; object-fit: cover; background: var(--bg); flex-shrink: 0; }
+        .news-item { background: var(--card); border-radius: var(--radius); padding: 12px; display: flex; gap: 12px; border: 1px solid var(--border); cursor: pointer; text-decoration: none; color: inherit; }
+        .news-img { width: 95px; height: 95px; border-radius: 15px; object-fit: cover; background: #eee; flex-shrink: 0; }
         .news-info { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .news-source { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 6px; }
-        .news-title { font-size: 1rem; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .news-meta { font-size: 0.75rem; color: var(--text-meta); margin-top: 10px; display: flex; justify-content: space-between; }
+        .news-source { font-size: 0.65rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
+        .news-title { font-size: 0.95rem; font-weight: 700; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-meta { font-size: 0.7rem; color: var(--text-meta); margin-top: 8px; display: flex; justify-content: space-between; }
 
-        /* Botão Flutuante de Guardados */
-        .fav-fab { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; box-shadow: 0 8px 25px rgba(0,97,255,0.4); z-index: 3000; cursor: pointer; border: none; transition: 0.3s; }
-        .fav-fab:active { transform: scale(0.9); }
-
-        #splash { position: fixed; inset: 0; background: var(--bg); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { width: 45px; height: 45px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        #splash { position: fixed; inset: 0; background: #fff; z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         @media (min-width: 768px) { .feed { grid-template-columns: repeat(2, 1fr); } }
     </style>
 </head>
 <body>
 
-<div id="splash"><div class="spinner"></div><p style="margin-top:15px; font-weight:700">Carregando notícia...</p></div>
+<div id="splash"><div class="spinner"></div><p style="margin-top:15px; font-weight:700">A abrir notícia...</p></div>
 <div class="loader-bar" id="loader-bar"></div>
 
 <header class="header">
     <div class="header-top">
         <a href="index.html" class="logo">Notícias <span>CLD</span></a>
-        <i class="fas fa-circle-half-stroke" onclick="toggleTheme()" style="cursor:pointer; font-size: 1.2rem;"></i>
+        <a href="?view=saved" class="btn-saved" title="Notícias Guardadas">
+            <i class="fas fa-bookmark"></i>
+        </a>
     </div>
     
     <div class="search-container">
         <i class="fas fa-search search-icon"></i>
-        <input type="text" class="search-input" id="search-input" placeholder="O que pretende ler hoje?" onkeyup="if(event.key==='Enter') startSearch()">
+        <input type="text" class="search-input" id="search-input" placeholder="Pesquisar notícias..." onkeyup="if(event.key==='Enter') startSearch()">
     </div>
 
     <div class="categories">
@@ -95,15 +88,10 @@
         <div class="cat-btn" onclick="filterCat('18', this)">Desporto</div>
         <div class="cat-btn" onclick="filterCat('4', this)">Mundo</div>
         <div class="cat-btn" onclick="filterCat('17', this)">Cultura</div>
-        <div class="cat-btn" onclick="filterCat('19', this)">Tecnologia</div>
     </div>
 </header>
 
 <main class="feed" id="feed"></main>
-
-<button class="fav-fab" onclick="window.location.href='?view=saved'" title="Notícias Guardadas">
-    <i class="fas fa-bookmark"></i>
-</button>
 
 <script>
 const SOURCES = [
@@ -116,16 +104,23 @@ let currentCat = '';
 let currentSearch = '';
 let page = 1;
 
+// Lógica para tempo relativo ("há 2 horas")
+function formatTime(date) {
+    const diff = Math.floor((new Date() - new Date(date)) / 1000);
+    if (diff < 60) return "agora mesmo";
+    if (diff < 3600) return `há ${Math.floor(diff / 60)} min`;
+    if (diff < 86400) return `há ${Math.floor(diff / 3600)} h`;
+    return new Date(date).toLocaleDateString(); // Volta para data normal após 24h
+}
+
 async function loadNews(append = false) {
     const bar = document.getElementById('loader-bar');
     bar.style.width = '30%';
     
-    // Se for visualizar guardados (exemplo simples via URL param)
     const urlParams = new URLSearchParams(window.location.search);
     if(urlParams.get('view') === 'saved') {
         renderSaved();
         bar.style.width = '100%';
-        setTimeout(() => bar.style.width = '0%', 400);
         return;
     }
 
@@ -148,13 +143,13 @@ async function loadNews(append = false) {
                 src: p.link.includes('opais') ? 'O País' : (p.link.includes('carta') ? 'Carta MZ' : 'MZNews'),
                 slug: p.link.includes('opais') ? 'opais' : (p.link.includes('carta') ? 'carta' : 'mznews'),
                 img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/600x400',
-                date: new Date(p.date),
+                date: p.date,
                 cat: p._embedded?.['wp:term']?.[0]?.[0]?.name || 'Geral'
             }))
-            .sort((a,b) => b.date - a.date);
+            .sort((a,b) => new Date(b.date) - new Date(a.date));
 
         renderFeed(allPosts, append);
-    } catch (e) { console.error("Falha na rede"); }
+    } catch (e) { console.error("Erro na busca"); }
     
     bar.style.width = '100%';
     setTimeout(() => bar.style.width = '0%', 400);
@@ -174,7 +169,10 @@ function renderFeed(posts, append) {
             <div class="news-info">
                 <span class="news-source">${p.src}</span>
                 <h3 class="news-title">${p.title}</h3>
-                <div class="news-meta"><span>${p.cat}</span><span>${p.date.toLocaleDateString()}</span></div>
+                <div class="news-meta">
+                    <span>${p.cat}</span>
+                    <span style="font-weight:600">${formatTime(p.date)}</span>
+                </div>
             </div>`;
         feed.appendChild(item);
     });
@@ -182,13 +180,11 @@ function renderFeed(posts, append) {
 
 function renderSaved() {
     const feed = document.getElementById('feed');
-    feed.innerHTML = '<h2 style="grid-column:1/-1; margin:10px 0;">Notícias Guardadas</h2>';
+    feed.innerHTML = '<h2 style="grid-column:1/-1; padding:10px 0;">Guardados</h2>';
     const saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
     if(saved.length === 0) {
-        feed.innerHTML += '<p style="grid-column:1/-1; opacity:0.6;">Ainda não guardou notícias.</p>';
-    } else {
-        renderFeed(saved, false);
-    }
+        feed.innerHTML += '<p style="grid-column:1/-1; opacity:0.6;">Ainda não guardou nenhuma notícia.</p>';
+    } else { renderFeed(saved, false); }
 }
 
 function startSearch() { currentSearch = document.getElementById('search-input').value; loadNews(); }
@@ -200,14 +196,7 @@ function filterCat(id, btn) {
     loadNews();
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('dark-cld', document.body.classList.contains('dark-mode'));
-}
-
-if(localStorage.getItem('dark-cld') === 'true') document.body.classList.add('dark-mode');
 window.onload = () => loadNews();
-
 window.onscroll = () => {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1000) {
         page++; loadNews(true);
