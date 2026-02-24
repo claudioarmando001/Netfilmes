@@ -3,84 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícias CLD</title>
+    <title>Carregando Notícia...</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; --sk: #eee; }
-        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; --sk: #222; } }
+        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; --sk: #f0f0f0; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; --sk: #1e1e1e; } }
         
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); margin: 0; padding-top: 60px; }
-        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); margin: 0; padding-top: 60px; transition: background 0.3s; }
         .top { position: fixed; top: 0; width: 100%; background: var(--bg); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; }
         
         .art-container { max-width: 740px; margin: 0 auto; padding: 20px; }
         
-        /* Animação Skeleton */
-        .skeleton { background: var(--sk); border-radius: 8px; position: relative; overflow: hidden; }
-        .skeleton::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: loading 1.5s infinite; }
+        /* Skeleton Animation */
+        .skeleton { background: var(--sk); border-radius: 12px; position: relative; overflow: hidden; }
+        .skeleton::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); animation: loading 1.5s infinite; }
         @keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
-        .sk-title { height: 35px; width: 90%; margin-bottom: 20px; }
-        .sk-img { height: 300px; width: 100%; border-radius: 20px; margin-bottom: 25px; }
-        .sk-text { height: 20px; width: 100%; margin-bottom: 10px; }
+        .sk-t { height: 35px; width: 85%; margin-bottom: 20px; }
+        .sk-i { height: 300px; width: 100%; margin-bottom: 25px; }
 
         .actions { display: flex; gap: 10px; margin-bottom: 25px; }
-        .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
+        .btn { border: none; padding: 12px 22px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; font-family: inherit; transition: 0.3s; }
         .audio-btn { background: var(--p); color: #fff; }
+        .audio-btn.playing { background: #ff3b30; }
         .save-btn { background: rgba(0,0,0,0.05); color: var(--t); }
 
-        .main-img { width: 100%; border-radius: 20px; margin-bottom: 25px; display: none; }
-        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.7; display: none; }
+        .main-img { width: 100%; border-radius: 20px; margin-bottom: 30px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.8; display: none; }
+        .body-text p { margin-bottom: 20px; }
 
-        /* Agregador */
-        .agregador { margin-top: 50px; padding: 25px; background: rgba(0,0,0,0.03); border-radius: 25px; }
+        /* Agregador 6 Notícias */
+        .agregador { margin-top: 50px; padding: 30px; background: rgba(0,0,0,0.03); border-radius: 30px; }
         .ag-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
-        .ag-item { display: flex; gap: 12px; text-decoration: none; color: inherit; align-items: center; background: var(--bg); padding: 10px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .ag-item img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
-        .ag-item h4 { font-size: 14px; margin: 0; line-height: 1.2; }
+        @media (min-width: 600px) { .ag-grid { grid-template-columns: 1fr 1fr; } }
+        .ag-item { display: flex; gap: 12px; text-decoration: none; color: inherit; background: var(--bg); padding: 10px; border-radius: 18px; align-items: center; }
+        .ag-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; }
+        .ag-item h4 { font-size: 13px; margin: 0; line-height: 1.2; }
 
-        footer { background: rgba(0,0,0,0.02); padding: 30px 20px; text-align: center; margin-top: 50px; font-size: 13px; }
+        footer { background: rgba(0,0,0,0.02); padding: 40px 20px; text-align: center; margin-top: 60px; border-radius: 40px 40px 0 0; }
     </style>
 </head>
 <body>
 
 <div class="top">
-    <a href="index.html" style="text-decoration:none; color:var(--t); font-weight:700"><i class="fas fa-arrow-left"></i> Voltar</a>
-    <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer"></i>
+    <a href="index.html" style="text-decoration:none; color:var(--t); font-weight:700"><i class="fas fa-chevron-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer; font-size: 1.2rem;"></i>
 </div>
 
 <main class="art-container">
     <div id="sk-loader">
-        <div class="skeleton sk-title"></div>
-        <div class="skeleton sk-img"></div>
-        <div class="skeleton sk-text"></div>
-        <div class="skeleton sk-text"></div>
-        <div class="skeleton sk-text" style="width: 60%"></div>
+        <div class="skeleton sk-t"></div>
+        <div class="skeleton sk-i"></div>
+        <div class="skeleton" style="height:20px; width:100%; margin-bottom:10px"></div>
+        <div class="skeleton" style="height:20px; width:90%; margin-bottom:10px"></div>
+        <div class="skeleton" style="height:20px; width:70%"></div>
     </div>
 
     <h1 id="title"></h1>
     <div class="actions" id="action-bar" style="display:none">
-        <button class="btn audio-btn" onclick="listen()"><i class="fas fa-play"></i> Ouvir</button>
-        <button id="saveBtn" class="btn save-btn" onclick="toggleSave()"><i class="far fa-bookmark"></i> Guardar</button>
+        <button class="btn audio-btn" id="voiceBtn" onclick="toggleVoice()">
+            <i class="fas fa-play" id="voiceIcon"></i> <span id="voiceTxt">Ouvir Notícia</span>
+        </button>
+        <button id="saveBtn" class="btn save-btn" onclick="toggleSave()">
+            <i class="far fa-bookmark"></i> Guardar
+        </button>
     </div>
 
     <img id="mainImg" class="main-img">
     <div id="content" class="body-text"></div>
 
     <div class="agregador">
-        <h3 style="margin:0">Últimas do Agregador</h3>
+        <h3 style="margin:0; font-weight:800">Mais Recentes</h3>
         <div class="ag-grid" id="ag-grid"></div>
     </div>
 </main>
 
 <footer>
-    <p><i class="fas fa-phone"></i> +258 869 667 677 | <i class="fas fa-envelope"></i> claudioarmando001@gmail.com</p>
+    <p style="font-weight:700; margin-bottom:10px">Notícias CLD</p>
+    <p style="font-size:13px; opacity:0.7"><i class="fas fa-phone"></i> +258 869 667 677<br><i class="fas fa-envelope"></i> claudioarmando001@gmail.com</p>
 </footer>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
-    let articleData = null;
+    let artData = null;
+    let isSpeaking = false;
 
     async function load() {
         const p = new URLSearchParams(window.location.search);
@@ -90,24 +96,53 @@
             const r = await fetch(`${APIS[src]}${id}?_embed`);
             const data = await r.json();
 
-            articleData = {
+            artData = {
                 id: data.id, title: data.title.rendered, slug: src,
-                img: data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+                img: data._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/800x450',
                 src: src === 'opais' ? 'O País' : 'Carta MZ'
             };
 
             document.getElementById('title').innerHTML = data.title.rendered;
-            document.getElementById('mainImg').src = articleData.img;
+            document.title = document.getElementById('title').innerText;
+            document.getElementById('mainImg').src = artData.img;
             document.getElementById('content').innerHTML = data.content.rendered;
             
-            // Trocar Skeleton pelo Conteúdo
             document.getElementById('sk-loader').style.display = 'none';
             document.getElementById('mainImg').style.display = 'block';
             document.getElementById('content').style.display = 'block';
             document.getElementById('action-bar').style.display = 'flex';
 
             loadAgregador(src);
-        } catch(e) { console.error(e); }
+            checkSaved();
+        } catch(e) { alert("Não foi possível carregar o conteúdo."); }
+    }
+
+    function toggleVoice() {
+        const btn = document.getElementById('voiceBtn');
+        const icon = document.getElementById('voiceIcon');
+        const txt = document.getElementById('voiceTxt');
+
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+            btn.classList.remove('playing');
+            icon.className = "fas fa-play";
+            txt.innerText = "Ouvir Notícia";
+        } else {
+            const utterance = new SpeechSynthesisUtterance(document.getElementById('content').innerText);
+            utterance.lang = 'pt-PT';
+            utterance.onend = () => {
+                isSpeaking = false;
+                btn.classList.remove('playing');
+                icon.className = "fas fa-play";
+                txt.innerText = "Ouvir Notícia";
+            };
+            window.speechSynthesis.speak(utterance);
+            isSpeaking = true;
+            btn.classList.add('playing');
+            icon.className = "fas fa-stop";
+            txt.innerText = "Parar Leitura";
+        }
     }
 
     async function loadAgregador(src) {
@@ -121,22 +156,22 @@
         `).join('');
     }
 
-    // Funcionalidades mantidas do código anterior (toggleSave, listen, share...)
     function toggleSave() {
         let saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
-        const idx = saved.findIndex(i => i.id === articleData.id);
-        idx > -1 ? saved.splice(idx, 1) : saved.push(articleData);
+        const idx = saved.findIndex(i => i.id === artData.id);
+        idx > -1 ? saved.splice(idx, 1) : saved.push(artData);
         localStorage.setItem('cld_saved', JSON.stringify(saved));
         checkSaved();
     }
+
     function checkSaved() {
         const saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
-        const isSaved = saved.some(i => i.id === articleData.id);
-        document.getElementById('saveBtn').innerHTML = isSaved ? '<i class="fas fa-bookmark"></i> Guardado' : '<i class="far fa-bookmark"></i> Guardar';
+        const isSaved = saved.some(i => i.id === artData.id);
+        const btn = document.getElementById('saveBtn');
+        btn.innerHTML = isSaved ? '<i class="fas fa-bookmark"></i> Guardado' : '<i class="far fa-bookmark"></i> Guardar';
+        btn.style.color = isSaved ? 'var(--p)' : 'inherit';
     }
-    function listen() {
-        window.speechSynthesis.speak(new SpeechSynthesisUtterance(document.getElementById('content').innerText));
-    }
+
     function share() {
         navigator.share({ title: document.title, url: window.location.href });
     }
