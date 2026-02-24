@@ -7,30 +7,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; }
-        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; } body { background: #0f1115; } }
+        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; --sk: #eee; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; --sk: #222; } }
+        
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); margin: 0; padding-top: 60px; }
+        
         .top { position: fixed; top: 0; width: 100%; background: var(--bg); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; }
+        
         .art-container { max-width: 740px; margin: 0 auto; padding: 20px; }
         
         /* Animação Skeleton */
-        .skeleton { background: #eee; background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%); border-radius: 5px; background-size: 200% 100%; animation: 1.5s shine linear infinite; }
-        @keyframes shine { to { background-position-x: -200%; } }
-        .sk-title { height: 30px; width: 80%; margin-bottom: 20px; }
-        .sk-img { height: 300px; width: 100%; border-radius: 20px; margin-bottom: 20px; }
-        .sk-text { height: 15px; width: 100%; margin-bottom: 10px; }
+        .skeleton { background: var(--sk); border-radius: 8px; position: relative; overflow: hidden; }
+        .skeleton::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: loading 1.5s infinite; }
+        @keyframes loading { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-        .main-img { width: 100%; border-radius: 20px; margin-bottom: 25px; }
-        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.7; }
-        
+        .sk-title { height: 35px; width: 90%; margin-bottom: 20px; }
+        .sk-img { height: 300px; width: 100%; border-radius: 20px; margin-bottom: 25px; }
+        .sk-text { height: 20px; width: 100%; margin-bottom: 10px; }
+
+        .actions { display: flex; gap: 10px; margin-bottom: 25px; }
+        .btn { border: none; padding: 10px 18px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
+        .audio-btn { background: var(--p); color: #fff; }
+        .save-btn { background: rgba(0,0,0,0.05); color: var(--t); }
+
+        .main-img { width: 100%; border-radius: 20px; margin-bottom: 25px; display: none; }
+        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.7; display: none; }
+
         /* Agregador */
-        .agregador { margin-top: 40px; border-top: 2px solid #eee; padding-top: 20px; }
-        .mini-card { display: flex; gap: 10px; text-decoration: none; color: inherit; margin-bottom: 15px; align-items: center; }
-        .mini-card img { width: 80px; height: 60px; border-radius: 10px; object-fit: cover; }
-        .mini-card h4 { font-size: 14px; margin: 0; }
-        
-        .footer-contact { text-align: center; padding: 30px; font-size: 13px; color: #888; border-top: 1px solid #eee; margin-top: 30px; }
-        .footer-contact a { color: var(--p); text-decoration: none; font-weight: bold; }
+        .agregador { margin-top: 50px; padding: 25px; background: rgba(0,0,0,0.03); border-radius: 25px; }
+        .ag-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+        .ag-item { display: flex; gap: 12px; text-decoration: none; color: inherit; align-items: center; background: var(--bg); padding: 10px; border-radius: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .ag-item img { width: 65px; height: 65px; border-radius: 10px; object-fit: cover; }
+        .ag-item h4 { font-size: 14px; margin: 0; line-height: 1.2; }
+
+        footer { background: rgba(0,0,0,0.02); padding: 30px 20px; text-align: center; margin-top: 50px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -40,45 +50,37 @@
     <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer"></i>
 </div>
 
-<main class="art-container" id="loaderArt">
-    <div class="skeleton sk-title"></div>
-    <div class="skeleton sk-img"></div>
-    <div class="skeleton sk-text"></div>
-    <div class="skeleton sk-text"></div>
-    <div class="skeleton sk-text" style="width: 60%"></div>
-</main>
+<main class="art-container">
+    <div id="sk-loader">
+        <div class="skeleton sk-title"></div>
+        <div class="skeleton sk-img"></div>
+        <div class="skeleton sk-text"></div>
+        <div class="skeleton sk-text"></div>
+        <div class="skeleton sk-text" style="width: 60%"></div>
+    </div>
 
-<main class="art-container" id="contentArt" style="display:none">
     <h1 id="title"></h1>
-    <p id="time" style="font-size: 13px; color: var(--p); font-weight: 700; margin-bottom: 20px;"></p>
-    
-    <div style="display:flex; gap:10px; margin-bottom:20px">
-        <button onclick="listen()" style="border:none; background:var(--p); color:#fff; padding:10px 20px; border-radius:20px; font-weight:bold"><i class="fas fa-play"></i> Ouvir</button>
-        <button id="saveBtn" onclick="toggleSave()" style="border:none; background:#eee; padding:10px 20px; border-radius:20px; font-weight:bold">Guardar</button>
+    <div class="actions" id="action-bar" style="display:none">
+        <button class="btn audio-btn" onclick="listen()"><i class="fas fa-play"></i> Ouvir</button>
+        <button id="saveBtn" class="btn save-btn" onclick="toggleSave()"><i class="far fa-bookmark"></i> Guardar</button>
     </div>
 
     <img id="mainImg" class="main-img">
     <div id="content" class="body-text"></div>
 
-    <section class="agregador">
-        <h3 style="margin-bottom:20px">Mais Notícias Fresquinhas</h3>
-        <div id="miniFeed"></div>
-    </section>
+    <div class="agregador">
+        <h3 style="margin:0">Últimas do Agregador</h3>
+        <div class="ag-grid" id="ag-grid"></div>
+    </div>
 </main>
 
-<footer class="footer-contact">
-    <p>Contacto: <a href="tel:+258869667677">+258 869 667 677</a> | <a href="mailto:claudioarmando001@gmail.com">claudioarmando001@gmail.com</a></p>
+<footer>
+    <p><i class="fas fa-phone"></i> +258 869 667 677 | <i class="fas fa-envelope"></i> claudioarmando001@gmail.com</p>
 </footer>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
-    
-    function timeAgo(date) {
-        const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-        if (seconds < 3600) return `Há ${Math.floor(seconds/60)} min`;
-        if (seconds < 86400) return `Há ${Math.floor(seconds/3600)} horas`;
-        return new Date(date).toLocaleDateString();
-    }
+    let articleData = null;
 
     async function load() {
         const p = new URLSearchParams(window.location.search);
@@ -86,40 +88,58 @@
         
         try {
             const r = await fetch(`${APIS[src]}${id}?_embed`);
-            const n = await r.json();
+            const data = await r.json();
 
-            document.getElementById('title').innerHTML = n.title.rendered;
-            document.getElementById('time').innerText = `Publicado ${timeAgo(n.date)}`;
-            document.getElementById('mainImg').src = n._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-            document.getElementById('content').innerHTML = n.content.rendered;
+            articleData = {
+                id: data.id, title: data.title.rendered, slug: src,
+                img: data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '',
+                src: src === 'opais' ? 'O País' : 'Carta MZ'
+            };
+
+            document.getElementById('title').innerHTML = data.title.rendered;
+            document.getElementById('mainImg').src = articleData.img;
+            document.getElementById('content').innerHTML = data.content.rendered;
             
-            document.getElementById('loaderArt').style.display = 'none';
-            document.getElementById('contentArt').style.display = 'block';
-            
+            // Trocar Skeleton pelo Conteúdo
+            document.getElementById('sk-loader').style.display = 'none';
+            document.getElementById('mainImg').style.display = 'block';
+            document.getElementById('content').style.display = 'block';
+            document.getElementById('action-bar').style.display = 'flex';
+
             loadAgregador(src);
-        } catch(e) { alert("Erro ao carregar"); }
+        } catch(e) { console.error(e); }
     }
 
     async function loadAgregador(src) {
         const r = await fetch(`${APIS[src]}?per_page=6&_embed`);
         const posts = await r.json();
-        document.getElementById('miniFeed').innerHTML = posts.map(p => `
-            <a href="artigo.html?id=${p.id}&src=${src}" class="mini-card">
-                <img src="${p._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
-                <div>
-                    <h4>${p.title.rendered}</h4>
-                    <span style="font-size:11px; color:#888">${timeAgo(p.date)}</span>
-                </div>
+        document.getElementById('ag-grid').innerHTML = posts.map(n => `
+            <a href="artigo.html?id=${n.id}&src=${src}" class="ag-item">
+                <img src="${n._embedded?.['wp:featuredmedia']?.[0]?.source_url || ''}">
+                <h4>${n.title.rendered}</h4>
             </a>
         `).join('');
     }
 
-    function listen() {
-        const msg = new SpeechSynthesisUtterance(document.getElementById('content').innerText);
-        msg.lang = 'pt-PT'; window.speechSynthesis.speak(msg);
+    // Funcionalidades mantidas do código anterior (toggleSave, listen, share...)
+    function toggleSave() {
+        let saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
+        const idx = saved.findIndex(i => i.id === articleData.id);
+        idx > -1 ? saved.splice(idx, 1) : saved.push(articleData);
+        localStorage.setItem('cld_saved', JSON.stringify(saved));
+        checkSaved();
     }
-
-    function share() { navigator.share({ title: document.title, url: window.location.href }); }
+    function checkSaved() {
+        const saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
+        const isSaved = saved.some(i => i.id === articleData.id);
+        document.getElementById('saveBtn').innerHTML = isSaved ? '<i class="fas fa-bookmark"></i> Guardado' : '<i class="far fa-bookmark"></i> Guardar';
+    }
+    function listen() {
+        window.speechSynthesis.speak(new SpeechSynthesisUtterance(document.getElementById('content').innerText));
+    }
+    function share() {
+        navigator.share({ title: document.title, url: window.location.href });
+    }
 
     window.onload = load;
 </script>
