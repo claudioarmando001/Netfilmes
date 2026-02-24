@@ -3,77 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícias CLD | Lendo</title>
+    <title>Notícias CLD</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; --sk: #eee; }
-        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; --sk: #222; } }
+        :root { --p: #0061ff; --t: #1a1d23; --bg: #ffffff; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #0f1115; --t: #f4f7fa; } }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--t); margin: 0; padding-top: 60px; }
         
         .top { position: fixed; top: 0; width: 100%; background: var(--bg); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; }
-        .art-container { max-width: 740px; margin: 0 auto; padding: 20px; }
+        .art-container { max-width: 800px; margin: 0 auto; padding: 20px; }
 
-        .skeleton { background: var(--sk); border-radius: 12px; margin-bottom: 15px; position: relative; overflow: hidden; }
-        .skeleton::after { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); animation: sh 1.5s infinite; }
-        @keyframes sh { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        /* IMAGENS RESPONSIVAS TOTAIS */
+        .main-img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 500px; 
+            object-fit: cover; 
+            border-radius: 20px; 
+            margin-bottom: 25px; 
+            display: none; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
 
-        .actions { display: flex; gap: 10px; margin-bottom: 25px; }
+        /* Responsividade para imagens dentro do conteúdo da notícia */
+        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.8; display: none; }
+        .body-text img { 
+            max-width: 100% !important; 
+            height: auto !important; 
+            border-radius: 15px; 
+            margin: 20px 0; 
+            display: block;
+        }
+        
+        /* Ajuste para Iframe/Vídeos (YouTube etc) */
+        .body-text iframe { width: 100% !important; aspect-ratio: 16 / 9; border-radius: 15px; border: none; }
+
+        .actions { display: flex; gap: 10px; margin-bottom: 30px; }
         .btn { border: none; padding: 12px 20px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
         .audio-btn { background: var(--p); color: #fff; }
         .audio-btn.playing { background: #ff4757; }
-        .save-btn { background: rgba(0,0,0,0.05); color: var(--t); }
-
-        .main-img { width: 100%; border-radius: 20px; margin-bottom: 25px; display: none; }
-        .body-text { font-family: 'Lora', serif; font-size: 19px; line-height: 1.8; display: none; }
         
-        .agregador { margin-top: 50px; padding: 25px; background: rgba(0,0,0,0.03); border-radius: 24px; }
         .ag-item { display: flex; gap: 12px; text-decoration: none; color: inherit; margin-bottom: 15px; align-items: center; }
-        .ag-item img { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; }
+        .ag-item img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
         
-        footer { padding: 40px 20px; text-align: center; border-top: 1px solid rgba(0,0,0,0.05); margin-top: 40px; font-size: 13px; color: var(--s); }
+        footer { padding: 40px; text-align: center; opacity: 0.6; font-size: 13px; }
     </style>
 </head>
 <body>
 
 <div class="top">
     <a href="index.html" style="text-decoration:none; color:var(--t); font-weight:700"><i class="fas fa-arrow-left"></i> Voltar</a>
-    <i class="fas fa-share-nodes" onclick="shareArticle()" style="cursor:pointer; font-size: 1.2rem;"></i>
+    <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer"></i>
 </div>
 
 <main class="art-container">
-    <div id="loader-art">
-        <h2 style="text-align:center; margin-bottom:30px">Processando notícia...</h2>
-        <div class="skeleton" style="height:40px; width:80%"></div>
-        <div class="skeleton" style="height:300px; width:100%"></div>
-        <div class="skeleton" style="height:20px; width:100%"></div>
-        <div class="skeleton" style="height:20px; width:90%"></div>
-    </div>
-
-    <h1 id="title"></h1>
+    <h1 id="title" style="font-size: 28px; line-height: 1.2; margin-bottom: 20px;">Processando notícia...</h1>
+    
     <div class="actions" id="action-bar" style="display:none">
-        <button id="audioBtn" class="btn audio-btn" onclick="toggleAudio()"><i class="fas fa-play"></i> <span>Ouvir Notícia</span></button>
-        <button id="saveBtn" class="btn save-btn" onclick="toggleSave()"><i class="far fa-bookmark"></i> Guardar</button>
+        <button id="audioBtn" class="btn audio-btn" onclick="toggleAudio()"><i class="fas fa-play"></i> <span>Ouvir</span></button>
+        <button class="btn" style="background:rgba(0,0,0,0.05); color:var(--t)" onclick="save()"><i class="far fa-bookmark"></i> Guardar</button>
     </div>
 
     <img id="mainImg" class="main-img">
     <div id="content" class="body-text"></div>
 
-    <div id="ag-box" class="agregador" style="display:none">
-        <h3 style="margin-bottom:20px">Mais notícias recentes</h3>
+    <div id="ag-box" style="margin-top:50px; display:none">
+        <h3 style="margin-bottom:20px">Relacionadas</h3>
         <div id="miniFeed"></div>
     </div>
 </main>
 
 <footer>
-    <p><i class="fas fa-phone"></i> +258 869 667 677</p>
-    <p><i class="fas fa-envelope"></i> claudioarmando001@gmail.com</p>
+    +258 869 667 677 | claudioarmando001@gmail.com
 </footer>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/' };
     let isReading = false;
-    let currentData = null;
 
     async function load() {
         const p = new URLSearchParams(window.location.search);
@@ -82,47 +89,39 @@
         try {
             const r = await fetch(`${APIS[src]}${id}?_embed`);
             const data = await r.json();
-            currentData = data;
 
             document.getElementById('title').innerHTML = data.title.rendered;
-            document.getElementById('mainImg').src = data._embedded?.['wp:featuredmedia']?.[0]?.source_url || '';
-            document.getElementById('content').innerHTML = data.content.rendered;
+            const img = data._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+            if(img) {
+                const mImg = document.getElementById('mainImg');
+                mImg.src = img;
+                mImg.style.display = 'block';
+            }
             
-            document.getElementById('loader-art').style.display = 'none';
-            document.getElementById('mainImg').style.display = 'block';
+            document.getElementById('content').innerHTML = data.content.rendered;
             document.getElementById('content').style.display = 'block';
             document.getElementById('action-bar').style.display = 'flex';
             document.getElementById('ag-box').style.display = 'block';
 
             loadMini(src);
-        } catch(e) { console.error(e); }
+        } catch(e) {}
     }
 
     function toggleAudio() {
         const btn = document.getElementById('audioBtn');
         if (isReading) {
             window.speechSynthesis.cancel();
-            btn.innerHTML = '<i class="fas fa-play"></i> <span>Ouvir Notícia</span>';
+            btn.innerHTML = '<i class="fas fa-play"></i> Ouvir';
             btn.classList.remove('playing');
             isReading = false;
         } else {
             const ut = new SpeechSynthesisUtterance(document.getElementById('content').innerText);
             ut.lang = 'pt-PT';
-            ut.onend = () => {
-                btn.innerHTML = '<i class="fas fa-play"></i> <span>Ouvir Notícia</span>';
-                btn.classList.remove('playing');
-                isReading = false;
-            };
+            ut.onend = () => { isReading = false; btn.classList.remove('playing'); };
             window.speechSynthesis.speak(ut);
-            btn.innerHTML = '<i class="fas fa-stop"></i> <span>Parar Leitura</span>';
+            btn.innerHTML = '<i class="fas fa-stop"></i> Parar';
             btn.classList.add('playing');
             isReading = true;
-        }
-    }
-
-    async function shareArticle() {
-        if (navigator.share) {
-            navigator.share({ title: document.getElementById('title').innerText, url: window.location.href });
         }
     }
 
@@ -135,6 +134,8 @@
                 <h4 style="font-size:14px">${n.title.rendered}</h4>
             </a>`).join('');
     }
+
+    function share() { navigator.share({ title: document.title, url: window.location.href }); }
 
     window.onload = load;
 </script>
