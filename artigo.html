@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leitura - CLD</title>
+    <title>Leitura | CLD</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -13,12 +13,12 @@
         .container { max-width: 800px; margin: 0 auto; padding: 20px; }
         h1 { font-size: 1.8rem; line-height: 1.2; font-weight: 800; margin-bottom: 15px; }
         .controls { display: flex; gap: 10px; margin-bottom: 25px; }
-        .btn { border: none; padding: 12px 22px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
-        .btn-audio { background: var(--p); color: white; transition: 0.3s; }
-        .btn-audio.playing { background: #dc3545; } /* Vermelho ao tocar */
-        .body-text { font-family: 'Lora', serif; font-size: 1.2rem; line-height: 1.8; }
+        .btn { border: none; padding: 12px 22px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; transition: 0.3s; }
+        .btn-audio { background: var(--p); color: white; }
+        .btn-audio.playing { background: #ff4757; }
+        .body-text { font-family: 'Lora', serif; font-size: 1.25rem; line-height: 1.8; }
         .body-text img { width: 100%; border-radius: 15px; margin: 20px 0; }
-        .main-img { width: 100%; border-radius: 20px; margin-bottom: 20px; }
+        .main-img { width: 100%; border-radius: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
@@ -29,10 +29,10 @@
 </div>
 
 <main class="container">
-    <h1 id="title">Carregando...</h1>
+    <h1 id="title">Processando conteúdo...</h1>
     <div class="controls">
-        <button id="voiceBtn" class="btn btn-audio" onclick="handleVoice()">
-            <i class="fas fa-play"></i> <span>Ouvir Notícia</span>
+        <button id="voiceBtn" class="btn btn-audio" onclick="toggleSpeech()">
+            <i class="fas fa-play"></i> <span>Ouvir</span>
         </button>
         <button class="btn" style="background:#f1f5f9" onclick="save()">
             <i class="far fa-bookmark"></i>
@@ -44,13 +44,13 @@
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/', 'mznews': 'https://mznews.co.mz/wp-json/wp/v2/posts/' };
-    let isSpeaking = false;
     let synth = window.speechSynthesis;
+    let isSpeaking = false;
 
     async function load() {
-        const p = new URLSearchParams(window.location.search);
+        const urlP = new URLSearchParams(window.location.search);
         try {
-            const res = await fetch(`${APIS[p.get('src')]}${p.get('id')}?_embed`);
+            const res = await fetch(`${APIS[urlP.get('src')]}${urlP.get('id')}?_embed`);
             const data = await res.json();
             document.getElementById('title').innerHTML = data.title.rendered;
             document.getElementById('content').innerHTML = data.content.rendered;
@@ -59,41 +59,32 @@
                 const el = document.getElementById('feat-img');
                 el.src = img; el.style.display = 'block'; 
             }
-        } catch(e) {}
+        } catch(e) { document.getElementById('title').innerText = "Erro ao carregar."; }
     }
 
-    function handleVoice() {
+    function toggleSpeech() {
         const btn = document.getElementById('voiceBtn');
-        const span = btn.querySelector('span');
-        const icon = btn.querySelector('i');
-
         if (!isSpeaking) {
             const text = document.getElementById('content').innerText;
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'pt-PT';
-            utterance.onend = () => resetVoice();
+            const msg = new SpeechSynthesisUtterance(text);
+            msg.lang = 'pt-PT';
+            msg.onend = () => { isSpeaking = false; btn.classList.remove('playing'); btn.querySelector('span').innerText = "Ouvir"; btn.querySelector('i').className = "fas fa-play"; };
             
-            synth.speak(utterance);
+            synth.speak(msg);
             isSpeaking = true;
             btn.classList.add('playing');
-            span.innerText = "Parar Leitura";
-            icon.className = "fas fa-stop";
+            btn.querySelector('span').innerText = "Parar";
+            btn.querySelector('i').className = "fas fa-stop";
         } else {
             synth.cancel();
-            resetVoice();
+            isSpeaking = false;
+            btn.classList.remove('playing');
+            btn.querySelector('span').innerText = "Ouvir";
+            btn.querySelector('i').className = "fas fa-play";
         }
     }
 
-    function resetVoice() {
-        const btn = document.getElementById('voiceBtn');
-        isSpeaking = false;
-        btn.classList.remove('playing');
-        btn.querySelector('span').innerText = "Ouvir Notícia";
-        btn.querySelector('i').className = "fas fa-play";
-    }
-
     window.onload = load;
-    // Garante que a voz para se o usuário sair da página
     window.onbeforeunload = () => synth.cancel();
 </script>
 </body>
