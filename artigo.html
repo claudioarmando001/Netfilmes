@@ -3,101 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lendo notícia - CLD</title>
+    <title>Leitura - CLD</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Lora:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { --p: #0061ff; --bg: #ffffff; --text: #0f172a; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; }
-        .header { position: fixed; top: 0; width: 100%; background: var(--bg); padding: 12px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; z-index: 100; box-sizing: border-box; }
-        .container { max-width: 800px; margin: 80px auto 40px; padding: 0 20px; }
-        .main-img { width: 100%; height: auto; border-radius: 20px; margin-bottom: 24px; }
-        h1 { font-size: 2rem; line-height: 1.2; font-weight: 800; margin-bottom: 20px; }
-        .body-text { font-family: 'Lora', serif; font-size: 1.25rem; line-height: 1.8; }
-        .body-text img { max-width: 100% !important; height: auto; border-radius: 12px; margin: 20px 0; }
-        .body-text iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
-        .controls { display: flex; gap: 12px; margin-bottom: 30px; }
-        .btn { border: none; padding: 12px 20px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: 'Plus Jakarta Sans'; }
-        .btn-audio { background: var(--p); color: white; }
-        .btn-save { background: #f1f5f9; color: var(--text); }
-        .btn-save.active { background: #ffd700; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding-top: 70px; }
+        .header { position: fixed; top: 0; width: 100%; background: var(--bg); padding: 12px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; z-index: 100; box-sizing: border-box; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        h1 { font-size: 1.8rem; line-height: 1.2; font-weight: 800; margin-bottom: 15px; }
+        .controls { display: flex; gap: 10px; margin-bottom: 25px; }
+        .btn { border: none; padding: 12px 22px; border-radius: 30px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; font-family: inherit; }
+        .btn-audio { background: var(--p); color: white; transition: 0.3s; }
+        .btn-audio.playing { background: #dc3545; } /* Vermelho ao tocar */
+        .body-text { font-family: 'Lora', serif; font-size: 1.2rem; line-height: 1.8; }
+        .body-text img { width: 100%; border-radius: 15px; margin: 20px 0; }
+        .main-img { width: 100%; border-radius: 20px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:700"><i class="fas fa-arrow-left"></i> Voltar</a>
-    <i class="fas fa-share-alt" onclick="share()" style="cursor:pointer"></i>
+    <a href="index.html" style="text-decoration:none; color:var(--text); font-weight:700"><i class="fas fa-chevron-left"></i> Voltar</a>
+    <i class="fas fa-share-alt" onclick="navigator.share({url: location.href})"></i>
 </div>
 
 <main class="container">
     <h1 id="title">Carregando...</h1>
     <div class="controls">
-        <button class="btn btn-audio" onclick="readText()"><i class="fas fa-headphones"></i> Ouvir</button>
-        <button class="btn btn-save" id="save-btn" onclick="saveToggle()"><i class="far fa-bookmark"></i> Guardar</button>
+        <button id="voiceBtn" class="btn btn-audio" onclick="handleVoice()">
+            <i class="fas fa-play"></i> <span>Ouvir Notícia</span>
+        </button>
+        <button class="btn" style="background:#f1f5f9" onclick="save()">
+            <i class="far fa-bookmark"></i>
+        </button>
     </div>
     <img id="feat-img" class="main-img" style="display:none">
-    <div id="article-body" class="body-text"></div>
+    <div id="content" class="body-text"></div>
 </main>
 
 <script>
     const APIS = { 'opais': 'https://opais.co.mz/wp-json/wp/v2/posts/', 'carta': 'https://cartamz.com/wp-json/wp/v2/posts/', 'mznews': 'https://mznews.co.mz/wp-json/wp/v2/posts/' };
-    let currentPost = null;
+    let isSpeaking = false;
+    let synth = window.speechSynthesis;
 
-    async function loadArticle() {
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('id'), src = params.get('src');
+    async function load() {
+        const p = new URLSearchParams(window.location.search);
         try {
-            const res = await fetch(`${APIS[src]}${id}?_embed`);
-            const post = await res.json();
-            currentPost = post;
-            
-            document.getElementById('title').innerHTML = post.title.rendered;
-            document.getElementById('article-body').innerHTML = post.content.rendered;
-            const img = post._embedded?.['wp:featuredmedia']?.[0]?.source_url;
-            if(img) {
-                const imgEl = document.getElementById('feat-img');
-                imgEl.src = img;
-                imgEl.style.display = 'block';
+            const res = await fetch(`${APIS[p.get('src')]}${p.get('id')}?_embed`);
+            const data = await res.json();
+            document.getElementById('title').innerHTML = data.title.rendered;
+            document.getElementById('content').innerHTML = data.content.rendered;
+            const img = data._embedded?.['wp:featuredmedia']?.[0]?.source_url;
+            if(img) { 
+                const el = document.getElementById('feat-img');
+                el.src = img; el.style.display = 'block'; 
             }
-            checkSaved();
-        } catch (e) { document.getElementById('title').innerText = "Erro ao carregar."; }
+        } catch(e) {}
     }
 
-    function readText() {
-        const speech = new SpeechSynthesisUtterance(document.getElementById('article-body').innerText);
-        speech.lang = 'pt-PT';
-        window.speechSynthesis.speak(speech);
-    }
+    function handleVoice() {
+        const btn = document.getElementById('voiceBtn');
+        const span = btn.querySelector('span');
+        const icon = btn.querySelector('i');
 
-    function saveToggle() {
-        let saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
-        const exists = saved.findIndex(p => p.id === currentPost.id);
-        if(exists > -1) {
-            saved.splice(exists, 1);
+        if (!isSpeaking) {
+            const text = document.getElementById('content').innerText;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'pt-PT';
+            utterance.onend = () => resetVoice();
+            
+            synth.speak(utterance);
+            isSpeaking = true;
+            btn.classList.add('playing');
+            span.innerText = "Parar Leitura";
+            icon.className = "fas fa-stop";
         } else {
-            // Formata para o feed
-            saved.push({
-                id: currentPost.id,
-                title: currentPost.title,
-                date: currentPost.date,
-                link: currentPost.link,
-                _embedded: currentPost._embedded
-            });
+            synth.cancel();
+            resetVoice();
         }
-        localStorage.setItem('cld_saved', JSON.stringify(saved));
-        checkSaved();
     }
 
-    function checkSaved() {
-        let saved = JSON.parse(localStorage.getItem('cld_saved') || '[]');
-        const isSaved = saved.some(p => p.id === currentPost.id);
-        document.getElementById('save-btn').classList.toggle('active', isSaved);
+    function resetVoice() {
+        const btn = document.getElementById('voiceBtn');
+        isSpeaking = false;
+        btn.classList.remove('playing');
+        btn.querySelector('span').innerText = "Ouvir Notícia";
+        btn.querySelector('i').className = "fas fa-play";
     }
 
-    function share() { navigator.share({ title: document.title, url: window.location.href }); }
-
-    window.onload = loadArticle;
+    window.onload = load;
+    // Garante que a voz para se o usuário sair da página
+    window.onbeforeunload = () => synth.cancel();
 </script>
 </body>
 </html>
