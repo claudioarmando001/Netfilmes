@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Notícias CLD | Moçambique</title>
+    <title>Notícias CLD | Premium</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -17,38 +17,44 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 20px; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding-bottom: 50px; }
 
+        /* Navbar */
         .navbar { position: sticky; top: 0; background: var(--card); z-index: 1000; padding: 12px 16px; border-bottom: 1px solid var(--border); box-shadow: var(--shadow); }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
         .logo { font-weight: 800; font-size: 1.4rem; color: var(--text); letter-spacing: -1px; text-decoration: none; }
         .logo span { color: var(--primary); }
         .btn-icon { font-size: 1.3rem; color: var(--text); cursor: pointer; background: none; border: none; }
 
+        /* Search */
         .search-bar { margin: 12px auto 0; max-width: 800px; position: relative; }
-        .search-bar input { width: 100%; padding: 12px 44px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); font-family: inherit; }
+        .search-bar input { width: 100%; padding: 12px 44px; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); font-family: inherit; font-size: 0.95rem; }
         .search-bar i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-meta); }
 
+        /* Categories Expandidas */
         .categories { display: flex; gap: 8px; overflow-x: auto; padding: 16px 0; scrollbar-width: none; max-width: 1200px; margin: 0 auto; }
         .categories::-webkit-scrollbar { display: none; }
-        .cat-item { padding: 8px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; font-size: 0.85rem; font-weight: 700; color: var(--text-meta); white-space: nowrap; cursor: pointer; }
+        .cat-item { padding: 8px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; font-size: 0.82rem; font-weight: 700; color: var(--text-meta); white-space: nowrap; cursor: pointer; transition: 0.2s; }
         .cat-item.active { background: var(--primary); color: white; border-color: var(--primary); }
 
+        /* Feed Grid */
         .feed { padding: 0 16px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 16px; }
 
-        /* Card Destaque Dinâmico */
+        /* Card Destaque */
         .news-card.featured { grid-column: 1 / -1; flex-direction: column; padding: 0; border: none; background: transparent; }
         .news-card.featured .news-img { width: 100%; height: 210px; border-radius: var(--radius); }
-        .news-card.featured .news-title { font-size: 1.3rem; margin-top: 12px; }
+        .news-card.featured .news-title { font-size: 1.35rem; margin-top: 12px; font-weight: 800; }
 
-        .news-card { display: flex; gap: 14px; background: var(--card); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); text-decoration: none; color: inherit; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+        /* Cards Normais */
+        .news-card { display: flex; gap: 14px; background: var(--card); padding: 12px; border-radius: var(--radius); border: 1px solid var(--border); text-decoration: none; color: inherit; transition: 0.2s; }
         .news-img { width: 95px; height: 95px; border-radius: 15px; object-fit: cover; flex-shrink: 0; background: #eee; }
         .news-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
         .news-tag { font-size: 0.65rem; font-weight: 800; color: var(--primary); text-transform: uppercase; }
         .news-title { font-size: 0.95rem; font-weight: 700; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin: 4px 0; }
         .news-meta { font-size: 0.7rem; color: var(--text-meta); }
+
+        /* Loader de Scroll */
+        .loading-trigger { text-align: center; padding: 30px; grid-column: 1/-1; color: var(--primary); font-size: 1.2rem; }
 
         @media (min-width: 768px) { .feed { grid-template-columns: repeat(2, 1fr); } }
     </style>
@@ -58,21 +64,27 @@
 <nav class="navbar">
     <div class="nav-top">
         <a href="index.html" class="logo">Notícias<span>CLD</span></a>
-        <button class="btn-icon" onclick="viewSaved()"><i class="far fa-bookmark"></i></button>
+        <button class="btn-icon" onclick="toggleSaved()"><i class="far fa-bookmark"></i></button>
     </div>
     <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input type="text" id="search-input" placeholder="Pesquisar..." onkeyup="if(event.key==='Enter') startSearch()">
+        <input type="text" id="search-input" placeholder="O que queres ler hoje?" onkeyup="if(event.key==='Enter') resetAndLoad()">
     </div>
     <div class="categories" id="cat-list">
         <div class="cat-item active" onclick="filterCat('', this)">Recentíssimas</div>
         <div class="cat-item" onclick="filterCat('1', this)">Política</div>
         <div class="cat-item" onclick="filterCat('13', this)">Economia</div>
+        <div class="cat-item" onclick="filterCat('11', this)">Sociedade</div>
         <div class="cat-item" onclick="filterCat('18', this)">Desporto</div>
+        <div class="cat-item" onclick="filterCat('4', this)">Mundo</div>
+        <div class="cat-item" onclick="filterCat('17', this)">Cultura</div>
+        <div class="cat-item" onclick="filterCat('19', this)">Tecnologia</div>
+        <div class="cat-item" onclick="filterCat('20', this)">Saúde</div>
     </div>
 </nav>
 
 <main class="feed" id="feed"></main>
+<div id="scroll-anchor" class="loading-trigger"><i class="fas fa-circle-notch fa-spin"></i></div>
 
 <script>
 const SOURCES = [
@@ -82,39 +94,52 @@ const SOURCES = [
 ];
 
 let allPosts = [];
-let page = 1;
+let currentPage = 1;
+let isFetching = false;
+let currentCategory = '';
 
-function relativeTime(dateStr) {
-    const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
+// Formatação de Tempo Relativo
+function getRelativeTime(date) {
+    const diff = Math.floor((new Date() - new Date(date)) / 1000);
     if (diff < 3600) return `há ${Math.floor(diff / 60)} min`;
     if (diff < 86400) return `há ${Math.floor(diff / 3600)} h`;
-    return new Date(dateStr).toLocaleDateString();
+    return new Date(date).toLocaleDateString();
 }
 
-async function loadStepByStep() {
-    const feed = document.getElementById('feed');
-    if (page === 1) { feed.innerHTML = ''; allPosts = []; }
+async function loadNews() {
+    if (isFetching) return;
+    isFetching = true;
 
-    // Processa cada fonte individualmente para aparecer rápido
-    SOURCES.forEach(async (src) => {
+    const query = document.getElementById('search-input').value;
+    let filterParams = `&per_page=6&page=${currentPage}`;
+    if (currentCategory) filterParams += `&categories=${currentCategory}`;
+    if (query) filterParams += `&search=${encodeURIComponent(query)}`;
+
+    // Carregamento progressivo (uma por uma)
+    for (const src of SOURCES) {
         try {
-            const res = await fetch(`${src.api}&per_page=8&page=${page}${getFilters()}`);
-            const data = await res.json();
+            const response = await fetch(src.api + filterParams);
+            const data = await response.json();
             
-            const formatted = data.map(p => ({
-                id: p.id,
-                title: p.title.rendered,
-                date: p.date,
-                srcName: src.name,
-                srcSlug: src.slug,
-                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/300',
-                link: `artigo.html?id=${p.id}&src=${src.slug}`
-            }));
+            if (data.length > 0) {
+                const newPosts = data.map(p => ({
+                    id: p.id,
+                    title: p.title.rendered,
+                    date: p.date,
+                    srcName: src.name,
+                    srcSlug: src.slug,
+                    img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x250',
+                    link: `artigo.html?id=${p.id}&src=${src.slug}`
+                }));
 
-            allPosts = [...allPosts, ...formatted].sort((a, b) => new Date(b.date) - new Date(a.date));
-            renderFeed();
-        } catch (e) {}
-    });
+                allPosts = [...allPosts, ...newPosts].sort((a, b) => new Date(b.date) - new Date(a.date));
+                renderFeed();
+            }
+        } catch (e) { console.error("Erro na fonte " + src.name); }
+    }
+
+    isFetching = false;
+    currentPage++;
 }
 
 function renderFeed() {
@@ -122,7 +147,7 @@ function renderFeed() {
     feed.innerHTML = '';
     
     allPosts.forEach((p, index) => {
-        const isFeatured = (index === 0 && page === 1);
+        const isFeatured = (index === 0 && !currentCategory && !document.getElementById('search-input').value);
         const card = document.createElement('a');
         card.className = `news-card ${isFeatured ? 'featured' : ''}`;
         card.href = p.link;
@@ -131,31 +156,36 @@ function renderFeed() {
             <div class="news-content">
                 <span class="news-tag">${p.srcName}</span>
                 <h3 class="news-title">${p.title}</h3>
-                <div class="news-meta">${relativeTime(p.date)}</div>
+                <div class="news-meta">${getRelativeTime(p.date)}</div>
             </div>`;
         feed.appendChild(card);
     });
 }
 
-function getFilters() {
-    let f = '';
-    const search = document.getElementById('search-input').value;
-    const cat = document.querySelector('.cat-item.active').getAttribute('onclick').match(/'([^']+)'/)?.[1] || '';
-    if(search) f += `&search=${search}`;
-    if(cat) f += `&categories=${cat}`;
-    return f;
-}
-
 function filterCat(id, btn) {
     document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
     btn.classList.add('active');
-    page = 1; loadStepByStep();
+    currentCategory = id;
+    resetAndLoad();
 }
 
-function startSearch() { page = 1; loadStepByStep(); }
-function viewSaved() { /* Implementar navegação para lista de localStorage */ }
+function resetAndLoad() {
+    allPosts = [];
+    currentPage = 1;
+    document.getElementById('feed').innerHTML = '';
+    loadNews();
+}
 
-window.onload = loadStepByStep;
+// Lógica de Scroll Infinito
+const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !isFetching) {
+        loadNews();
+    }
+}, { threshold: 0.1 });
+
+observer.observe(document.getElementById('scroll-anchor'));
+
+window.onload = loadNews;
 </script>
 </body>
 </html>
