@@ -3,185 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CLD News | O seu agregador de notícias de Moçambique</title>
+    <title>CLD News | Moçambique</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            /* Nova Paleta de Cores Premium (Modo Claro) */
-            --primary: #047857; /* Verde Esmeralda */
+            --primary: #047857;
             --primary-dark: #065f46;
-            --bg: #fdfdfc; /* Off-white suave */
+            --bg: #fdfdfc;
             --card: #ffffff;
-            --text: #111827; /* Cinza quase preto */
+            --text: #111827;
             --text-meta: #6b7280;
             --border: #e5e7eb;
             --radius-lg: 16px;
             --radius-md: 12px;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
-
         @media (prefers-color-scheme: dark) {
             :root {
-                --bg: #0f172a; /* Slate escuro */
+                --bg: #0f172a;
                 --card: #1e293b;
                 --text: #f3f4f6;
                 --text-meta: #9ca3af;
                 --border: #334155;
             }
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 40px; }
         
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
-            padding-bottom: 40px;
-            letter-spacing: -0.01em;
-        }
-        
-        /* Navbar Moderna com Efeito de Vidro */
-        .navbar { 
-            position: sticky; 
-            top: 0; 
-            background: rgba(var(--bg), 0.85); 
-            backdrop-filter: blur(15px) saturate(180%); 
-            -webkit-backdrop-filter: blur(15px) saturate(180%); 
-            z-index: 1000; 
-            padding: 14px 20px; 
-            border-bottom: 1px solid var(--border);
-        }
-        
+        .navbar { position: sticky; top: 0; background: rgba(var(--bg), 0.85); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1000; padding: 14px 20px; border-bottom: 1px solid var(--border); }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+        .logo { font-weight: 800; font-size: 1.6rem; color: var(--text); text-decoration: none; letter-spacing: -1.5px; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--primary); }
         
-        .logo { 
-            font-weight: 800; 
-            font-size: 1.6rem; 
-            color: var(--text); 
-            text-decoration: none; 
-            letter-spacing: -1.5px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .logo::before {
-            content: '';
-            display: block;
-            width: 12px;
-            height: 24px;
-            background: var(--primary);
-            border-radius: 4px;
-        }
-        
-        .btn-saved {
-            background: var(--card);
-            border: 1px solid var(--border);
-            color: var(--text);
-            padding: 8px 16px;
-            border-radius: var(--radius-md);
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .btn-saved:hover { background: var(--border); }
+        .btn-saved { background: var(--card); border: 1px solid var(--border); color: var(--text); padding: 8px 16px; border-radius: var(--radius-md); font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
         .btn-saved.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         .search-bar { margin: 16px auto; max-width: 800px; position: relative; }
-        .search-bar input { 
-            width: 100%; 
-            padding: 14px 18px 14px 48px; 
-            border-radius: var(--radius-md); 
-            border: 1px solid var(--border); 
-            background: var(--card); 
-            color: var(--text); 
-            font-family: inherit;
-            font-size: 1rem;
-            transition: all 0.2s;
-            box-shadow: var(--shadow-sm);
-        }
-        .search-bar input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.1);
-        }
-        .search-bar i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-meta); font-size: 1.1rem; }
+        .search-bar input { width: 100%; padding: 14px 18px 14px 48px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--card); color: var(--text); font-family: inherit; box-shadow: var(--shadow-sm); }
+        .search-bar i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--text-meta); }
 
-        /* Categorias Estilo "Pill" */
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0 5px; scrollbar-width: none; max-width: 1200px; margin: 0 auto; }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; max-width: 1200px; margin: 0 auto; }
         .categories::-webkit-scrollbar { display: none; }
-        .cat-item { 
-            padding: 10px 20px; 
-            background: var(--card); 
-            border: 1px solid var(--border); 
-            border-radius: 100px; 
-            font-size: 0.85rem; 
-            font-weight: 700; 
-            color: var(--text); 
-            white-space: nowrap; 
-            cursor: pointer; 
-            transition: all 0.2s ease;
-            box-shadow: var(--shadow-sm);
-        }
-        .cat-item:hover { border-color: var(--text-meta); }
+        .cat-item { padding: 10px 20px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; font-size: 0.85rem; font-weight: 700; color: var(--text); white-space: nowrap; cursor: pointer; transition: 0.2s; }
         .cat-item.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
-        /* Feed Estilo Editorial */
         .feed { padding: 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
-        
-        .news-card { 
-            display: flex; 
-            flex-direction: column; 
-            background: var(--card); 
-            border-radius: var(--radius-lg); 
-            border: 1px solid var(--border); 
-            text-decoration: none; 
-            color: inherit; 
-            overflow: hidden; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: var(--shadow-sm);
-        }
-        .news-card:hover { 
-            transform: translateY(-5px); 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            border-color: transparent;
-        }
-        
-        .news-img { width: 100%; height: 210px; object-fit: cover; background: var(--border); }
-        
-        .news-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-        
-        .news-tag { 
-            font-size: 0.75rem; 
-            font-weight: 800; 
-            color: var(--primary); 
-            text-transform: uppercase; 
-            margin-bottom: 10px; 
-            letter-spacing: 0.05em;
-        }
-        
-        .news-title { 
-            font-size: 1.15rem; 
-            font-weight: 700; 
-            line-height: 1.35; 
-            margin-bottom: 15px; 
-            display: -webkit-box; 
-            -webkit-line-clamp: 3; 
-            -webkit-box-orient: vertical; 
-            overflow: hidden; 
-            color: var(--text);
-        }
-        
-        .news-meta { 
-            font-size: 0.8rem; 
-            color: var(--text-meta); 
-            margin-top: auto; 
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-        }
+        .news-card { display: flex; flex-direction: column; background: var(--card); border-radius: var(--radius-lg); border: 1px solid var(--border); text-decoration: none; color: inherit; overflow: hidden; transition: 0.3s; box-shadow: var(--shadow-sm); }
+        .news-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .news-img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
+        .news-body { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .news-tag { font-size: 0.75rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; }
+        .news-title { font-size: 1.1rem; font-weight: 700; line-height: 1.4; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-meta { font-size: 0.8rem; color: var(--text-meta); margin-top: auto; }
 
         .loader { text-align: center; padding: 50px; grid-column: 1/-1; color: var(--primary); font-size: 1.8rem; }
     </style>
@@ -190,17 +64,15 @@
 
 <nav class="navbar">
     <div class="nav-top">
-        <a href="index.html" class="logo">CLD News</a>
-        <button id="bookmark-btn" class="btn-saved" onclick="toggleSavedView()">
-            <i class="far fa-bookmark"></i> Salvos
-        </button>
+        <a href="index.html" class="logo">CLD<span>News</span></a>
+        <button id="bookmark-btn" class="btn-saved" onclick="toggleSavedView()"><i class="far fa-bookmark"></i> Salvos</button>
     </div>
     <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input type="text" id="search-input" placeholder="Pesquisar notícias de Moçambique..." onkeyup="if(event.key==='Enter') resetAndLoad()">
+        <input type="text" id="search-input" placeholder="Pesquisar em todos os jornais..." onkeyup="if(event.key==='Enter') resetAndLoad()">
     </div>
     <div class="categories">
-        <div class="cat-item active" onclick="filterCat('', this)">Tudo</div>
+        <div class="cat-item active" onclick="filterCat('', this)">Recentíssimas</div>
         <div class="cat-item" onclick="filterCat('política', this)">Política</div>
         <div class="cat-item" onclick="filterCat('economia', this)">Economia</div>
         <div class="cat-item" onclick="filterCat('sociedade', this)">Sociedade</div>
@@ -212,9 +84,87 @@
 <div id="scroll-anchor" class="loader"><i class="fas fa-circle-notch fa-spin"></i></div>
 
 <script>
-    // Mantenha o JavaScript original da Página Principal aqui.
-    // Ele funcionará perfeitamente com a nova aparência.
-    // [Inserir aqui o script da sua página principal original]
+const SOURCES = [
+    { name: "O País", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed", slug: "opais" },
+    { name: "Carta de MZ", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed", slug: "carta" },
+    { name: "MZ News", api: "https://mznews.co.mz/wp-json/wp/v2/posts?_embed", slug: "mznews" },
+    { name: "Folha de Maputo", api: "https://www.folhademaputo.co.mz/wp-json/wp/v2/posts?_embed", slug: "folha" },
+    { name: "Evidências", api: "https://evidencias.co.mz/wp-json/wp/v2/posts?_embed", slug: "evidencias" },
+    { name: "Integrity", api: "https://integritymag.co.mz/wp-json/wp/v2/posts?_embed", slug: "integrity" },
+    { name: "Mais de MZ", api: "https://mais.co.mz/wp-json/wp/v2/posts?_embed", slug: "mais" }
+];
+
+let allPosts = [], currentPage = 1, isFetching = false, currentCat = '', isSavedView = false;
+
+async function loadNews() {
+    if (isFetching || isSavedView) return;
+    isFetching = true;
+    
+    const searchVal = document.getElementById('search-input').value;
+    const query = currentCat || searchVal;
+
+    const fetchPromises = SOURCES.map(async (src) => {
+        try {
+            let url = `${src.api}&per_page=3&page=${currentPage}`;
+            if (query) url += `&search=${encodeURIComponent(query)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            return data.map(p => ({
+                id: p.id, title: p.title.rendered, date: p.date, 
+                srcName: src.name, srcSlug: src.slug,
+                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x250?text=Sem+Imagem',
+                link: `artigo.html?id=${p.id}&src=${src.slug}`
+            }));
+        } catch (e) { return []; }
+    });
+
+    const results = await Promise.all(fetchPromises);
+    const newPosts = results.flat().sort((a, b) => new Date(b.date) - new Date(a.date));
+    allPosts = [...allPosts, ...newPosts];
+    renderFeed();
+    isFetching = false;
+    currentPage++;
+}
+
+function renderFeed() {
+    const feed = document.getElementById('feed');
+    if(currentPage === 1) feed.innerHTML = '';
+    const displayList = isSavedView ? JSON.parse(localStorage.getItem('cld_saved') || '[]') : allPosts;
+    
+    displayList.forEach(p => {
+        const card = document.createElement('a');
+        card.className = 'news-card';
+        card.href = p.link;
+        card.innerHTML = `
+            <img class="news-img" src="${p.img}" loading="lazy">
+            <div class="news-body">
+                <span class="news-tag">${p.srcName}</span>
+                <h3 class="news-title">${p.title}</h3>
+                <div class="news-meta"><span>${new Date(p.date).toLocaleDateString()}</span></div>
+            </div>`;
+        feed.appendChild(card);
+    });
+}
+
+function filterCat(cat, btn) {
+    document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+    btn.classList.add('active');
+    currentCat = cat;
+    isSavedView = false;
+    resetAndLoad();
+}
+
+function toggleSavedView() {
+    isSavedView = !isSavedView;
+    document.getElementById('bookmark-btn').classList.toggle('active', isSavedView);
+    document.getElementById('scroll-anchor').style.display = isSavedView ? 'none' : 'block';
+    renderFeed();
+}
+
+function resetAndLoad() { allPosts = []; currentPage = 1; loadNews(); }
+const observer = new IntersectionObserver(e => e[0].isIntersecting && loadNews());
+observer.observe(document.getElementById('scroll-anchor'));
+window.onload = loadNews;
 </script>
 </body>
 </html>
