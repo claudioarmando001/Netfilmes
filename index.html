@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CLD News | Moçambique</title>
+    <title>CLD News | Premium</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,11 +12,9 @@
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 40px; }
         
-        .navbar { position: sticky; top: 0; background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 1000; padding: 12px 16px; border-bottom: 1px solid var(--border); }
-        @media (prefers-color-scheme: dark) { .navbar { background: rgba(2, 6, 23, 0.8); } }
-        
+        .navbar { position: sticky; top: 0; background: rgba(var(--bg), 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 1000; padding: 12px 16px; border-bottom: 1px solid var(--border); }
         .nav-top { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
-        .logo { font-weight: 800; font-size: 1.5rem; color: var(--text); text-decoration: none; }
+        .logo { font-weight: 800; font-size: 1.5rem; color: var(--text); text-decoration: none; letter-spacing: -1px; }
         .logo span { color: var(--primary); }
         
         .search-bar { margin: 12px auto; max-width: 800px; position: relative; }
@@ -26,35 +24,38 @@
         .categories { display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; scrollbar-width: none; max-width: 1200px; margin: 0 auto; }
         .categories::-webkit-scrollbar { display: none; }
         .cat-item { padding: 8px 18px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; font-size: 0.85rem; font-weight: 700; color: var(--text-meta); white-space: nowrap; cursor: pointer; transition: 0.2s; }
-        .cat-item.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .cat-item.active { background: var(--text); color: var(--bg); border-color: var(--text); }
 
         .feed { padding: 16px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        
         .news-card { display: flex; flex-direction: column; background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); text-decoration: none; color: inherit; overflow: hidden; transition: 0.3s; }
-        .news-card:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .news-img { width: 100%; height: 180px; object-fit: cover; background: #eee; }
-        .news-body { padding: 16px; flex-grow: 1; display: flex; flex-direction: column; }
+        .news-img { width: 100%; height: 190px; object-fit: cover; background: #eee; }
+        .news-body { padding: 16px; display: flex; flex-direction: column; flex-grow: 1; }
         .news-tag { font-size: 0.7rem; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 8px; }
-        .news-title { font-size: 1rem; font-weight: 700; line-height: 1.4; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .news-title { font-size: 1.05rem; font-weight: 700; line-height: 1.4; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .news-meta { font-size: 0.75rem; color: var(--text-meta); margin-top: auto; }
 
-        .loader { text-align: center; padding: 40px; grid-column: 1/-1; font-size: 1.5rem; color: var(--primary); }
+        .loader { text-align: center; padding: 40px; grid-column: 1/-1; color: var(--primary); font-size: 1.5rem; }
     </style>
 </head>
 <body>
 
 <nav class="navbar">
     <div class="nav-top">
-        <a href="#" class="logo" onclick="location.reload()">CLD<span>News</span></a>
-        <button id="bookmark-nav" class="cat-item" onclick="toggleSavedView()"><i class="far fa-bookmark"></i> Salvos</button>
+        <a href="index.html" class="logo">CLD<span>News</span></a>
+        <div id="bookmark-btn" class="cat-item" onclick="toggleSavedView()"><i class="far fa-bookmark"></i> Salvos</div>
     </div>
     <div class="search-bar">
         <i class="fas fa-search"></i>
-        <input type="text" id="search-input" placeholder="Pesquisar notícias de Moçambique..." onkeyup="if(event.key==='Enter') resetAndLoad()">
+        <input type="text" id="search-input" placeholder="Pesquisar notícias..." onkeyup="if(event.key==='Enter') resetAndLoad()">
     </div>
-    <div class="categories" id="source-filters">
-        <div class="cat-item active" onclick="filterSource('all', this)">Todas as Fontes</div>
-        </div>
+    <div class="categories">
+        <div class="cat-item active" onclick="filterCat('', this)">Tudo</div>
+        <div class="cat-item" onclick="filterCat('política', this)">Política</div>
+        <div class="cat-item" onclick="filterCat('economia', this)">Economia</div>
+        <div class="cat-item" onclick="filterCat('sociedade', this)">Sociedade</div>
+        <div class="cat-item" onclick="filterCat('desporto', this)">Desporto</div>
+        <div class="cat-item" onclick="filterCat('entretenimento', this)">Cultura</div>
+    </div>
 </nav>
 
 <main class="feed" id="feed"></main>
@@ -63,40 +64,38 @@
 <script>
 const SOURCES = [
     { name: "O País", api: "https://opais.co.mz/wp-json/wp/v2/posts?_embed", slug: "opais" },
-    { name: "Carta de MZ", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed", slug: "carta" },
+    { name: "Carta MZ", api: "https://cartamz.com/wp-json/wp/v2/posts?_embed", slug: "carta" },
     { name: "MZ News", api: "https://mznews.co.mz/wp-json/wp/v2/posts?_embed", slug: "mznews" },
     { name: "Folha de Maputo", api: "https://www.folhademaputo.co.mz/wp-json/wp/v2/posts?_embed", slug: "folha" },
-    { name: "Evidências", api: "https://evidencias.co.mz/wp-json/wp/v2/posts?_embed", slug: "evidencias" },
-    { name: "Mais de MZ", api: "https://mais.co.mz/wp-json/wp/v2/posts?_embed", slug: "mais" }
+    { name: "Evidências", api: "https://evidencias.co.mz/wp-json/wp/v2/posts?_embed", slug: "evidencias" }
 ];
 
-let allPosts = [], currentPage = 1, isFetching = false, activeSource = 'all', isSavedView = false;
+let allPosts = [], currentPage = 1, isFetching = false, currentCat = '', isSavedView = false;
 
 async function loadNews() {
     if (isFetching || isSavedView) return;
     isFetching = true;
     
-    const query = document.getElementById('search-input').value;
-    const fetchPromises = SOURCES
-        .filter(s => activeSource === 'all' || s.slug === activeSource)
-        .map(async (src) => {
-            try {
-                let url = `${src.api}&per_page=4&page=${currentPage}`;
-                if (query) url += `&search=${encodeURIComponent(query)}`;
-                const res = await fetch(url);
-                const data = await res.json();
-                return data.map(p => ({
-                    id: p.id, title: p.title.rendered, date: p.date, 
-                    srcName: src.name, srcSlug: src.slug,
-                    img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x250?text=CLD+News',
-                    link: `artigo.html?id=${p.id}&src=${src.slug}`
-                }));
-            } catch (e) { return []; }
-        });
+    const searchVal = document.getElementById('search-input').value;
+    const queryTerm = currentCat || searchVal;
+
+    const fetchPromises = SOURCES.map(async (src) => {
+        try {
+            let url = `${src.api}&per_page=3&page=${currentPage}`;
+            if (queryTerm) url += `&search=${encodeURIComponent(queryTerm)}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            return data.map(p => ({
+                id: p.id, title: p.title.rendered, date: p.date, 
+                srcName: src.name, srcSlug: src.slug,
+                img: p._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'https://via.placeholder.com/400x250',
+                link: `artigo.html?id=${p.id}&src=${src.slug}`
+            }));
+        } catch (e) { return []; }
+    });
 
     const results = await Promise.all(fetchPromises);
     const newPosts = results.flat().sort((a, b) => new Date(b.date) - new Date(a.date));
-    
     allPosts = [...allPosts, ...newPosts];
     renderFeed();
     isFetching = false;
@@ -106,15 +105,13 @@ async function loadNews() {
 function renderFeed() {
     const feed = document.getElementById('feed');
     if(currentPage === 1) feed.innerHTML = '';
+    const displayList = isSavedView ? JSON.parse(localStorage.getItem('cld_saved') || '[]') : allPosts;
     
-    const postsToDisplay = isSavedView ? JSON.parse(localStorage.getItem('cld_saved') || '[]') : allPosts;
-
-    postsToDisplay.forEach(p => {
+    displayList.forEach(p => {
         const card = document.createElement('a');
         card.className = 'news-card';
         card.href = p.link;
-        card.innerHTML = `
-            <img class="news-img" src="${p.img}" loading="lazy">
+        card.innerHTML = `<img class="news-img" src="${p.img}" loading="lazy">
             <div class="news-body">
                 <span class="news-tag">${p.srcName}</span>
                 <h3 class="news-title">${p.title}</h3>
@@ -124,22 +121,22 @@ function renderFeed() {
     });
 }
 
-function filterSource(slug, btn) {
+function filterCat(cat, btn) {
     document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
     btn.classList.add('active');
-    activeSource = slug;
+    currentCat = cat;
     isSavedView = false;
     resetAndLoad();
 }
 
 function toggleSavedView() {
     isSavedView = !isSavedView;
+    document.getElementById('bookmark-btn').classList.toggle('active', isSavedView);
     document.getElementById('scroll-anchor').style.display = isSavedView ? 'none' : 'block';
     renderFeed();
 }
 
 function resetAndLoad() { allPosts = []; currentPage = 1; loadNews(); }
-
 const observer = new IntersectionObserver(e => e[0].isIntersecting && loadNews());
 observer.observe(document.getElementById('scroll-anchor'));
 window.onload = loadNews;
